@@ -1,1 +1,5 @@
 node_modules/
+
+# Matt Pocock skills setup — local config & prompting journal, not tracked
+AGENTS.md
+docs/
