@@ -1,0 +1,20 @@
+import { writeFileSync } from 'node:fs';
+const ver = await (await fetch('http://localhost:9333/json/version')).json();
+const ws = new WebSocket(ver.webSocketDebuggerUrl); await new Promise(r=>ws.onopen=r);
+let _id=0; const pending=new Map(); const waiters=[];
+ws.onmessage=e=>{const m=JSON.parse(e.data); if(m.id&&pending.has(m.id)){pending.get(m.id)(m);pending.delete(m.id);} else if(m.method){for(let i=waiters.length-1;i>=0;i--)if(waiters[i].pred(m))waiters.splice(i,1)[0].res(m);}};
+const send=(method,params,sid)=>{const id=++_id;const msg={id,method,params:params||{}};if(sid)msg.sessionId=sid;return new Promise((res,rej)=>{pending.set(id,m=>m.error?rej(new Error(method+':'+JSON.stringify(m.error))):res(m.result));ws.send(JSON.stringify(msg));});};
+const waitEvent=(pred,ms=8000)=>new Promise((res,rej)=>{const w={pred,res};waiters.push(w);setTimeout(()=>{const i=waiters.indexOf(w);if(i>=0){waiters.splice(i,1);rej(new Error('timeout'));}},ms);});
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const {targetId}=await send('Target.createTarget',{url:'about:blank'});
+const {sessionId}=await send('Target.attachToTarget',{targetId,flatten:true});
+await send('Page.enable',{},sessionId); await send('Runtime.enable',{},sessionId);
+await send('Emulation.setDeviceMetricsOverride',{width:1000,height:615,deviceScaleFactor:1,mobile:false},sessionId);
+const p=waitEvent(m=>m.method==='Page.loadEventFired'&&m.sessionId===sessionId);
+await send('Page.navigate',{url:'http://localhost:8000/menu.html'},sessionId); await p; await sleep(400);
+// 清掉会触发升段弹窗的残留档，设成幼年+有币，关掉任何已弹出的 rankUp，再开萌宠弹窗
+await send('Runtime.evaluate',{expression:`localStorage.setItem('mathgameRankSeen','99');['rankUpModal'].forEach(id=>{const e=document.getElementById(id);if(e){e.classList.remove('show');e.setAttribute('aria-hidden','true');}});localStorage.setItem('mathgamePet',JSON.stringify({adopted:true,exp:90}));setCoins(120);updateProfileBadge();showPet();1`,returnByValue:true},sessionId);
+await sleep(500);
+const shot=await send('Page.captureScreenshot',{format:'png'},sessionId);
+writeFileSync('e:/mathgame/mathgame/.shots/pet_clean.png',Buffer.from(shot.data,'base64'));
+await send('Target.closeTarget',{targetId}); ws.close(); console.log('shot done');

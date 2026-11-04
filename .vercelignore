@@ -1,0 +1,11 @@
+# Web 部署只需要根目录 *.html + vendor/ + models/ + fonts/（见 vercel.json builds）。
+# 以下目录与网页版无关，排除后部署上传从 ~195MB 降到几 MB。
+android/
+.shots/
+.shots.bak/
+.vercel.bak/
+node_modules/
+.git/
+dist/
+www/
+_bgm_old.html

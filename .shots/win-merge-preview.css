@@ -1,0 +1,45 @@
+/* 宝箱舞台 × 过关场景 合并稿：只放新增/覆盖，其余沿用 chest-stage-preview.css（真舞台 CSS 的忠实副本） */
+body.static *{animation:none!important;transition:none!important}
+.cs{background:transparent}
+.cs-scene{position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none}
+.cs-scene>svg{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible}
+.cs-scrim{position:absolute;left:0;top:0;right:0;bottom:0;background:rgba(40,22,8,.22)}
+.cs.opened .cs-scrim{background:rgba(40,22,8,.08)}
+.cs.done .cs-scrim{background:rgba(40,22,8,0)}
+.cs.lv6 .cs-scrim{background:none}
+.cs-rays{opacity:.55}
+.cs-title{padding:6px 28px 8px;border-radius:24px;background:rgba(62,34,12,.82);box-shadow:0 4px 0 rgba(0,0,0,.18)}
+.cs.lv6 .cs-title{background:rgba(24,30,78,.86)}
+.cs-chip.mat{background:#FFF1DC;border-color:#F2C48C}
+.cs-chip .mat-art{width:24px;height:24px}
+.cs-partner{position:absolute;right:calc(100% + 22px);bottom:6px;width:128px;height:120px;pointer-events:none}
+.cs-partner svg{position:relative;width:100%;height:100%;display:block}
+.cs-partner .sh{position:absolute;left:12%;right:12%;bottom:-1px;height:12px;border-radius:50%;background:rgba(40,20,0,.3)}
+.cs-partner.lamp::after{content:"";position:absolute;left:75%;top:33%;width:18px;height:22px;border-radius:6px;background:#FFE27A;box-shadow:0 0 20px 9px rgba(255,226,122,.7)}
+.cs-crowd{opacity:1}.cs.closed .cs-crowd{opacity:.5}
+@media (max-height:600px) and (min-width:601px){.cs-partner{width:104px;height:98px;right:calc(100% + 16px)}}
+/* 第6关点亮：状态由 .cs-scene 上的 w1 w2 dl all 控制 */
+.win{fill:#2B3566;transition:fill .5s}
+.cs-scene.w1 .win.a,.cs-scene.w2 .win.b{fill:#FFD866}
+.wglow{opacity:0;transition:opacity .6s}
+.cs-scene.w1 .wglow.a,.cs-scene.w2 .wglow.b{opacity:1}
+.dlamp{fill:#5A6088;transition:fill .5s}
+.dlglow{opacity:0;transition:opacity .6s}
+.cs-scene.dl .dlamp{fill:#FFE27A}.cs-scene.dl .dlglow{opacity:1}
+.nt{opacity:.5;transition:opacity 1.2s}
+.cs-scene.all .nt{opacity:.08}
+.bulb{fill:#5A6088;transition:fill .5s}
+.cs-scene.all .bulb{fill:var(--bc)}
+.bigglow{opacity:0;transition:opacity 1.4s}
+.cs-scene.all .bigglow{opacity:1}
+.ffs{opacity:.15;transition:opacity 1.2s}
+.cs-scene.all .ffs{opacity:1}
+.smoke{opacity:0;transition:opacity 1s}
+.cs-scene.all .smoke{opacity:.75}
+@keyframes ws-tw{0%,100%{opacity:.25;transform:scale(.7)}50%{opacity:1;transform:scale(1)}}
+@keyframes ws-fall{from{transform:translate(0,-60px) rotate(0)}to{transform:translate(50px,640px) rotate(320deg)}}
+@keyframes ws-ff{0%,100%{transform:translate(0,0)}50%{transform:translate(14px,-18px)}}
+.tw{animation:ws-tw 1.8s infinite;transform-box:fill-box;transform-origin:center}
+.leaf{animation:ws-fall 8s linear infinite}
+.ff{animation:ws-ff 3s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.cs-scene *{animation:none!important}}

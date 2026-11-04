@@ -1,0 +1,45 @@
+<!-- ④ HUD：纪录条三态 -->
+<div class="panel game-bg" id="hud"><div class="lbl">纪录 · 答题中 HUD 条（纪录 12 题，三个时刻）</div><div class="hill"></div>
+  <div class="hud-col">
+    <div class="hrow"><span class="cap">刚开始</span>
+      <div class="hl"><span class="l">答对 <b>5</b> 题</span><span class="r">还差 8 题，超过纪录</span></div>
+      <div class="trk"><div class="rec"></div><div class="fill" style="width:33.3%"></div><span class="dot" style="left:33.3%"></span>
+        <svg class="pin" style="left:80%" viewBox="0 0 28 36"><rect x="3" y="2" width="3" height="33" rx="1.5" fill="#E8E0CC"/><path d="M6 3h19l-5 6.5 5 6.5H6z" fill="#E5483B" stroke="#A8281C" stroke-width="1.4" stroke-linejoin="round"/><text x="9" y="13.5" fill="#fff">12</text></svg></div></div>
+    <div class="hrow"><span class="cap">快追上了</span>
+      <div class="hl"><span class="l">答对 <b>11</b> 题</span><span class="r hot">只差 2 题！加油！</span></div>
+      <div class="trk"><div class="rec"></div><div class="fill near" style="width:73.3%"></div><span class="dot near" style="left:73.3%"></span>
+        <svg class="pin shake" style="left:80%" viewBox="0 0 28 36"><rect x="3" y="2" width="3" height="33" rx="1.5" fill="#E8E0CC"/><path d="M6 3h19l-5 6.5 5 6.5H6z" fill="#FF7A59" stroke="#A8281C" stroke-width="1.4" stroke-linejoin="round"/><text x="9" y="13.5" fill="#fff">12</text></svg></div></div>
+    <div class="hrow"><span class="cap">超过纪录</span>
+      <div class="hl"><span class="l">答对 <b>14</b> 题</span><span class="r gold">新纪录！还在涨</span></div>
+      <div class="trk"><div class="rec"></div><div class="fill gold" style="width:93.3%"></div><span class="dot gold" style="left:93.3%"></span>
+        <svg class="pin" style="left:80%" viewBox="0 0 28 36"><rect x="3" y="2" width="3" height="33" rx="1.5" fill="#E8E0CC"/><path d="M6 3h19l-5 6.5 5 6.5H6z" fill="#FFF6D0" stroke="#C77800" stroke-width="1.6" stroke-linejoin="round"/><text x="10" y="13.5" fill="#C77800">★</text></svg>
+        <span class="spark" style="left:78%;top:-30px">✦</span><span class="spark" style="left:96%;top:-26px;font-size:12px">✦</span><span class="spark" style="left:88%;top:26px;font-size:13px">✦</span></div></div>
+  </div>
+</div>
+
+<!-- ⑤ 结算：破纪录 -->
+<div class="panel game-bg" id="result1"><div class="lbl">纪录 · 结算卡（破了纪录）</div><div class="hill"></div>
+  <div class="rc">
+    <h2>时间到！</h2>
+    <div class="msg">60 秒答对 15 题，今天的速算练完啦</div>
+    <div class="rec-badge"><span class="ribbon">新纪录</span>
+      <span class="medal"><svg viewBox="0 0 24 24"><use href="#star"/></svg></span>
+      <span class="tt"><small>最高答对</small><b>12<i>→</i>15<u>题</u></b></span></div>
+    <div class="btns"><span class="b pri">再来一局</span><span class="b sec">回菜单</span></div>
+  </div>
+</div>
+
+<!-- ⑥ 结算：没破纪录 -->
+<div class="panel game-bg" id="result2"><div class="lbl">纪录 · 结算卡（没破纪录）</div><div class="hill"></div>
+  <div class="rc">
+    <h2>时间到！</h2>
+    <div class="msg">60 秒答对 10 题，离纪录很近啦</div>
+    <div class="near-box">
+      <div class="nl"><span>这一局 <em>10</em> 题</span><span>纪录 12 题</span></div>
+      <div class="trk"><div class="rec"></div><div class="fill near" style="width:66.7%"></div><span class="dot near" style="left:66.7%"></span>
+        <svg class="pin shake" style="left:80%" viewBox="0 0 28 36"><rect x="3" y="2" width="3" height="33" rx="1.5" fill="#E8E0CC"/><path d="M6 3h19l-5 6.5 5 6.5H6z" fill="#FF7A59" stroke="#A8281C" stroke-width="1.4" stroke-linejoin="round"/><text x="9" y="13.5" fill="#fff">12</text></svg></div>
+      <div class="nl" style="margin-top:10px;justify-content:center">只差 <em style="margin:0 4px">3 题</em> 就破纪录啦！</div>
+    </div>
+    <div class="btns"><span class="b pri">再冲一次，破纪录！</span><span class="b sec">回菜单</span></div>
+  </div>
+</div>

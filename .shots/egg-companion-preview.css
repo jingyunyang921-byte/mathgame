@@ -1,0 +1,47 @@
+html,body{margin:0;background:#FBF3DF;font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif}
+.frame{position:relative;width:960px;height:576px;overflow:hidden;background-size:960px 576px;background-repeat:no-repeat}
+.frame>*{position:absolute}
+.trail{left:0;top:0;width:960px;height:576px;pointer-events:none}
+.trail path{fill:none;stroke-linecap:round;stroke-dasharray:1 11}
+.trail .b{stroke:rgba(183,105,31,.55);stroke-width:6}
+.trail .f{stroke:#FFF3B0;stroke-width:3.4}
+.slot{width:112px;height:108px}
+.slot>*{position:absolute}
+.halo{left:-14px;top:-42px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(255,238,160,.92) 0,rgba(255,238,160,.55) 38%,rgba(255,238,160,0) 70%)}
+.nestB,.nestF{left:0;top:32px;width:112px;height:46px}
+.eggw{left:6px;top:-27px;width:100px;height:100px}
+.eggw svg,.deckegg svg{width:100%;height:100%;display:block}
+.m{width:18px;height:18px}
+.m svg,.tally svg,.fly svg,.mi svg{width:100%;height:100%;display:block}
+.tally{display:flex;align-items:center;gap:4px;white-space:nowrap;background:#FFF6E3;border:2px solid #F0DDB5;border-radius:999px;padding:1px 10px 1px 6px;font:800 15px/22px "Microsoft YaHei",sans-serif;color:#8A531B;box-shadow:0 2px 0 rgba(195,154,103,.35)}
+.tally svg{width:18px;height:18px;flex:none}
+.tally em{font-style:normal;color:#E8742A}
+.slot .tally{left:50%;top:82px;transform:translateX(-50%)}
+.big{transform:scale(1.35);transform-origin:50% 0}
+.deckegg{width:64px;height:64px}
+.halo.abs{background:radial-gradient(circle,rgba(255,238,160,.9) 0,rgba(255,238,160,.5) 40%,rgba(255,238,160,0) 70%)}
+.fly svg{filter:drop-shadow(0 2px 3px rgba(120,80,20,.4))}
+.spw svg{width:100%;height:100%;display:block}
+.pin{width:24px;height:24px;border-radius:50%;background:#E8442A;color:#fff;font:800 14px/24px sans-serif;text-align:center;box-shadow:0 0 0 2px #fff}
+.ttl{height:32px;border-radius:18px;background:rgba(255,255,255,.94);color:#B7691F;font:800 17px/32px "Microsoft YaHei",sans-serif;text-align:center;letter-spacing:1px;box-shadow:0 2px 6px rgba(120,90,40,.2)}
+.friend{width:96px;height:96px}
+.wob path{fill:none;stroke:#FFE48A;stroke-width:3.4;stroke-linecap:round}
+body.solo #root{width:960px}
+.sheet{width:1472px;padding:22px 0 34px}
+.sheet h1{font:800 27px "Microsoft YaHei",sans-serif;color:#8A531B;margin:0 24px 4px}
+.sheet .sub{margin:0 24px 16px;color:#A07A4A;font:600 15px/1.5 "Microsoft YaHei",sans-serif}
+.grid{display:grid;grid-template-columns:700px 700px;gap:22px 24px;padding:0 24px}
+.fwrap{width:700px;height:420px;border-radius:14px;overflow:hidden;box-shadow:0 4px 14px rgba(120,90,40,.28)}
+.fwrap .frame{transform:scale(.7291667);transform-origin:0 0}
+.cell h2{font:800 18px "Microsoft YaHei",sans-serif;margin:10px 2px 4px;color:#8A531B}
+.cell p{margin:0 2px;font:600 14px/1.65 "Microsoft YaHei",sans-serif;color:#6B5030}
+.six{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 16px;padding:0 24px;margin-top:6px}
+.six h2{grid-column:1/-1;font:800 18px "Microsoft YaHei",sans-serif;color:#8A531B;margin:8px 2px 0}
+.lv{display:flex;align-items:center;gap:8px;background:#FFF6E3;border:2px solid #F0DDB5;border-radius:16px;padding:8px 12px}
+.lv .tag{font:800 15px "Microsoft YaHei",sans-serif;color:#fff;background:#E8742A;border-radius:10px;padding:2px 8px}
+.lv .fr{width:46px;height:46px;flex:none}
+.lv .ar{font-style:normal;color:#C39A67;font-weight:800}
+.lv .mi{width:32px;height:32px;flex:none}
+.lv .t{flex:1;min-width:0;font:700 14px/1.45 "Microsoft YaHei",sans-serif;color:#6B5030}
+.lv .t b{display:block;font-size:15px;color:#8A531B}
+.lv .rx{font:800 14px/1.35 "Microsoft YaHei",sans-serif;color:#E8742A;max-width:118px}

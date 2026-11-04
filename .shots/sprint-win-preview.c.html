@@ -1,0 +1,35 @@
+<!-- ⑦ 胜利一拍：答题页峰值帧 -->
+<div class="panel win-bg" id="win"><div class="lbl">胜利一拍 · 最后一题答对后约 1.5 秒（静态峰值帧，实际会动）</div>
+  <div class="rays"></div><div class="hill"></div>
+  <div id="fwbox"></div><div id="cfbox"></div>
+  <div class="plaque">过关啦！</div>
+  <div class="stars3"><svg viewBox="0 0 24 24"><use href="#star"/></svg><svg viewBox="0 0 24 24"><use href="#star"/></svg><svg viewBox="0 0 24 24"><use href="#star"/></svg></div>
+  <div class="shadow"></div>
+  <div class="partner"><svg viewBox="0 0 24 24"><use href="#p-bunny"/></svg></div>
+  <div class="sub-cap">10 根暖草，扎成 1 捆啦！</div>
+</div>
+
+<script>
+const P = new URLSearchParams(location.search).get('p') || 'entry1';
+document.body.dataset.p = P;
+const COLS = ['#FFD43B', '#FF7A59', '#7BE06A', '#6EC6FF', '#FF8AD8'];
+function fw(x, y, size, c) {
+  let g = '';
+  for (let i = 0; i < 12; i++) {
+    const a = i * Math.PI / 6, r1 = 14, r2 = 32, r3 = 42;
+    g += '<line x1="' + (Math.cos(a) * r1).toFixed(1) + '" y1="' + (Math.sin(a) * r1).toFixed(1) + '" x2="' + (Math.cos(a) * r2).toFixed(1) + '" y2="' + (Math.sin(a) * r2).toFixed(1) + '" stroke="' + c + '" stroke-width="4" stroke-linecap="round"/>'
+       + '<circle cx="' + (Math.cos(a + 0.26) * r3).toFixed(1) + '" cy="' + (Math.sin(a + 0.26) * r3).toFixed(1) + '" r="3.2" fill="' + (i % 2 ? '#fff' : c) + '"/>';
+  }
+  return '<svg class="fw" style="left:' + x + 'px;top:' + y + 'px;width:' + size + 'px;height:' + size + 'px" viewBox="-50 -50 100 100">' + g + '<circle r="5" fill="#fff"/></svg>';
+}
+document.getElementById('fwbox').innerHTML = fw(70, 50, 200, '#FFD43B') + fw(690, 36, 170, '#FF8AD8') + fw(560, 250, 140, '#6EC6FF') + fw(140, 270, 130, '#7BE06A');
+let s = 7; const rnd = () => (s = (s * 9301 + 49297) % 233280) / 233280;
+let cf = '';
+for (let i = 0; i < 54; i++) {
+  const x = rnd() * 100, y = rnd() * 92, rot = Math.round(rnd() * 360), c = COLS[i % COLS.length];
+  cf += '<i class="cf" style="left:' + x.toFixed(1) + '%;top:' + y.toFixed(1) + '%;background:' + c + ';transform:rotate(' + rot + 'deg)"></i>';
+}
+document.getElementById('cfbox').innerHTML = cf;
+requestAnimationFrame(() => setTimeout(() => { document.body.dataset.ready = '1'; }, 120));
+</script>
+</body></html>

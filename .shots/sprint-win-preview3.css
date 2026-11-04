@@ -1,0 +1,45 @@
+/* ── 结算：纪录徽章 ── */
+.rc{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:540px;padding:20px 28px 22px;border-radius:26px;text-align:center;
+  background:linear-gradient(#FFFBEE,#FFF0CF);border:3px solid #F0B960;box-shadow:0 14px 0 rgba(0,0,0,.18),0 24px 40px rgba(0,0,0,.35)}
+.rc h2{font-size:30px;font-weight:900;color:#7A3E10}
+.rc .msg{margin-top:4px;font-size:16px;font-weight:700;color:#8a6a3c}
+.rec-badge{position:relative;margin:14px auto 0;display:flex;align-items:center;justify-content:center;gap:16px;padding:12px 20px 12px 16px;border-radius:20px;width:max-content;
+  background:linear-gradient(#FFF3C4,#FFD966);border:3px solid #E8A817;box-shadow:inset 0 2px 0 rgba(255,255,255,.7),0 0 22px 3px rgba(255,200,40,.55)}
+.rec-badge .medal{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,#FFF08A,#FFB300 70%);border:3px solid #C77800;box-shadow:0 3px 0 rgba(120,70,0,.4)}
+.rec-badge .medal svg{width:36px;height:36px;fill:#fff;stroke:#C77800;stroke-width:1.5;stroke-linejoin:round}
+.rec-badge .tt{text-align:left;line-height:1.15}
+.rec-badge .tt small{display:block;font-size:15px;font-weight:900;color:#9A5A00}
+.rec-badge .tt b{font-size:38px;font-weight:900;color:#D2480C;-webkit-text-stroke:1px #fff;white-space:nowrap}
+.rec-badge .tt b i{font-style:normal;font-size:24px;color:#9A7A4A;margin:0 6px;-webkit-text-stroke:0}
+.rec-badge .tt b u{text-decoration:none;font-size:20px;margin-left:3px}
+.rec-badge .ribbon{position:absolute;left:-14px;top:-12px;padding:2px 12px;border-radius:12px;font-size:14px;font-weight:900;color:#fff;background:linear-gradient(#FF7A59,#E5483B);box-shadow:0 2px 0 #A8281C;transform:rotate(-8deg)}
+.near-box{margin:14px auto 0;width:420px;padding:12px 16px 14px;border-radius:18px;background:#fff7e3;border:2.5px solid #F0C87A}
+.near-box .nl{display:flex;justify-content:space-between;font-size:16px;font-weight:900;color:#7A5A2C}
+.near-box .nl em{font-style:normal;color:#D2480C}
+.near-box .trk{background:#EFD9A8;box-shadow:inset 0 2px 3px rgba(94,55,22,.25);height:20px;margin-top:20px}
+.near-box .trk .rec{background:repeating-linear-gradient(45deg,rgba(232,168,23,.35) 0 6px,rgba(232,168,23,.15) 6px 12px)}
+.rc .btns{margin-top:18px;display:flex;justify-content:center;gap:14px}
+.rc .b{height:52px;line-height:52px;padding:0 30px;border-radius:26px;font-size:22px;font-weight:900}
+.rc .b.pri{color:#fff;background:linear-gradient(#FFB05C,#FF8A3D 50%,#E8701A);box-shadow:inset 0 2px 0 rgba(255,255,255,.5),0 5px 0 #C25510}
+.rc .b.sec{color:#9A5A00;background:#fff;box-shadow:inset 0 0 0 2.5px #E8C98A,0 4px 0 rgba(94,55,22,.18)}
+
+/* ── 胜利一拍：答题页上的峰值帧 ── */
+.win-bg{background:radial-gradient(ellipse at 50% 45%,#3f7fb0 0,#245a86 50%,#122f50 100%)}
+.win-bg .hill{position:absolute;left:-5%;right:-5%;bottom:0;height:30%;background:linear-gradient(#6aa83a,#3e7222);border-radius:50% 50% 0 0/40% 40% 0 0}
+.win-bg .rays{position:absolute;left:50%;top:44%;width:900px;height:900px;margin:-450px 0 0 -450px;opacity:.5;
+  background:repeating-conic-gradient(from 0deg,rgba(255,226,122,.55) 0 8deg,rgba(255,226,122,0) 8deg 24deg);-webkit-mask:radial-gradient(circle,#000 8%,transparent 62%);mask:radial-gradient(circle,#000 8%,transparent 62%)}
+.plaque{position:absolute;left:50%;top:15%;transform:translateX(-50%) rotate(-3deg);padding:8px 64px 12px;border-radius:22px;font-size:68px;font-weight:900;color:#fff;letter-spacing:6px;white-space:nowrap;
+  -webkit-text-stroke:2px #B8470A;background:linear-gradient(#FFD25C,#FF9A2E 55%,#F07A12);border:4px solid #fff3c9;
+  box-shadow:inset 0 3px 0 rgba(255,255,255,.55),0 8px 0 #B8470A,0 18px 28px rgba(0,0,0,.4)}
+.plaque::before,.plaque::after{content:'';position:absolute;top:50%;width:46px;height:46px;margin-top:-23px;background:#FFE27A;border:3px solid #fff3c9;
+  clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.plaque::before{left:-30px}.plaque::after{right:-30px}
+.stars3{position:absolute;left:50%;top:41%;transform:translateX(-50%);display:flex;gap:10px}
+.stars3 svg{width:70px;height:70px;fill:#FFD43B;stroke:#C77800;stroke-width:1.6;stroke-linejoin:round;filter:drop-shadow(0 4px 0 rgba(120,70,0,.45))}
+.stars3 svg:nth-child(2){width:88px;height:88px;margin-top:-14px}
+.partner{position:absolute;left:50%;bottom:5%;width:200px;height:200px;margin-left:-100px;transform:translateY(-34px) rotate(-5deg)}
+.partner svg{width:100%;height:100%}
+.shadow{position:absolute;left:50%;bottom:9%;width:150px;height:22px;margin-left:-75px;border-radius:50%;background:rgba(0,0,0,.28)}
+.fw{position:absolute;width:190px;height:190px}
+.cf{position:absolute;width:12px;height:20px;border-radius:3px}
+.sub-cap{position:absolute;left:0;right:0;bottom:3%;text-align:center;font-size:22px;font-weight:900;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.5)}

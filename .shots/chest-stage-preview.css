@@ -1,0 +1,85 @@
+/* 宝箱舞台静态稿：只用 transform/opacity 做动效（此处是静态帧，用 class 摆出某一刻） */
+:root{--c-primary:#FF8A3D;--c-primary-deep:#E8701A;--c-primary-dark:#C25510;--c-gold:#FFC63D;--c-ink:#5C3310;--c-surface:#FFFDF8;--grad-angle:160deg;
+  --shadow-card:0 6px 12px rgba(74,42,16,.12);--shadow-raised:0 10px 20px rgba(74,42,16,.16);--r-pill:999px}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;font-family:'Nunito','PingFang SC','Microsoft YaHei',sans-serif;user-select:none}
+body{background:linear-gradient(160deg,#EAF3FF 0%,#CFE4FF 55%,#B3D4FF 100%);position:relative}
+.ic{width:1em;height:1em;display:inline-block;vertical-align:-.125em;fill:none;stroke:currentColor;flex:none}
+
+/* 背后的结算卡（被遮罩压暗，只为表现「宝箱浮在结算卡上面」） */
+.fake-card{position:absolute;left:50%;top:50%;width:min(440px,88vw);height:min(360px,70vh);transform:translate(-50%,-50%);border-radius:24px;background:#FFFDF8;
+  box-shadow:var(--shadow-raised);display:flex;flex-direction:column;align-items:center;padding-top:26px;gap:12px;color:#5C3310}
+.fake-card b{font-size:26px}.fake-card .st{display:flex;gap:8px}.fake-card .st i{width:42px;height:42px;background:#FFC63D;clip-path:polygon(50% 0,62% 36%,100% 38%,70% 60%,80% 100%,50% 76%,20% 100%,30% 60%,0 38%,38% 36%)}
+.fake-card .ln{width:70%;height:12px;border-radius:9px;background:#F3E6CF}
+
+/* ===== 舞台本体 ===== */
+.cs{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:12px;background:rgba(48,28,12,.86);overflow:hidden}
+.cs-rays{position:absolute;left:50%;top:38%;width:820px;height:820px;margin:-410px 0 0 -410px;pointer-events:none;
+  background:repeating-conic-gradient(rgba(255,214,102,.24) 0 8deg,transparent 8deg 24deg);
+  -webkit-mask:radial-gradient(circle,#000 14%,transparent 66%);mask:radial-gradient(circle,#000 14%,transparent 66%)}
+.cs-title{position:relative;font-size:24px;font-weight:900;letter-spacing:.04em;color:#FFF3C4;text-shadow:0 2px 0 rgba(120,60,0,.5)}
+.cs-title small{display:block;margin-top:2px;text-align:center;font-size:13px;letter-spacing:.02em;color:#FFE19A;text-shadow:none;font-weight:800}
+
+.cs-box{position:relative;width:var(--cs-chest,176px);height:var(--cs-chest,156px);display:flex;align-items:center;justify-content:center}
+.cs-glow{position:absolute;left:50%;top:50%;width:230%;height:230%;margin:-115% 0 0 -115%;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,236,160,.95) 0,rgba(255,214,102,.5) 32%,rgba(255,214,102,0) 62%)}
+.cs-ring{position:absolute;left:50%;top:52%;width:100%;height:100%;margin:-50% 0 0 -50%;border-radius:50%;border:4px solid rgba(255,226,140,.8);pointer-events:none}
+.cs-ring.r1{transform:scale(1.18);opacity:.75}.cs-ring.r2{transform:scale(1.55);opacity:.38}
+.cs-chest{position:relative;width:100%;height:100%}
+.cs-chest svg{width:100%;height:100%;display:block;overflow:visible}
+.cs-chest::after{content:'';position:absolute;left:12%;right:12%;bottom:-4px;height:14px;border-radius:50%;background:rgba(40,20,0,.38);z-index:-1}
+.cs.closed .cs-chest{transform:rotate(-5deg)}
+.cs.opened .cs-chest{transform:scale(1.06) translateY(-2px)}
+.cs.opened .cs-box,.cs.done .cs-box{--cs-chest:var(--cs-chest-open,140px)}
+.cs.done .cs-glow{opacity:.45}
+.cs-spark{position:absolute;width:var(--s,18px);height:var(--s,18px);pointer-events:none;
+  background:#FFF2B0;clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);left:50%;top:50%;margin:-9px 0 0 -9px;
+  transform:translate(var(--x),var(--y)) rotate(var(--r,0deg))}
+
+.cs-hand{position:absolute;right:-6px;bottom:-14px;width:52px;height:52px;transform:rotate(-12deg);filter:drop-shadow(0 3px 0 rgba(60,30,0,.35))}
+.cs-tapfx{position:absolute;right:8px;bottom:6px;width:34px;height:34px;border-radius:50%;border:3px solid #fff;opacity:.7}
+.cs-cue{position:relative;display:inline-flex;align-items:center;gap:8px;margin-top:10px;padding:11px 26px;border:0;border-radius:var(--r-pill);
+  font:900 20px inherit;font-family:inherit;color:#fff;background:linear-gradient(var(--grad-angle),var(--c-primary),var(--c-primary-deep));
+  box-shadow:0 5px 0 var(--c-primary-dark),0 0 0 4px rgba(255,255,255,.32),0 12px 22px rgba(0,0,0,.28)}
+.cs-cue::before,.cs-cue::after{content:'';width:7px;height:7px;border-radius:50%;background:#FFE08A}
+
+/* 奖励牌 */
+.cs-chips{position:relative;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:560px}
+.cs-chip{display:inline-flex;align-items:center;gap:7px;padding:7px 15px;border-radius:13px;font-size:17px;font-weight:900;color:var(--c-primary-dark);
+  background:#FFF8E6;border:2px solid #F3D78E;box-shadow:0 4px 0 rgba(120,70,10,.28)}
+.cs-chip .ic{width:24px;height:24px}.cs-chip.coin .ic{color:#E89A00}
+.cs-chip.partner{background:#EEF8E4;border-color:#BFE0A4}.cs-chip.partner .ic{width:30px;height:30px}
+.cs-chip.en{background:linear-gradient(90deg,#FFF0B8,#FFD98A);border-color:#FFC247;box-shadow:0 4px 0 rgba(160,90,0,.35),0 0 0 4px rgba(255,200,70,.35)}
+.cs-chip .orb{width:18px;height:18px}
+
+/* 萌蛋条（沿用结算卡的 .egg-strip 结构，舞台里放大一档） */
+.cs .egg-strip{position:relative;width:min(470px,calc(100vw - 28px));margin:0;padding:8px 16px 8px 10px;gap:12px;border-radius:18px;box-shadow:0 8px 18px rgba(0,0,0,.25)}
+.cs .egg-strip svg.egg{width:68px;height:68px;margin:-8px 0}
+.cs .egg-strip .col{flex:1;min-width:0}
+.cs .egg-strip .l1{display:flex;justify-content:space-between;font-size:15px;font-weight:900;color:#5E3716}
+.cs .egg-strip .l1 em{font-style:normal;color:var(--c-primary-deep)}
+.cs .egg-strip .en-bar{height:12px;margin:22px 3px 6px}
+.cs .egg-strip .en-mark{width:15px;height:15px;margin:-7.5px 0 0 -7.5px;border-width:2px}.cs .egg-strip .en-mark i{display:none}
+.cs .egg-strip .en-mark.nx{width:19px;height:19px;margin:-9.5px 0 0 -9.5px;border-width:3px}
+.cs .egg-strip .l2{font-size:13px;font-weight:800;color:#8A6B4A}
+.cs .egg-strip .shine{position:absolute;top:0;bottom:0;width:30px;border-radius:99px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),transparent)}
+.cs .egg-strip .plus1{position:absolute;top:-21px;font-size:16px;font-weight:900;color:var(--c-primary-deep);transform:translateX(-50%)}
+.cs .egg-strip.catch svg.egg{transform:translateY(-5px) scale(1.1)}
+.cs .egg-strip.catch::before{content:'';position:absolute;left:10px;top:50%;width:84px;height:84px;margin-top:-42px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,226,120,.9),rgba(255,226,120,0) 70%)}
+.flyorb{position:absolute;width:20px;height:20px;margin:-10px 0 0 -10px;z-index:5;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#FFD86B 45%,#FFA928);box-shadow:0 0 12px rgba(255,185,40,.95)}
+.flyorb::before{content:'';position:absolute;right:50%;top:50%;width:46px;height:7px;margin-top:-3.5px;border-radius:99px;background:linear-gradient(90deg,transparent,rgba(255,185,40,.8));transform-origin:100% 50%;transform:rotate(var(--a,0deg))}
+
+.cs-go{position:relative;margin-top:2px;padding:13px 54px;border:0;border-radius:var(--r-pill);font:900 22px inherit;font-family:inherit;color:#fff;
+  background:linear-gradient(var(--grad-angle),var(--c-primary),var(--c-primary-deep));box-shadow:0 5px 0 var(--c-primary-dark),0 12px 22px rgba(0,0,0,.28)}
+
+/* 矮屏横屏（真机 960×576 / 900×500） */
+@media (max-height:600px) and (min-width:601px){
+  .cs{gap:6px;padding:8px}.cs-title{font-size:21px}.cs-title small{font-size:12px}
+  .cs-box{--cs-chest:150px;--cs-chest-open:112px}.cs-cue{margin-top:6px;padding:8px 24px;font-size:18px}
+  .cs-chip{padding:5px 12px;font-size:15px}.cs .egg-strip svg.egg{width:56px;height:56px}.cs-go{padding:10px 48px;font-size:20px}
+}
+@media (max-width:480px){
+  .cs{gap:14px}.cs-box{--cs-chest:230px;--cs-chest-open:170px}.cs-title{font-size:26px}
+  .cs .egg-strip{width:calc(100vw - 24px)}
+}

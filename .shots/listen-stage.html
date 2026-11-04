@@ -1,0 +1,111 @@
+<!doctype html><html lang="zh"><head><meta charset="utf-8"><style>
+:root{--c-primary:#FF8A3D;--c-primary-deep:#E8701A;--c-gold:#FFC63D;--c-ink:#5C3310;--c-ink-soft:#8A6240;--c-surface:#FFFDF8;--c-surface-warm:#FFF6EA;--r-card:16px;--r-modal:24px;--r-pill:999px;--shadow-card:0 6px 12px rgba(74,42,16,.12);--shadow-raised:0 10px 20px rgba(74,42,16,.16);--mg-a:#43A047;--mg-b:#2E9E4A;--mg-ring:rgba(67,160,71,.30)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:#e7e2da;padding:26px;display:flex;flex-direction:column;gap:10px;align-items:center}
+.cap{font:800 16px/1.5 sans-serif;color:#333;margin-top:12px;max-width:1000px;text-align:center}
+.cap small{font-weight:600;color:#777}
+.frame{width:1000px;height:576px;position:relative;overflow:hidden;border-radius:14px;box-shadow:0 10px 34px rgba(0,0,0,.2);background:linear-gradient(180deg,#FFF8E1,#FFF6EA 46%,#FFF1DE)}
+.pk{height:112px;background:linear-gradient(180deg,#dcefd6,#ebf6e6);border-bottom:2px dashed rgba(255,138,61,.3);display:flex;align-items:center;justify-content:center;gap:16px;color:#7d9170;font:800 14px sans-serif}
+.pk .vs{width:46px;height:46px;border-radius:50%;background:#fff;border:3px solid #ff6b9d;display:flex;align-items:center;justify-content:center;color:#ff4d7d;font:900 15px sans-serif}
+.qwrap{position:absolute;top:122px;left:50%;transform:translateX(-50%)}
+.q-big{position:relative;background:var(--c-surface);border:4px solid var(--c-primary);border-radius:26px;padding:14px 60px;box-shadow:var(--shadow-raised),0 0 0 6px rgba(255,138,61,.12);font:900 56px/1 sans-serif;color:var(--c-ink);letter-spacing:8px}
+.replay{position:absolute;right:-10px;bottom:-16px;display:inline-flex;align-items:center;gap:6px;background:linear-gradient(160deg,var(--c-gold),var(--c-primary));color:#fff;font:900 14px sans-serif;padding:7px 15px;border-radius:var(--r-pill);box-shadow:var(--shadow-card)}
+.replay svg{width:14px;height:14px}
+.vdash{position:absolute;left:0;right:0;top:250px;border-top:2px dashed rgba(255,138,61,.28)}
+.spark{position:absolute;pointer-events:none}
+.qmark{position:absolute;pointer-events:none;font:900 46px sans-serif;color:rgba(140,110,70,.09);line-height:1}
+.msym{position:absolute;pointer-events:none;font:900 30px sans-serif;opacity:.5}
+.mic{border-radius:50%;background:linear-gradient(160deg,var(--mg-a),var(--mg-b));display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px rgba(46,158,74,.4)}
+.mic svg{width:46%;height:46%;color:#fff}
+.ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:50%;border:3px solid var(--mg-ring);pointer-events:none}
+.arc{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:50%;border:2px dashed rgba(67,160,71,.3);pointer-events:none}
+.bars{display:flex;align-items:flex-end;gap:4px;height:26px}
+.bars i{width:5px;border-radius:3px;background:linear-gradient(180deg,#43C65F,#239A43);display:block}
+.status{color:#2E9E4A;font:800 15px sans-serif}
+.heard{border:1.5px dashed rgba(79,168,224,.55);border-radius:var(--r-pill);padding:7px 30px;color:#9bb3c4;font:700 15px sans-serif;background:#fff}
+.heard.on{border-style:solid;border-color:rgba(79,168,224,.7);background:#EAF4FC;color:#2E7FB8}
+.skip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,253,248,.9);color:var(--c-primary-deep);font:900 14px sans-serif;padding:9px 20px;border-radius:var(--r-pill);border:2px solid rgba(255,138,61,.4);box-shadow:var(--shadow-card)}
+.skip svg{width:15px;height:15px}
+.prompt{color:var(--c-ink);font:900 26px sans-serif;text-align:center;display:flex;align-items:center;justify-content:center;gap:9px}
+.prompt .ear{width:26px;height:26px;color:var(--c-primary)}
+.card{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);width:344px;background:rgba(255,253,248,.96);border:2px solid rgba(255,138,61,.18);border-radius:var(--r-modal);box-shadow:var(--shadow-raised);padding:13px 16px 11px;display:flex;flex-direction:column;gap:8px}
+.card .top{display:flex;align-items:center;gap:14px}
+.card .left{flex:1;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.badge{display:inline-flex;align-items:center;gap:5px;background:#EAF4FC;color:#2E7FB8;font:900 12px sans-serif;padding:4px 11px;border-radius:var(--r-pill);border:1.5px solid rgba(79,168,224,.35)}
+.chero{color:var(--c-ink);font:900 19px/1.2 sans-serif}
+.sub{color:var(--c-ink-soft);font:700 12px sans-serif}
+.card .right{display:flex;flex-direction:column;align-items:center;gap:6px}
+.cmic{width:62px;height:62px}
+.card .bars{height:22px;gap:3px}.card .bars i{width:4px}
+.divider{height:1px;background:rgba(140,100,60,.12)}
+.card .skip{align-self:center;box-shadow:none}
+.stageA{position:absolute;left:0;right:0;top:250px;bottom:0;overflow:hidden}
+.stageA .bg{position:absolute;inset:0;background:radial-gradient(220px 150px at 50% 60%,rgba(255,255,255,.75),rgba(255,255,255,0) 72%),linear-gradient(180deg,rgba(255,240,220,0),rgba(255,228,196,.8))}
+.panel{position:absolute;left:50%;transform:translateX(-50%);top:262px;bottom:16px;width:640px;background:rgba(255,253,248,.8);border:2px solid rgba(255,138,61,.2);border-radius:30px;box-shadow:var(--shadow-raised);overflow:hidden}
+.panel .spot{position:absolute;inset:0;background:radial-gradient(230px 170px at 50% 52%,rgba(255,214,150,.5),rgba(255,214,150,0) 70%)}
+</style></head><body>
+<div class="cap">① 现状 <small>— 顶部有「听算模式」徽标；卡片窄、偏居底部中间；「跳过」夹在卡内麦克风下方；题目下方一大片空白</small></div>
+<div class="frame">
+  <div class="pk">🏁 比谁快（PK 地图·不改）<span class="vs">VS</span>怪兽</div>
+  <div class="qwrap"><div class="q-big">7 + 3 = ?<div class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6"/></svg>再听一遍</div></div></div>
+  <div class="vdash"></div>
+  <div class="qmark" style="top:360px;left:150px">?</div><div class="qmark" style="top:300px;right:150px;font-size:58px">?</div>
+  <svg class="spark" style="top:300px;left:70px" width="26" height="26" viewBox="0 0 24 24" fill="#FFC63D"><path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/></svg>
+  <div class="card">
+    <div class="top"><div class="left"><div class="badge">🔊 听算模式</div><div class="chero">大声说出<br>你的答案</div><div class="sub">我会自动识别你的声音</div></div>
+      <div class="right"><div class="mic cmic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/></svg></div><div class="bars"><i style="height:8px"></i><i style="height:15px"></i><i style="height:22px"></i><i style="height:12px"></i><i style="height:18px"></i></div><div class="status">正在聆听…</div></div></div>
+    <div class="divider"></div>
+    <div class="heard">听你说…</div>
+    <div class="skip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 5v14l9-7zM17 5v14"/></svg>跳过这题</div>
+  </div>
+</div>
+<div class="cap">② 方案 A「开放舞台」<small>— 去徽标；一行「大声说出你的答案吧」；放大绿麦+脉冲光环+声波动画填满下方；识别框在麦克风正下方；底部暖色聚光渐变+散落星点/运算符号把背景做丰富；「跳过这题」移到屏幕右下角做成低调幽灵按钮</small></div>
+<div class="frame">
+  <div class="pk">🏁 比谁快（PK 地图·不改）<span class="vs">VS</span>怪兽</div>
+  <div class="qwrap"><div class="q-big">7 + 3 = ?<div class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6"/></svg>再听一遍</div></div></div>
+  <div class="vdash"></div>
+  <div class="stageA">
+    <div class="bg"></div>
+    <svg class="spark" style="top:24px;left:120px" width="24" height="24" viewBox="0 0 24 24" fill="#FFB74D"><path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/></svg>
+    <svg class="spark" style="top:150px;right:120px" width="20" height="20" viewBox="0 0 24 24" fill="#FFC63D"><path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/></svg>
+    <svg class="spark" style="bottom:34px;left:170px" width="16" height="16" viewBox="0 0 24 24" fill="#FF8A3D"><path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/></svg>
+    <div class="qmark" style="top:40px;left:60px;font-size:40px">?</div><div class="qmark" style="bottom:30px;right:70px;font-size:54px">?</div>
+    <div class="msym" style="top:60px;right:200px;color:#FFB74D">＋</div><div class="msym" style="bottom:70px;left:270px;color:#7FB2E0">－</div>
+    <div class="prompt" style="position:absolute;left:0;right:0;top:16px"><svg class="ear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/></svg>大声说出你的答案吧</div>
+    <div style="position:absolute;left:50%;top:66px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:11px">
+      <div style="position:relative;display:flex;align-items:center;justify-content:center;width:112px;height:112px">
+        <div class="ring" style="width:170px;height:170px;opacity:.3"></div><div class="ring" style="width:140px;height:140px;opacity:.55"></div>
+        <div class="mic" style="width:112px;height:112px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/></svg></div>
+      </div>
+      <div class="bars"><i style="height:10px"></i><i style="height:20px"></i><i style="height:28px"></i><i style="height:16px"></i><i style="height:23px"></i></div>
+      <div class="status">正在聆听…</div>
+      <div class="heard on">听你说…</div>
+    </div>
+  </div>
+  <div class="skip" style="position:absolute;right:22px;bottom:18px;background:rgba(255,253,248,.72);border-color:rgba(255,138,61,.3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 5v14l9-7zM17 5v14"/></svg>跳过这题</div>
+</div>
+<div class="cap">③ 方案 B「聚光卡台」<small>— 在 A 基础上把整组收进一张居中大卡台（半透明圆角，真正「占住」底部）；聚光灯更强 + 声波涟漪虚线弧 + 卡外漂浮运算符号，层次更足、更有舞台感；跳过同样在屏幕右下角</small></div>
+<div class="frame">
+  <div class="pk">🏁 比谁快（PK 地图·不改）<span class="vs">VS</span>怪兽</div>
+  <div class="qwrap"><div class="q-big">7 + 3 = ?<div class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6"/></svg>再听一遍</div></div></div>
+  <div class="vdash"></div>
+  <div class="msym" style="top:296px;left:120px;color:#FFB74D;font-size:34px">＋</div>
+  <div class="msym" style="top:430px;left:150px;color:#7FB2E0">×</div>
+  <div class="msym" style="top:320px;right:120px;color:#F2A365">÷</div>
+  <svg class="spark" style="top:300px;right:190px" width="22" height="22" viewBox="0 0 24 24" fill="#FFC63D"><path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/></svg>
+  <div class="panel">
+    <div class="spot"></div>
+    <div class="prompt" style="position:absolute;left:0;right:0;top:18px"><svg class="ear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/></svg>大声说出你的答案吧</div>
+    <div style="position:absolute;left:50%;top:66px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:11px">
+      <div style="position:relative;display:flex;align-items:center;justify-content:center;width:120px;height:120px">
+        <div class="arc" style="width:206px;height:206px;opacity:.4"></div><div class="arc" style="width:164px;height:164px;opacity:.6"></div>
+        <div class="mic" style="width:120px;height:120px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/></svg></div>
+      </div>
+      <div class="bars"><i style="height:10px"></i><i style="height:20px"></i><i style="height:28px"></i><i style="height:16px"></i><i style="height:23px"></i></div>
+      <div class="status">正在聆听…</div>
+      <div class="heard on">听你说…</div>
+    </div>
+  </div>
+  <div class="skip" style="position:absolute;right:22px;bottom:18px;background:rgba(255,253,248,.72);border-color:rgba(255,138,61,.3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 5v14l9-7zM17 5v14"/></svg>跳过这题</div>
+</div>
+</body></html>

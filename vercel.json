@@ -1,14 +1,15 @@
 {
   "version": 2,
   "builds": [
-    { "src": "*.html", "use": "@vercel/static" }
+    { "src": "*.html", "use": "@vercel/static" },
+    { "src": "pet-*.js", "use": "@vercel/static" },
+    { "src": "pet-*.css", "use": "@vercel/static" },
+    { "src": "vendor/**", "use": "@vercel/static" },
+    { "src": "models/**", "use": "@vercel/static" },
+    { "src": "fonts/**", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/", "dest": "/menu.html" },
-    {
-      "src": "/api/ocr",
-      "dest": "https://needed-channels-spirituality-exactly.trycloudflare.com/ocr"
-    },
     { "src": "/(.*)", "dest": "/$1" }
   ]
 }

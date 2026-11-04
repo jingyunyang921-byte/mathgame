@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>听算模式布局方案</title>
+<style>
+:root{
+  --c-primary:#FF8A3D;--c-primary-deep:#E8701A;--c-gold:#FFC63D;
+  --c-ink:#5C3310;--c-ink-soft:#8A6240;--c-surface:#FFFDF8;
+  --c-green:#2E9E4A;--c-green-deep:#1F7D38;--c-sky:#4FA8E0;
+  --r-pill:999px;--r-modal:24px;
+  --shadow-card:0 6px 12px rgba(74,42,16,0.12);
+  --shadow-raised:0 10px 20px rgba(74,42,16,0.16);
+  --font-ui:'Nunito','PingFang SC','Microsoft YaHei',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+.ic{display:inline-block;fill:none;stroke:currentColor;flex:none;}
+body{
+  font-family:var(--font-ui);
+  background:linear-gradient(160deg,#E4F3E8 0%,#C8E6D0 55%,#AAD8B8 100%);
+  min-height:100vh;padding:30px 24px 40px;
+  display:flex;flex-direction:column;align-items:center;gap:22px;
+}
+h1{color:#1F5A33;font-size:20px;font-weight:900;}
+.row{display:flex;gap:26px;justify-content:center;align-items:flex-start;flex-wrap:wrap;}
+.col{display:flex;flex-direction:column;align-items:center;gap:12px;}
+.tag{font-weight:900;color:#1F5A33;font-size:15px;background:#fff;
+  padding:5px 16px;border-radius:var(--r-pill);box-shadow:var(--shadow-card);}
+.note{font-size:12px;color:#2A5A3A;max-width:360px;text-align:center;line-height:1.5;opacity:.85;}
+.card{width:362px;background:rgba(255,253,248,0.94);border-radius:var(--r-modal);
+  border:2px solid rgba(255,138,61,0.16);box-shadow:var(--shadow-raised);
+  display:flex;flex-direction:column;align-items:center;}
+/* ---- shared pieces ---- */
+.badge{display:inline-flex;align-items:center;gap:6px;background:#EAF4FC;color:#2E7FB8;
+  font-weight:900;font-size:13px;padding:5px 14px;border-radius:var(--r-pill);
+  border:1.5px solid rgba(79,168,224,0.35);}
+.badge .ic{width:16px;height:16px;color:#4FA8E0;stroke-width:2.2;}
+.eyebrow{color:var(--c-primary-deep);font-weight:900;font-size:14px;letter-spacing:.5px;}
+.hero{color:var(--c-ink);font-weight:900;font-size:26px;line-height:1.2;}
+.sub{color:var(--c-ink-soft);font-weight:700;font-size:13px;}
+.mic{width:84px;height:84px;border-radius:50%;position:relative;
+  background:linear-gradient(160deg,#43C65F,#239A43);
+  display:flex;align-items:center;justify-content:center;flex:none;
+  border:4px solid #FFFDF8;box-shadow:0 8px 18px rgba(31,125,56,0.4),0 0 0 6px rgba(46,158,74,0.14);}
+.mic .ic{width:38px;height:38px;color:#fff;stroke-width:2.1;}
+.mic.gold{background:linear-gradient(160deg,var(--c-gold),var(--c-primary));
+  box-shadow:0 8px 18px rgba(232,112,26,0.38);}
+.bars{display:flex;align-items:flex-end;gap:4px;height:26px;}
+.bars i{width:5px;border-radius:3px;background:linear-gradient(180deg,#43C65F,#239A43);display:block;}
+.listen{color:var(--c-green-deep);font-weight:900;font-size:15px;}
+.heard{font-size:15px;font-weight:800;color:var(--c-ink-soft);background:#fff;
+  padding:4px 18px;border-radius:var(--r-pill);border:2px solid rgba(79,168,224,0.4);box-shadow:var(--shadow-card);}
+.skip{display:inline-flex;align-items:center;gap:7px;background:#fff;color:var(--c-primary-deep);
+  font-weight:900;font-size:14px;padding:9px 24px;border-radius:var(--r-pill);
+  border:2px solid rgba(255,138,61,0.4);box-shadow:var(--shadow-card);cursor:pointer;}
+.skip .ic{width:17px;height:17px;stroke-width:2.4;}
+/* ===== 方案 A 参考图忠实版 ===== */
+.cardA{padding:22px 24px 20px;gap:11px;}
+.cardA .micwrap{display:flex;flex-direction:column;align-items:center;gap:9px;margin-top:6px;}
+/* ===== 方案 B 童趣精简版 ===== */
+.cardB{padding:24px 24px 20px;gap:14px;}
+.disc{width:122px;height:98px;border-radius:30px;background:#ECF6FC;position:relative;
+  display:flex;align-items:center;justify-content:center;box-shadow:inset 0 2px 0 rgba(255,255,255,0.7);}
+.disc .headphone{width:64px;height:54px;color:#4FA8E0;filter:drop-shadow(0 3px 6px rgba(79,168,224,0.3));}
+.disc .w{position:absolute;width:15px;height:28px;color:var(--c-primary);opacity:.85;}
+.disc .wl{left:12px;transform:scaleX(-1);}
+.disc .wr{right:12px;}
+.cardB .line{color:var(--c-ink);font-weight:900;font-size:19px;text-align:center;line-height:1.3;}
+.cardB .statusrow{display:flex;align-items:center;gap:9px;}
+/* ===== 方案 C 紧凑横排版 ===== */
+.cardC{padding:20px 22px 16px;gap:13px;align-items:stretch;}
+.cardC .top{display:flex;align-items:center;gap:16px;}
+.cardC .left{flex:1;display:flex;flex-direction:column;gap:8px;align-items:flex-start;text-align:left;}
+.cardC .hero{font-size:21px;}
+.cardC .right{flex:none;display:flex;flex-direction:column;align-items:center;gap:7px;}
+.cardC .divider{height:1px;background:rgba(140,100,60,0.12);margin:2px 0;}
+.cardC .skip{align-self:center;}
+</style></head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="i-skip" viewBox="0 0 24 24"><path d="M5 6 L13 12 L5 18 Z" fill="currentColor" stroke="none"/><path d="M13 6 L19.5 12 L13 18 Z" fill="currentColor" stroke="none"/><line x1="20.6" y1="6" x2="20.6" y2="18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5.5 11.5 a6.5 6.5 0 0 0 13 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="18" x2="12" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="8.5" y1="21" x2="15.5" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-soundwave" viewBox="0 0 20 24"><path d="M3 12 A9 9 0 0 1 3 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M8 15 A14 14 0 0 1 8 3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-headphone-cute" viewBox="0 0 48 40"><path d="M8 24 V20 A16 16 0 0 1 40 20 V24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/><rect x="3" y="21" width="11" height="15" rx="5.5" fill="currentColor"/><rect x="34" y="21" width="11" height="15" rx="5.5" fill="currentColor"/><rect x="5.6" y="24.2" width="5.8" height="8.6" rx="2.9" fill="rgba(255,255,255,0.35)"/><rect x="36.6" y="24.2" width="5.8" height="8.6" rx="2.9" fill="rgba(255,255,255,0.35)"/></symbol>
+</defs></svg>
+
+<h1>听算模式布局 · 三个方案对比（L3 绿色场景为例）</h1>
+<div class="row">
+  <div class="col">
+    <div class="tag">方案 A · 参考图忠实版</div>
+    <div class="card cardA">
+      <div class="badge"><svg class="ic" viewBox="0 0 20 24"><use href="#i-soundwave"/></svg>听算模式</div>
+      <div class="eyebrow">认真听题</div>
+      <div class="hero">大声说出你的答案</div>
+      <div class="sub">不用点手写框，我会自动听你说</div>
+      <div class="micwrap">
+        <div class="mic"><svg class="ic" viewBox="0 0 24 24"><use href="#i-mic"/></svg></div>
+        <div class="bars"><i style="height:8px"></i><i style="height:14px"></i><i style="height:22px"></i><i style="height:12px"></i><i style="height:24px"></i><i style="height:13px"></i><i style="height:9px"></i></div>
+        <div class="listen">正在聆听…</div>
+      </div>
+      <div class="heard">请说出答案</div>
+      <div class="skip"><svg class="ic" viewBox="0 0 24 24"><use href="#i-skip"/></svg>跳过这题</div>
+    </div>
+    <div class="note">层级完整：徽标→小标题→大标题→说明→绿麦+声波+状态→识别框→跳过。信息最全，最贴近参考图。</div>
+  </div>
+  <div class="col">
+    <div class="tag">方案 B · 童趣精简版</div>
+    <div class="card cardB">
+      <div class="disc">
+        <svg class="ic w wl" viewBox="0 0 20 24"><use href="#i-soundwave"/></svg>
+        <svg class="ic headphone" viewBox="0 0 48 40"><use href="#i-headphone-cute"/></svg>
+        <svg class="ic w wr" viewBox="0 0 20 24"><use href="#i-soundwave"/></svg>
+      </div>
+      <div class="line">听到题目啦～<br>大声说出你的答案！</div>
+      <div class="mic"><svg class="ic" viewBox="0 0 24 24"><use href="#i-mic"/></svg></div>
+      <div class="statusrow">
+        <div class="bars"><i style="height:8px"></i><i style="height:16px"></i><i style="height:12px"></i><i style="height:20px"></i><i style="height:10px"></i></div>
+        <div class="listen">正在聆听…</div>
+      </div>
+      <div class="heard">请说出答案</div>
+      <div class="skip"><svg class="ic" viewBox="0 0 24 24"><use href="#i-skip"/></svg>跳过这题</div>
+    </div>
+    <div class="note">少文字层级，卡通耳机当主视觉，一句话引导。更童趣、更轻，适合低龄。</div>
+  </div>
+  <div class="col">
+    <div class="tag">方案 C · 紧凑横排版</div>
+    <div class="card cardC">
+      <div class="top">
+        <div class="left">
+          <div class="badge"><svg class="ic" viewBox="0 0 20 24"><use href="#i-soundwave"/></svg>听算模式</div>
+          <div class="hero">大声说出<br>你的答案</div>
+          <div class="sub">我会自动识别声音</div>
+        </div>
+        <div class="right">
+          <div class="mic"><svg class="ic" viewBox="0 0 24 24"><use href="#i-mic"/></svg></div>
+          <div class="bars"><i style="height:8px"></i><i style="height:14px"></i><i style="height:22px"></i><i style="height:12px"></i><i style="height:24px"></i><i style="height:13px"></i><i style="height:9px"></i></div>
+          <div class="listen">正在聆听…</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="heard" style="align-self:center">请说出答案</div>
+      <div class="skip"><svg class="ic" viewBox="0 0 24 24"><use href="#i-skip"/></svg>跳过这题</div>
+    </div>
+    <div class="note">横向利用空间、整体更矮；适合横屏(1000×576)和题卡并排不顶高。</div>
+  </div>
+</div>
+</body></html>

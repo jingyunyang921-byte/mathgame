@@ -1,0 +1,261 @@
+<!doctype html><html lang="zh"><head><meta charset="utf-8"><title>sprint-win-preview</title>
+<style>*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;font-family:"Microsoft YaHei","PingFang SC",sans-serif}
+.panel{display:none;position:relative;width:100vw;height:100vh;overflow:hidden}
+body[data-p="entry1"] #entry1,body[data-p="entry2"] #entry2,body[data-p="intro"] #intro,body[data-p="hud"] #hud,
+body[data-p="result1"] #result1,body[data-p="result2"] #result2,body[data-p="win"] #win{display:block}
+.lbl{position:absolute;left:12px;top:10px;z-index:9;font-size:13px;font-weight:700;color:#fff;background:rgba(0,0,0,.5);padding:3px 10px;border-radius:10px}
+svg.ic{width:1em;height:1em}
+
+/* ── 菜单底部：出发 + 今日打卡 ── */
+.menu-bg{background:linear-gradient(#cfeefa 0,#8fd0ec 38%,#4e9fd4 68%,#3b86c0 100%)}
+.menu-bg .hint{position:absolute;left:0;right:0;top:34%;text-align:center;font-size:20px;color:rgba(255,255,255,.7);font-weight:700}
+.menu-bg .grass{position:absolute;left:0;right:0;bottom:0;height:96px;background:linear-gradient(#8cc34b,#5d9a32)}
+.cta-grp{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:12px}
+.cta{display:inline-flex;align-items:center;gap:10px;height:64px;padding:0 54px;border-radius:32px;font-size:30px;font-weight:900;color:#fff;
+  -webkit-text-stroke:1px #C25510;background:linear-gradient(180deg,#FFB05C 0,#FF8A3D 48%,#E8701A 100%);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.55),0 5px 0 #C25510,0 10px 14px rgba(190,80,20,.38)}
+.cta svg{width:.8em;height:.8em;fill:#fff}
+.dk{position:relative;display:flex;align-items:center;gap:11px;width:392px;height:54px;padding:0 9px 0 7px;border-radius:16px;
+  border:2px solid #C99A52;background:linear-gradient(180deg,#FFF6DA,#F2D79C);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.75),0 3px 0 rgba(94,55,22,.34),0 8px 14px rgba(0,0,0,.2)}
+.dk::before{content:'';position:absolute;inset:-7px;border-radius:22px;border:3px solid rgba(255,198,61,.85);box-shadow:0 0 18px 4px rgba(255,198,61,.7)}
+.dk.done::before{display:none}
+.dk .medal{flex:none;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 35% 30%,#FFE98A,#FFB300 70%);border:2px solid #C77800;box-shadow:0 2px 0 rgba(120,70,0,.4)}
+.dk .medal svg{width:22px;height:22px;fill:#fff;stroke:#C77800;stroke-width:1.4;stroke-linejoin:round}
+.dk .tx{flex:1;min-width:0;line-height:1.18;text-align:left}
+.dk .tx b{display:block;font-size:17px;font-weight:900;color:#6a3a14}
+.dk .tx span{display:block;font-size:13px;font-weight:700;color:#9A5A00}
+.dk .tx em{font-style:normal;color:#D2480C;font-weight:900}
+.dk .go{flex:none;height:36px;padding:0 15px;border-radius:18px;display:flex;align-items:center;font-size:17px;font-weight:900;color:#fff;
+  background:linear-gradient(180deg,#FFB05C,#FF8A3D 50%,#E8701A);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 3px 0 #C25510}
+.dk.done{background:linear-gradient(180deg,#FFF3D2,#EAD2A0)}
+.dk.done .medal{background:#fff7e0;border-color:#C0392B}
+.dk.done .medal svg{fill:none;stroke:#C0392B;stroke-width:3.2;stroke-linecap:round}
+.dk.done .tx b{color:#7a5a30}
+.dk.done .go{background:#fff;color:#C25510;box-shadow:inset 0 0 0 2px #E8A060,0 3px 0 rgba(94,55,22,.2)}
+.dk .dot{position:absolute;right:-6px;top:-8px;width:20px;height:20px;border-radius:50%;background:#E5483B;border:2px solid #fff;color:#fff;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center}
+.old{position:absolute;right:16px;bottom:18px;opacity:.95;font-size:12px;color:#fff;text-align:center}
+.old i{display:block;margin:0 auto 4px;padding:4px 20px;border:1.5px solid #C99A52;border-width:1.5px 0;background:linear-gradient(#FFF3D2,#F2D79C);color:#6E4520;font-style:normal;font-weight:700;font-size:13px}
+
+/* ── 深色游戏底（介绍卡 / HUD / 结算 / 胜利一拍共用） ── */
+.game-bg{background:radial-gradient(ellipse at 50% 30%,#2b5a86 0,#173a5e 55%,#0e2540 100%)}
+.game-bg .hill{position:absolute;left:-5%;right:-5%;bottom:0;height:34%;background:linear-gradient(#5d9a32,#3e7222);border-radius:50% 50% 0 0/38% 38% 0 0}
+
+/* ── 介绍卡：今天的目标 ── */
+.ic-card{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:560px;padding:22px 30px 24px;border-radius:26px;text-align:center;
+  background:linear-gradient(#FFFBEE,#FFF0CF);border:3px solid #F0B960;box-shadow:0 14px 0 rgba(0,0,0,.18),0 24px 40px rgba(0,0,0,.35)}
+.ic-card .hd{display:flex;align-items:center;justify-content:center;gap:10px;font-size:26px;font-weight:900;color:#7A3E10}
+.ic-card .hd i{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(#FFE27A,#FFB300);border:2px solid #C77800}
+.ic-card .hd svg{width:22px;height:22px;fill:#fff;stroke:#C77800;stroke-width:1.4;stroke-linejoin:round}
+.ic-card .rule{margin-top:6px;font-size:16px;font-weight:700;color:#8a6a3c}
+.goal{margin:16px auto 0;display:flex;align-items:center;justify-content:center;gap:18px;padding:12px 22px;border-radius:20px;
+  background:linear-gradient(#FFF3C4,#FFE08A);border:2.5px solid #E8A817;box-shadow:inset 0 2px 0 rgba(255,255,255,.7)}
+.goal .flag{width:46px;height:56px}
+.goal .tt{text-align:left;line-height:1.15}
+.goal .tt small{display:block;font-size:15px;font-weight:800;color:#9A5A00}
+.goal .tt b{font-size:50px;font-weight:900;color:#D2480C;-webkit-text-stroke:1px #fff}
+.goal .tt b u{text-decoration:none;font-size:24px;margin-left:4px}
+.goal .sub{font-size:15px;font-weight:800;color:#7A5A2C;max-width:190px;text-align:left;line-height:1.35}
+.goal .sub em{font-style:normal;color:#D2480C}
+.ic-card .go{display:inline-block;margin-top:16px;padding:0 44px;height:52px;line-height:52px;border-radius:26px;font-size:24px;font-weight:900;color:#fff;
+  background:linear-gradient(#FFB05C,#FF8A3D 50%,#E8701A);box-shadow:inset 0 2px 0 rgba(255,255,255,.5),0 5px 0 #C25510}
+.ic-card.first .goal .tt b{font-size:44px}
+
+/* ── HUD：纪录条三态 ── */
+.hud-col{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:700px;display:flex;flex-direction:column;gap:18px}
+.hrow{position:relative;padding:10px 16px 12px;border-radius:18px;background:rgba(8,22,40,.55);border:1.5px solid rgba(255,255,255,.18)}
+.hrow .cap{position:absolute;right:14px;top:-10px;font-size:12px;font-weight:800;color:#fff;background:rgba(0,0,0,.55);padding:1px 9px;border-radius:9px}
+.hl{display:flex;align-items:center;justify-content:space-between;color:#fff;font-weight:900}
+.hl .l{display:flex;align-items:baseline;gap:8px;font-size:15px;color:#cfe6f7}
+.hl .l b{font-size:30px;color:#fff;line-height:1}
+.hl .r{font-size:17px;color:#FFE27A}
+.hl .r.hot{color:#FFB05C;font-size:20px}
+.hl .r.gold{color:#FFD43B;font-size:22px;text-shadow:0 0 12px rgba(255,200,40,.8)}
+.trk{position:relative;height:22px;margin-top:26px;border-radius:11px;background:rgba(255,255,255,.16);box-shadow:inset 0 2px 4px rgba(0,0,0,.35)}
+.trk .rec{position:absolute;right:0;top:0;bottom:0;width:20%;border-radius:0 11px 11px 0;background:repeating-linear-gradient(45deg,rgba(255,198,61,.28) 0 6px,rgba(255,198,61,.12) 6px 12px)}
+.trk .fill{position:absolute;left:0;top:0;bottom:0;border-radius:11px;background:linear-gradient(#7BE06A,#3BB54A);box-shadow:inset 0 2px 0 rgba(255,255,255,.4)}
+.trk .fill.near{background:linear-gradient(#FFD27A,#FF9F2E)}
+.trk .fill.gold{background:linear-gradient(#FFF08A,#FFB300);box-shadow:inset 0 2px 0 rgba(255,255,255,.6),0 0 14px rgba(255,200,40,.9)}
+.trk .pin{position:absolute;top:-17px;width:28px;height:36px;margin-left:-4px}
+.trk .pin.shake{transform:rotate(-8deg);transform-origin:4px 34px}
+.trk .pin text{font-size:13px;font-weight:900}
+.trk .dot{position:absolute;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;border:3px solid #fff;background:#3BB54A;box-shadow:0 2px 4px rgba(0,0,0,.4)}
+.trk .dot.near{background:#FF9F2E}
+.trk .dot.gold{background:#FFC61D;box-shadow:0 0 12px 3px rgba(255,210,60,.9)}
+.spark{position:absolute;color:#FFE27A;font-size:16px;font-weight:900;text-shadow:0 0 6px rgba(255,200,40,.9)}
+
+/* ── 结算：纪录徽章 ── */
+.rc{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:540px;padding:20px 28px 22px;border-radius:26px;text-align:center;
+  background:linear-gradient(#FFFBEE,#FFF0CF);border:3px solid #F0B960;box-shadow:0 14px 0 rgba(0,0,0,.18),0 24px 40px rgba(0,0,0,.35)}
+.rc h2{font-size:30px;font-weight:900;color:#7A3E10}
+.rc .msg{margin-top:4px;font-size:16px;font-weight:700;color:#8a6a3c}
+.rec-badge{position:relative;margin:14px auto 0;display:flex;align-items:center;justify-content:center;gap:16px;padding:12px 20px 12px 16px;border-radius:20px;width:max-content;
+  background:linear-gradient(#FFF3C4,#FFD966);border:3px solid #E8A817;box-shadow:inset 0 2px 0 rgba(255,255,255,.7),0 0 22px 3px rgba(255,200,40,.55)}
+.rec-badge .medal{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,#FFF08A,#FFB300 70%);border:3px solid #C77800;box-shadow:0 3px 0 rgba(120,70,0,.4)}
+.rec-badge .medal svg{width:36px;height:36px;fill:#fff;stroke:#C77800;stroke-width:1.5;stroke-linejoin:round}
+.rec-badge .tt{text-align:left;line-height:1.15}
+.rec-badge .tt small{display:block;font-size:15px;font-weight:900;color:#9A5A00}
+.rec-badge .tt b{font-size:38px;font-weight:900;color:#D2480C;-webkit-text-stroke:1px #fff;white-space:nowrap}
+.rec-badge .tt b i{font-style:normal;font-size:24px;color:#9A7A4A;margin:0 6px;-webkit-text-stroke:0}
+.rec-badge .tt b u{text-decoration:none;font-size:20px;margin-left:3px}
+.rec-badge .ribbon{position:absolute;left:-14px;top:-12px;padding:2px 12px;border-radius:12px;font-size:14px;font-weight:900;color:#fff;background:linear-gradient(#FF7A59,#E5483B);box-shadow:0 2px 0 #A8281C;transform:rotate(-8deg)}
+.near-box{margin:14px auto 0;width:420px;padding:12px 16px 14px;border-radius:18px;background:#fff7e3;border:2.5px solid #F0C87A}
+.near-box .nl{display:flex;justify-content:space-between;font-size:16px;font-weight:900;color:#7A5A2C}
+.near-box .nl em{font-style:normal;color:#D2480C}
+.near-box .trk{background:#EFD9A8;box-shadow:inset 0 2px 3px rgba(94,55,22,.25);height:20px;margin-top:20px}
+.near-box .trk .rec{background:repeating-linear-gradient(45deg,rgba(232,168,23,.35) 0 6px,rgba(232,168,23,.15) 6px 12px)}
+.rc .btns{margin-top:18px;display:flex;justify-content:center;gap:14px}
+.rc .b{height:52px;line-height:52px;padding:0 30px;border-radius:26px;font-size:22px;font-weight:900}
+.rc .b.pri{color:#fff;background:linear-gradient(#FFB05C,#FF8A3D 50%,#E8701A);box-shadow:inset 0 2px 0 rgba(255,255,255,.5),0 5px 0 #C25510}
+.rc .b.sec{color:#9A5A00;background:#fff;box-shadow:inset 0 0 0 2.5px #E8C98A,0 4px 0 rgba(94,55,22,.18)}
+
+/* ── 胜利一拍：答题页上的峰值帧 ── */
+.win-bg{background:radial-gradient(ellipse at 50% 45%,#3f7fb0 0,#245a86 50%,#122f50 100%)}
+.win-bg .hill{position:absolute;left:-5%;right:-5%;bottom:0;height:30%;background:linear-gradient(#6aa83a,#3e7222);border-radius:50% 50% 0 0/40% 40% 0 0}
+.win-bg .rays{position:absolute;left:50%;top:44%;width:900px;height:900px;margin:-450px 0 0 -450px;opacity:.5;
+  background:repeating-conic-gradient(from 0deg,rgba(255,226,122,.55) 0 8deg,rgba(255,226,122,0) 8deg 24deg);-webkit-mask:radial-gradient(circle,#000 8%,transparent 62%);mask:radial-gradient(circle,#000 8%,transparent 62%)}
+.plaque{position:absolute;left:50%;top:15%;transform:translateX(-50%) rotate(-3deg);padding:8px 64px 12px;border-radius:22px;font-size:68px;font-weight:900;color:#fff;letter-spacing:6px;white-space:nowrap;
+  -webkit-text-stroke:2px #B8470A;background:linear-gradient(#FFD25C,#FF9A2E 55%,#F07A12);border:4px solid #fff3c9;
+  box-shadow:inset 0 3px 0 rgba(255,255,255,.55),0 8px 0 #B8470A,0 18px 28px rgba(0,0,0,.4)}
+.plaque::before,.plaque::after{content:'';position:absolute;top:50%;width:46px;height:46px;margin-top:-23px;background:#FFE27A;border:3px solid #fff3c9;
+  clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.plaque::before{left:-30px}.plaque::after{right:-30px}
+.stars3{position:absolute;left:50%;top:41%;transform:translateX(-50%);display:flex;gap:10px}
+.stars3 svg{width:70px;height:70px;fill:#FFD43B;stroke:#C77800;stroke-width:1.6;stroke-linejoin:round;filter:drop-shadow(0 4px 0 rgba(120,70,0,.45))}
+.stars3 svg:nth-child(2){width:88px;height:88px;margin-top:-14px}
+.partner{position:absolute;left:50%;bottom:5%;width:200px;height:200px;margin-left:-100px;transform:translateY(-34px) rotate(-5deg)}
+.partner svg{width:100%;height:100%}
+.shadow{position:absolute;left:50%;bottom:9%;width:150px;height:22px;margin-left:-75px;border-radius:50%;background:rgba(0,0,0,.28)}
+.fw{position:absolute;width:190px;height:190px}
+.cf{position:absolute;width:12px;height:20px;border-radius:3px}
+.sub-cap{position:absolute;left:0;right:0;bottom:3%;text-align:center;font-size:22px;font-weight:900;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.5)}
+</style></head>
+<body data-p="entry1">
+<svg width="0" height="0" style="position:absolute"><defs><symbol id="p-bunny" viewBox="0 0 24 24"><ellipse cx="9" cy="6.5" rx="1.7" ry="4.2" fill="#FBF5EE" stroke="#E0BE98" stroke-width="0.9"/><ellipse cx="15" cy="6.5" rx="1.7" ry="4.2" fill="#FBF5EE" stroke="#E0BE98" stroke-width="0.9"/><ellipse cx="9" cy="6.8" rx="0.8" ry="2.6" fill="#F9C2D0"/><ellipse cx="15" cy="6.8" rx="0.8" ry="2.6" fill="#F9C2D0"/><circle cx="12" cy="14.5" r="6.3" fill="#FDF9F4" stroke="#E0BE98" stroke-width="1"/><circle cx="9.7" cy="13.6" r="1.15" fill="#2A2A3A"/><circle cx="14.3" cy="13.6" r="1.15" fill="#2A2A3A"/><circle cx="10.1" cy="13.2" r="0.35" fill="#fff"/><circle cx="14.7" cy="13.2" r="0.35" fill="#fff"/><circle cx="8.8" cy="16" r="1.25" fill="#FFB3C1" opacity="0.7"/><circle cx="15.2" cy="16" r="1.25" fill="#FFB3C1" opacity="0.7"/><path d="M11 15.6 h2 l-1 1 Z" fill="#F4879E"/><path d="M10.6 17.4 Q12 18.4 13.4 17.4" fill="none" stroke="#C98BA0" stroke-width="0.8" stroke-linecap="round"/></symbol>
+<symbol id="bolt" viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H10L9 22l9.5-12H13z"/></symbol>
+<symbol id="chk" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7.5"/></symbol>
+<symbol id="star" viewBox="0 0 24 24"><path d="M12 2.5 14.9 9l7 .6-5.3 4.6 1.6 6.9L12 17.4 5.8 21l1.6-6.9L2.1 9.6l7-.6z"/></symbol>
+</defs></svg>
+
+<!-- ① 菜单：今日打卡卡（未打卡） -->
+<div class="panel menu-bg" id="entry1"><div class="lbl">E1 · 菜单底部 · 今天还没打卡</div>
+  <div class="hint">（岛屿地图在这里）</div><div class="grass"></div>
+  <div class="cta-grp">
+    <div class="cta"><svg viewBox="0 0 24 24"><use href="#bolt"/></svg>出发</div>
+    <div class="dk"><span class="dot">!</span>
+      <span class="medal"><svg viewBox="0 0 24 24"><use href="#bolt"/></svg></span>
+      <span class="tx"><b>今日打卡 · 一分钟速算</b><span>今天还没打卡，来答 <em>10 以内</em>的题吧</span></span>
+      <span class="go">去打卡</span></div>
+  </div>
+  <div class="old"><i>一分钟速算</i>现在的样子（对比）</div>
+</div>
+
+<!-- ② 菜单：今日打卡卡（已打卡） -->
+<div class="panel menu-bg" id="entry2"><div class="lbl">E1 · 菜单底部 · 今天已打卡</div>
+  <div class="hint">（岛屿地图在这里）</div><div class="grass"></div>
+  <div class="cta-grp">
+    <div class="cta"><svg viewBox="0 0 24 24"><use href="#bolt"/></svg>出发</div>
+    <div class="dk done">
+      <span class="medal"><svg viewBox="0 0 24 24"><use href="#chk"/></svg></span>
+      <span class="tx"><b>今日已打卡</b><span>最高 <em>12</em> 题 · 再冲一次，破纪录？</span></span>
+      <span class="go">再冲一次</span></div>
+  </div>
+</div>
+
+<!-- ③ 介绍卡：今天的目标 -->
+<div class="panel game-bg" id="intro"><div class="lbl">纪录 · 开场介绍卡（有纪录时）</div><div class="hill"></div>
+  <div class="ic-card">
+    <div class="hd"><i><svg viewBox="0 0 24 24"><use href="#bolt"/></svg></i>一分钟速算</div>
+    <div class="rule">60 秒里，能答对几题就答几题</div>
+    <div class="goal">
+      <svg class="flag" viewBox="0 0 46 56"><rect x="6" y="4" width="4" height="50" rx="2" fill="#8A5A34"/><path d="M10 6h32l-8 11 8 11H10z" fill="#E5483B" stroke="#A8281C" stroke-width="2" stroke-linejoin="round"/></svg>
+      <div class="tt"><small>今天的目标</small><b>13<u>题</u></b></div>
+      <div class="sub">你的纪录是 <em>12 题</em><br>答到 13 题就破纪录啦！</div>
+    </div>
+    <div class="go">开始冲刺</div>
+  </div>
+</div>
+
+<!-- ④ HUD：纪录条三态 -->
+<div class="panel game-bg" id="hud"><div class="lbl">纪录 · 答题中 HUD 条（纪录 12 题，三个时刻）</div><div class="hill"></div>
+  <div class="hud-col">
+    <div class="hrow"><span class="cap">刚开始</span>
+      <div class="hl"><span class="l">答对 <b>5</b> 题</span><span class="r">还差 8 题，超过纪录</span></div>
+      <div class="trk"><div class="rec"></div><div class="fill" style="width:33.3%"></div><span class="dot" style="left:33.3%"></span>
+        <svg class="pin" style="left:80%" viewBox="0 0 28 36"><rect x="3" y="2" width="3" height="33" rx="1.5" fill="#E8E0CC"/><path d="M6 3h19l-5 6.5 5 6.5H6z" fill="#E5483B" stroke="#A8281C" stroke-width="1.4" stroke-linejoin="round"/><text x="9" y="13.5" fill="#fff">12</text></svg></div></div>
+    <div class="hrow"><span class="cap">快追上了</span>
+      <div class="hl"><span class="l">答对 <b>11</b> 题</span><span class="r hot">只差 2 题！加油！</span></div>
+      <div class="trk"><div class="rec"></div><div class="fill near" style="width:73.3%"></div><span class="dot near" style="left:73.3%"></span>
+        <svg class="pin shake" style="left:80%" viewBox="0 0 28 36"><rect x="3" y="2" width="3" height="33" rx="1.5" fill="#E8E0CC"/><path d="M6 3h19l-5 6.5 5 6.5H6z" fill="#FF7A59" stroke="#A8281C" stroke-width="1.4" stroke-linejoin="round"/><text x="9" y="13.5" fill="#fff">12</text></svg></div></div>
+    <div class="hrow"><span class="cap">超过纪录</span>
+      <div class="hl"><span class="l">答对 <b>14</b> 题</span><span class="r gold">新纪录！还在涨</span></div>
+      <div class="trk"><div class="rec"></div><div class="fill gold" style="width:93.3%"></div><span class="dot gold" style="left:93.3%"></span>
+        <svg class="pin" style="left:80%" viewBox="0 0 28 36"><rect x="3" y="2" width="3" height="33" rx="1.5" fill="#E8E0CC"/><path d="M6 3h19l-5 6.5 5 6.5H6z" fill="#FFF6D0" stroke="#C77800" stroke-width="1.6" stroke-linejoin="round"/><text x="10" y="13.5" fill="#C77800">★</text></svg>
+        <span class="spark" style="left:78%;top:-30px">✦</span><span class="spark" style="left:96%;top:-26px;font-size:12px">✦</span><span class="spark" style="left:88%;top:26px;font-size:13px">✦</span></div></div>
+  </div>
+</div>
+
+<!-- ⑤ 结算：破纪录 -->
+<div class="panel game-bg" id="result1"><div class="lbl">纪录 · 结算卡（破了纪录）</div><div class="hill"></div>
+  <div class="rc">
+    <h2>时间到！</h2>
+    <div class="msg">60 秒答对 15 题，今天的速算练完啦</div>
+    <div class="rec-badge"><span class="ribbon">新纪录</span>
+      <span class="medal"><svg viewBox="0 0 24 24"><use href="#star"/></svg></span>
+      <span class="tt"><small>最高答对</small><b>12<i>→</i>15<u>题</u></b></span></div>
+    <div class="btns"><span class="b pri">再来一局</span><span class="b sec">回菜单</span></div>
+  </div>
+</div>
+
+<!-- ⑥ 结算：没破纪录 -->
+<div class="panel game-bg" id="result2"><div class="lbl">纪录 · 结算卡（没破纪录）</div><div class="hill"></div>
+  <div class="rc">
+    <h2>时间到！</h2>
+    <div class="msg">60 秒答对 10 题，离纪录很近啦</div>
+    <div class="near-box">
+      <div class="nl"><span>这一局 <em>10</em> 题</span><span>纪录 12 题</span></div>
+      <div class="trk"><div class="rec"></div><div class="fill near" style="width:66.7%"></div><span class="dot near" style="left:66.7%"></span>
+        <svg class="pin shake" style="left:80%" viewBox="0 0 28 36"><rect x="3" y="2" width="3" height="33" rx="1.5" fill="#E8E0CC"/><path d="M6 3h19l-5 6.5 5 6.5H6z" fill="#FF7A59" stroke="#A8281C" stroke-width="1.4" stroke-linejoin="round"/><text x="9" y="13.5" fill="#fff">12</text></svg></div>
+      <div class="nl" style="margin-top:10px;justify-content:center">只差 <em style="margin:0 4px">3 题</em> 就破纪录啦！</div>
+    </div>
+    <div class="btns"><span class="b pri">再冲一次，破纪录！</span><span class="b sec">回菜单</span></div>
+  </div>
+</div>
+
+<!-- ⑦ 胜利一拍：答题页峰值帧 -->
+<div class="panel win-bg" id="win"><div class="lbl">胜利一拍 · 最后一题答对后约 1.5 秒（静态峰值帧，实际会动）</div>
+  <div class="rays"></div><div class="hill"></div>
+  <div id="fwbox"></div><div id="cfbox"></div>
+  <div class="plaque">过关啦！</div>
+  <div class="stars3"><svg viewBox="0 0 24 24"><use href="#star"/></svg><svg viewBox="0 0 24 24"><use href="#star"/></svg><svg viewBox="0 0 24 24"><use href="#star"/></svg></div>
+  <div class="shadow"></div>
+  <div class="partner"><svg viewBox="0 0 24 24"><use href="#p-bunny"/></svg></div>
+  <div class="sub-cap">10 根暖草，扎成 1 捆啦！</div>
+</div>
+
+<script>
+const P = new URLSearchParams(location.search).get('p') || 'entry1';
+document.body.dataset.p = P;
+const COLS = ['#FFD43B', '#FF7A59', '#7BE06A', '#6EC6FF', '#FF8AD8'];
+function fw(x, y, size, c) {
+  let g = '';
+  for (let i = 0; i < 12; i++) {
+    const a = i * Math.PI / 6, r1 = 14, r2 = 32, r3 = 42;
+    g += '<line x1="' + (Math.cos(a) * r1).toFixed(1) + '" y1="' + (Math.sin(a) * r1).toFixed(1) + '" x2="' + (Math.cos(a) * r2).toFixed(1) + '" y2="' + (Math.sin(a) * r2).toFixed(1) + '" stroke="' + c + '" stroke-width="4" stroke-linecap="round"/>'
+       + '<circle cx="' + (Math.cos(a + 0.26) * r3).toFixed(1) + '" cy="' + (Math.sin(a + 0.26) * r3).toFixed(1) + '" r="3.2" fill="' + (i % 2 ? '#fff' : c) + '"/>';
+  }
+  return '<svg class="fw" style="left:' + x + 'px;top:' + y + 'px;width:' + size + 'px;height:' + size + 'px" viewBox="-50 -50 100 100">' + g + '<circle r="5" fill="#fff"/></svg>';
+}
+document.getElementById('fwbox').innerHTML = fw(70, 50, 200, '#FFD43B') + fw(690, 36, 170, '#FF8AD8') + fw(560, 250, 140, '#6EC6FF') + fw(140, 270, 130, '#7BE06A');
+let s = 7; const rnd = () => (s = (s * 9301 + 49297) % 233280) / 233280;
+let cf = '';
+for (let i = 0; i < 54; i++) {
+  const x = rnd() * 100, y = rnd() * 92, rot = Math.round(rnd() * 360), c = COLS[i % COLS.length];
+  cf += '<i class="cf" style="left:' + x.toFixed(1) + '%;top:' + y.toFixed(1) + '%;background:' + c + ';transform:rotate(' + rot + 'deg)"></i>';
+}
+document.getElementById('cfbox').innerHTML = cf;
+requestAnimationFrame(() => setTimeout(() => { document.body.dataset.ready = '1'; }, 120));
+</script>
+</body></html>

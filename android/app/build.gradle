@@ -1,15 +1,32 @@
 apply plugin: 'com.android.application'
 
+// 云端「小度AI老师」音色配置只从 android/local.properties 读（tts.url / tts.clientId / tts.salt / tts.cuid / tts.scene / tts.stream）；缺任何一项就走系统 TTS。
+def localProps = new Properties()
+def localPropsFile = rootProject.file('local.properties')
+if (localPropsFile.exists()) localPropsFile.withInputStream { localProps.load(it) }
+def tts = { String key, String dflt -> '"' + localProps.getProperty(key, dflt).trim().replace('\\', '\\\\').replace('"', '\\"') + '"' }
+
 android {
     namespace "com.mathgame.app"
     compileSdk rootProject.ext.compileSdkVersion
+    buildFeatures { buildConfig true }
     defaultConfig {
+        buildConfigField 'String', 'TTS_CLOUD_URL', tts('tts.url', '')
+        buildConfigField 'String', 'TTS_CLIENT_ID', tts('tts.clientId', '')
+        buildConfigField 'String', 'TTS_SALT', tts('tts.salt', '')
+        buildConfigField 'String', 'TTS_CUID', tts('tts.cuid', '')
+        buildConfigField 'String', 'TTS_SCENE', tts('tts.scene', 'math')
+        buildConfigField 'boolean', 'TTS_STREAM', localProps.getProperty('tts.stream', 'false').trim() == 'true' ? 'true' : 'false'
         applicationId "com.mathgame.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            // Keep only common phone/tablet ABIs to limit the native-library size added by Vosk.
+            abiFilters 'arm64-v8a', 'armeabi-v7a'
+        }
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
              // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
@@ -40,6 +57,7 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation project(':capacitor-cordova-android-plugins')
+    implementation 'com.alphacephei:vosk-android:0.3.75'
 }
 
 apply from: 'capacitor.build.gradle'

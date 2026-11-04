@@ -1,0 +1,47 @@
+<!doctype html><html lang="zh"><head><meta charset="utf-8"><title>sprint-win-preview</title>
+<style>/*CSS*/</style></head>
+<body data-p="entry1">
+<svg width="0" height="0" style="position:absolute"><defs><!--SPRITES-->
+<symbol id="bolt" viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H10L9 22l9.5-12H13z"/></symbol>
+<symbol id="chk" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7.5"/></symbol>
+<symbol id="star" viewBox="0 0 24 24"><path d="M12 2.5 14.9 9l7 .6-5.3 4.6 1.6 6.9L12 17.4 5.8 21l1.6-6.9L2.1 9.6l7-.6z"/></symbol>
+</defs></svg>
+
+<!-- ① 菜单：今日打卡卡（未打卡） -->
+<div class="panel menu-bg" id="entry1"><div class="lbl">E1 · 菜单底部 · 今天还没打卡</div>
+  <div class="hint">（岛屿地图在这里）</div><div class="grass"></div>
+  <div class="cta-grp">
+    <div class="cta"><svg viewBox="0 0 24 24"><use href="#bolt"/></svg>出发</div>
+    <div class="dk"><span class="dot">!</span>
+      <span class="medal"><svg viewBox="0 0 24 24"><use href="#bolt"/></svg></span>
+      <span class="tx"><b>今日打卡 · 一分钟速算</b><span>今天还没打卡，来答 <em>10 以内</em>的题吧</span></span>
+      <span class="go">去打卡</span></div>
+  </div>
+  <div class="old"><i>一分钟速算</i>现在的样子（对比）</div>
+</div>
+
+<!-- ② 菜单：今日打卡卡（已打卡） -->
+<div class="panel menu-bg" id="entry2"><div class="lbl">E1 · 菜单底部 · 今天已打卡</div>
+  <div class="hint">（岛屿地图在这里）</div><div class="grass"></div>
+  <div class="cta-grp">
+    <div class="cta"><svg viewBox="0 0 24 24"><use href="#bolt"/></svg>出发</div>
+    <div class="dk done">
+      <span class="medal"><svg viewBox="0 0 24 24"><use href="#chk"/></svg></span>
+      <span class="tx"><b>今日已打卡</b><span>最高 <em>12</em> 题 · 再冲一次，破纪录？</span></span>
+      <span class="go">再冲一次</span></div>
+  </div>
+</div>
+
+<!-- ③ 介绍卡：今天的目标 -->
+<div class="panel game-bg" id="intro"><div class="lbl">纪录 · 开场介绍卡（有纪录时）</div><div class="hill"></div>
+  <div class="ic-card">
+    <div class="hd"><i><svg viewBox="0 0 24 24"><use href="#bolt"/></svg></i>一分钟速算</div>
+    <div class="rule">60 秒里，能答对几题就答几题</div>
+    <div class="goal">
+      <svg class="flag" viewBox="0 0 46 56"><rect x="6" y="4" width="4" height="50" rx="2" fill="#8A5A34"/><path d="M10 6h32l-8 11 8 11H10z" fill="#E5483B" stroke="#A8281C" stroke-width="2" stroke-linejoin="round"/></svg>
+      <div class="tt"><small>今天的目标</small><b>13<u>题</u></b></div>
+      <div class="sub">你的纪录是 <em>12 题</em><br>答到 13 题就破纪录啦！</div>
+    </div>
+    <div class="go">开始冲刺</div>
+  </div>
+</div>

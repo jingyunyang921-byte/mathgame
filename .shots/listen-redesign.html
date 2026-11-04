@@ -1,0 +1,145 @@
+<!doctype html><html lang="zh"><head><meta charset="utf-8">
+<style>
+:root{
+  --c-primary:#FF8A3D;--c-primary-deep:#E8701A;--c-gold:#FFC63D;
+  --c-ink:#5C3310;--c-ink-soft:#8A6240;--c-surface:#FFFDF8;--c-surface-warm:#FFF6EA;
+  --r-card:16px;--r-modal:24px;--r-pill:999px;
+  --shadow-card:0 6px 12px rgba(74,42,16,0.12);--shadow-raised:0 10px 20px rgba(74,42,16,0.16);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:#e7e2da;padding:26px;display:flex;flex-direction:column;gap:10px;align-items:center}
+.cap{align-self:center;font:800 16px/1 sans-serif;color:#333;margin-top:12px}
+.cap small{font-weight:600;color:#777}
+.frame{width:1000px;height:576px;position:relative;overflow:hidden;border-radius:14px;
+  box-shadow:0 10px 34px rgba(0,0,0,.2);background:linear-gradient(180deg,#FFF8E1,#FFF3CD 55%,#FFE8A3)}
+/* PK band placeholder (not being redesigned) */
+.pk{height:112px;background:linear-gradient(180deg,#dcefd6,#ebf6e6);border-bottom:2px dashed rgba(255,138,61,.3);
+  display:flex;align-items:center;justify-content:center;gap:16px;color:#7d9170;font:800 14px sans-serif}
+.pk .vs{width:46px;height:46px;border-radius:50%;background:#fff;border:3px solid #ff6b9d;
+  display:flex;align-items:center;justify-content:center;color:#ff4d7d;font:900 15px sans-serif}
+.pk .lab{color:#7d9170}
+/* decorative sparkles / faint marks */
+.deco{position:absolute;pointer-events:none;opacity:.5}
+.deco.q{font:900 46px sans-serif;color:rgba(140,110,70,.1)}
+.spark{position:absolute;pointer-events:none}
+/* ---- small current question ---- */
+.q-sm{position:absolute;top:132px;left:50%;transform:translateX(-50%);background:var(--c-surface);
+  border:2px solid rgba(255,138,61,.28);border-radius:var(--r-card);padding:10px 42px;
+  box-shadow:var(--shadow-card);font:900 46px/1 sans-serif;color:var(--c-ink);letter-spacing:6px}
+/* ---- big playful question (option A/B) ---- */
+.qwrap{position:absolute;top:124px;left:50%;transform:translateX(-50%)}
+.q-big{position:relative;background:var(--c-surface);border:4px solid var(--c-primary);border-radius:28px;
+  padding:16px 56px;box-shadow:var(--shadow-raised),0 0 0 7px rgba(255,138,61,.12);
+  display:flex;align-items:center;gap:20px;font:900 58px/1 sans-serif;color:var(--c-ink);letter-spacing:4px}
+.q-big .blank{width:56px;height:56px;border-radius:50%;
+  background:linear-gradient(160deg,var(--c-gold),var(--c-primary));box-shadow:inset 0 -4px 7px rgba(0,0,0,.14)}
+.replay{position:absolute;right:-14px;bottom:-16px;display:inline-flex;align-items:center;gap:6px;
+  background:linear-gradient(160deg,var(--c-gold),var(--c-primary));color:#fff;font:900 15px sans-serif;
+  padding:8px 16px;border-radius:var(--r-pill);box-shadow:var(--shadow-card)}
+.replay svg{width:16px;height:16px}
+</style></head><body>
+<style>
+/* ===== merged listen card (current + option A) ===== */
+.card{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);width:344px;
+  background:rgba(255,253,248,.96);border:2px solid rgba(255,138,61,.18);border-radius:var(--r-modal);
+  box-shadow:var(--shadow-raised);padding:13px 16px 11px;display:flex;flex-direction:column;gap:8px}
+.card .top{display:flex;align-items:center;gap:14px}
+.card .left{flex:1;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.badge{display:inline-flex;align-items:center;gap:5px;background:#EAF4FC;color:#2E7FB8;font:900 12px sans-serif;
+  padding:4px 11px;border-radius:var(--r-pill);border:1.5px solid rgba(79,168,224,.35)}
+.hero{color:var(--c-ink);font:900 19px/1.2 sans-serif}
+.sub{color:var(--c-ink-soft);font:700 12px sans-serif}
+.right{display:flex;flex-direction:column;align-items:center;gap:6px}
+.mic{width:62px;height:62px;border-radius:50%;background:linear-gradient(160deg,#43A047,#2E9E4A);
+  display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px rgba(46,158,74,.4)}
+.mic.big{width:96px;height:96px}
+.mic svg{width:46%;height:46%;color:#fff}
+.ring{position:absolute;border-radius:50%;border:3px solid rgba(67,160,71,.35);pointer-events:none}
+.bars{display:flex;align-items:flex-end;gap:3px;height:22px}
+.bars i{width:4px;border-radius:3px;background:linear-gradient(180deg,#43C65F,#239A43);display:block}
+.bars.lg{height:28px;gap:4px}.bars.lg i{width:5px}
+.status{color:#2E9E4A;font:800 13px sans-serif}
+.divider{height:1px;background:rgba(140,100,60,.12)}
+.heard{align-self:center;border:1.5px dashed rgba(79,168,224,.55);border-radius:var(--r-pill);
+  padding:5px 22px;color:#9bb3c4;font:700 13px sans-serif;background:#fff}
+.skip{display:inline-flex;align-items:center;gap:6px;background:var(--c-surface);color:var(--c-primary-deep);
+  font:900 14px sans-serif;padding:8px 22px;border-radius:var(--r-pill);border:2px solid rgba(255,138,61,.4);
+  box-shadow:var(--shadow-card)}
+.skip.center{align-self:center}
+.skip svg{width:16px;height:16px}
+/* option B standalone cue + mic */
+.cue{position:absolute;top:300px;left:50%;transform:translateX(-50%);text-align:center;display:flex;
+  flex-direction:column;align-items:center;gap:3px}
+.cue .t{color:var(--c-ink);font:900 20px sans-serif}
+.cue .s{color:var(--c-ink-soft);font:700 13px sans-serif}
+.micwrap{position:absolute;top:368px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;
+  align-items:center;gap:7px}
+.skip-side{position:absolute;top:410px;right:92px}
+</style>
+<div class="cap">① 现状 <small>— 题目偏小，中间一大片空，卡片孤零零贴在最底</small></div>
+<div class="frame">
+  <div class="pk"><span class="lab">🏁 闯关进度条（PK 地图，不改）</span><span class="vs">VS</span><span class="lab">怪兽</span></div>
+  <div class="q-sm">7 − 1 = ?</div>
+  <div class="card">
+    <div class="top">
+      <div class="left"><div class="badge">🔊 听算模式</div><div class="hero">大声说出<br>你的答案</div><div class="sub">我会自动识别你的声音</div></div>
+      <div class="right"><div class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/></svg></div>
+        <div class="bars"><i style="height:8px"></i><i style="height:15px"></i><i style="height:22px"></i><i style="height:12px"></i><i style="height:18px"></i></div>
+        <div class="status">正在聆听…</div></div>
+    </div>
+    <div class="divider"></div>
+    <div class="heard">听你说…</div>
+    <div class="skip center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 5v14l9-7zM17 5v14"/></svg>跳过这题</div>
+  </div>
+</div>
+<div class="cap">② 方案 A <small>— 放大题目成「主角」(厚橙描边 + 答案留白圆 + 再听一遍)，中间点缀星光填空，底部保留合并卡</small></div>
+<div class="frame">
+  <div class="pk"><span class="lab">🏁 闯关进度条（PK 地图，不改）</span><span class="vs">VS</span><span class="lab">怪兽</span></div>
+  <div class="deco q" style="top:200px;left:120px">?</div>
+  <div class="deco q" style="top:300px;right:120px;font-size:60px">?</div>
+  <svg class="spark" style="top:210px;left:300px" width="26" height="26" viewBox="0 0 24 24" fill="#FFB74D"><path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/></svg>
+  <svg class="spark" style="top:250px;right:260px" width="18" height="18" viewBox="0 0 24 24" fill="#FF8A3D"><path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/></svg>
+  <svg class="spark" style="top:330px;left:230px" width="16" height="16" viewBox="0 0 24 24" fill="#FFC63D"><path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/></svg>
+  <div class="qwrap">
+    <div class="q-big">7 − 1 =<span class="blank"></span>
+      <div class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6"/></svg>再听一遍</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="top">
+      <div class="left"><div class="badge">🔊 听算模式</div><div class="hero">大声说出<br>你的答案</div><div class="sub">我会自动识别你的声音</div></div>
+      <div class="right"><div class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/></svg></div>
+        <div class="bars"><i style="height:8px"></i><i style="height:15px"></i><i style="height:22px"></i><i style="height:12px"></i><i style="height:18px"></i></div>
+        <div class="status">正在聆听…</div></div>
+    </div>
+    <div class="divider"></div>
+    <div class="heard">听你说…</div>
+    <div class="skip center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 5v14l9-7zM17 5v14"/></svg>跳过这题</div>
+  </div>
+</div>
+<div class="cap">③ 方案 B <small>— 更贴近你发的参考图：题目主角化 + 居中大麦克风 + 提示语在中间，跳过移到侧边，卡片拆开铺满</small></div>
+<div class="frame">
+  <div class="pk"><span class="lab">🏁 闯关进度条（PK 地图，不改）</span><span class="vs">VS</span><span class="lab">怪兽</span></div>
+  <div class="deco q" style="top:200px;left:140px">?</div>
+  <div class="deco q" style="top:330px;right:140px;font-size:58px">?</div>
+  <svg class="spark" style="top:220px;left:320px" width="24" height="24" viewBox="0 0 24 24" fill="#FFB74D"><path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/></svg>
+  <svg class="spark" style="top:300px;right:280px" width="18" height="18" viewBox="0 0 24 24" fill="#FF8A3D"><path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/></svg>
+  <svg class="spark" style="bottom:40px;left:260px" width="16" height="16" viewBox="0 0 24 24" fill="#FFC63D"><path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/></svg>
+  <div class="qwrap">
+    <div class="q-big">7 − 1 =<span class="blank"></span>
+      <div class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6"/></svg>再听一遍</div>
+    </div>
+  </div>
+  <div class="cue"><div class="badge" style="margin-bottom:4px">🔊 听算模式</div><div class="t">认真听题，大声说出答案</div><div class="s">点下方麦克风开始作答</div></div>
+  <div class="micwrap">
+    <div style="position:relative;display:flex;align-items:center;justify-content:center">
+      <div class="ring" style="width:132px;height:132px"></div><div class="ring" style="width:112px;height:112px;opacity:.6"></div>
+      <div class="mic big"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/></svg></div>
+    </div>
+    <div class="bars lg"><i style="height:10px"></i><i style="height:20px"></i><i style="height:28px"></i><i style="height:16px"></i><i style="height:23px"></i></div>
+    <div class="status">正在聆听…</div>
+    <div class="heard">听你说…</div>
+  </div>
+  <div class="skip skip-side"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 5v14l9-7zM17 5v14"/></svg>跳过这题</div>
+</div>
+</body></html>
