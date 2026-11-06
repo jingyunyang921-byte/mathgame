@@ -26,7 +26,9 @@ for (const block of ['cloud-backup', 'device-transfer']) {
 }
 const javaDir = ROOT + '/android/app/src/main/java';
 const javaFiles = []; (function walk(d) { for (const n of readdirSync(d)) { const p = join(d, n); statSync(p).isDirectory() ? walk(p) : /\.(java|kt)$/.test(n) && javaFiles.push(p); } })(javaDir);
-const javaSrc = javaFiles.map(f => readFileSync(f, 'utf8')).join('\n');
+// 唯一放行：云端 TTS 请求参数 cuid 默认取 ANDROID_ID（用户已确认），它只拼进请求，不落盘、不进存档。
+const javaSrc = javaFiles.map(f => readFileSync(f, 'utf8')).join('\n')
+  .replace('id = Settings.Secure.getString(ctx.getContentResolver(), Settings.Secure.ANDROID_ID);', '');
 P(javaFiles.length > 0, '扫到原生源码', javaFiles.length + ' 个文件');
 P(!/SharedPreferences|getExternal|Environment\.|openFileOutput|Settings\.Secure|ANDROID_ID|UUID/.test(javaSrc), '原生层不写 SharedPreferences/外部存储/设备号（存档只在 WebView localStorage）');
 const capCfg = JSON.parse(readFileSync(ROOT + '/capacitor.config.json', 'utf8'));
@@ -69,7 +71,8 @@ const st = JSON.parse(await dev.ev(`JSON.stringify({
   stars: getTotalStars(), done: getCompletedCount(), coins: getCoins(), rank: getRank(getTotalStars()).title,
   daily: getDaily(), pet: MG_PET.get(), wrong: getWrongLog().length, badges: Object.keys(getBadges() || {}).length,
   sprint: [getSprintBest(1), getSprintBest(2), getSprintBest(3)],
-  shown: [...document.querySelectorAll('.modal.show, .overlay.show, [aria-hidden="false"]')].map(n => n.id || n.className).filter(Boolean)
+  shown: [...document.querySelectorAll('.modal.show, .overlay.show, [aria-hidden="false"]')].map(n => n.id || n.className).filter(Boolean),
+  guide: document.getElementById('confirmTitle').textContent, dot: document.getElementById('petBtn').classList.contains('need-adopt')
 })`));
 P(st.stars === 0 && st.done === 0, '星星 0 / 通关数 0', JSON.stringify([st.stars, st.done]));
 P(st.coins === 0, '星币 0', String(st.coins));
@@ -81,7 +84,8 @@ P(Object.values(st.pet.bag).every(v => v === 0) && Object.values(st.pet.used).ev
 P(st.wrong === 0, '错题本为空', String(st.wrong));
 P(st.badges === 0, '勋章墙无已解锁', String(st.badges));
 P(st.sprint.every(v => !v), '速算三档纪录都没有', JSON.stringify(st.sprint));
-P(st.shown.length === 0, '没有任何弹窗自动打开（大结局/升段/勋章/打卡日历/数宝出生）', JSON.stringify(st.shown));
+P(st.shown.length === 1 && st.shown[0] === 'confirmModal' && st.guide === '先领一颗萌蛋吧', '没有庆祝类弹窗（大结局/升段/勋章/打卡日历/数宝出生）；唯一弹出的是领养萌蛋引导', JSON.stringify([st.shown, st.guide]));
+P(st.dot === true, '顶栏萌宠钮亮着领养小红点');
 
 console.log('\n-- 动态：全新设备进游戏页（第 1 关 / 第 6 关 / 一分钟速算）不写进度 --');
 for (const [name, lv, extra] of [['L1', '1', ''], ['L6', '6', ''], ['速算', '0', `sessionStorage.setItem('mgSprint','1');sessionStorage.setItem('mgSprintTier','1');`]]) {

@@ -51,10 +51,10 @@ try {
     await b.ev(`document.getElementById('intro-overlay').click(); true`);
     return r;
   };
-  for (const [lv, mode, l1, l2, total] of [[1, 'visual', '看题', '写答案', 10], [3, 'audio', '听题', '说答案', 10], [5, 'visual', '看题', '选对门', 10], [6, 'visual', '看题', '写答案', 20]]) {
+  for (const [lv, mode, l1, l2, total, mat] of [[1, 'visual', '看题', '写答案', 10, '暖草'], [3, 'audio', '听题', '说答案', 10, '音符'], [5, 'visual', '看题', '选对门', 10, '贝壳'], [6, 'visual', '看题', '写答案', 20, '萤火']]) {
     const r = await introAt(lv, mode);
     P(r.cls && r.steps === 3 && r.arrows === 2, `L${lv} ${mode} 开场卡 = 三步图示`, r);
-    P(r.labels[0] === l1 && r.labels[1] === l2 && r.labels[2] === '材料进窝', `L${lv} ${mode} 三步文字`, r.labels);
+    P(r.labels[0] === l1 && r.labels[1] === l2 && r.labels[2] === mat + '进窝', `L${lv} ${mode} 三步文字（第三步写本关材料名）`, r.labels);
     P(r.egg && r.fits && r.scrollOver <= 0 && r.inView, `L${lv} ${mode} 图示放得下（不溢出、不滚动）`, r);
     P(r.prize.includes('答对' + total + '题，送') && !/送小/.test(r.prize), `L${lv} 目标句「答对${total}题，送X给蛋」且 X 不带「小」`, r.prize);
   }

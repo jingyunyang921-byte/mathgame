@@ -16,6 +16,7 @@ import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -113,19 +114,24 @@ public class TtsPlugin extends Plugin {
         }
         io.execute(() -> {
             File f = cloud.get(text);
+            long keep = f == null ? 0 : Mp3Tail.keepBytes(f);
             main.post(() -> {
                 synchronized (TtsPlugin.this) { if (my != gen) return; }
-                if (f == null) fallback(my, call); else play(my, call, f);
+                if (f == null) fallback(my, call); else play(my, call, f, keep);
             });
         });
     }
 
-    private void play(int my, PluginCall call, File f) {
+    private void play(int my, PluginCall call, File f, long keep) {
         MediaPlayer mp = new MediaPlayer();
         try {
             mp.setAudioAttributes(new AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_MEDIA).setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build());
-            mp.setDataSource(f.getAbsolutePath());
+            if (keep > 0 && keep < f.length()) {
+                try (FileInputStream in = new FileInputStream(f)) { mp.setDataSource(in.getFD(), 0, keep); }
+            } else {
+                mp.setDataSource(f.getAbsolutePath());
+            }
             float vol = (float) Math.max(0.0, Math.min(1.0, call.getDouble("volume", 1.0)));
             mp.setVolume(vol, vol);
             final double rate = call.getDouble("rate", 1.0);

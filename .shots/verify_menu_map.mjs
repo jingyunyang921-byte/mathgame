@@ -3,7 +3,7 @@
 // CTA 与任务条在屏内、完成印章、减少动画下新动画全停、禁用语法/悬空 <use>/箱影动画扫描。
 import fs from 'node:fs';
 const PAGE = process.argv[2] || 'menu.html';
-const CDP = 'http://localhost:9333', URL = 'http://localhost:8000/' + PAGE;
+const CDP = process.env.CDP || 'http://localhost:9333', URL = 'http://localhost:8000/' + PAGE;
 const ver = await (await fetch(CDP + '/json/version')).json();
 const ws = new WebSocket(ver.webSocketDebuggerUrl);
 await new Promise((r, j) => { ws.onopen = r; ws.onerror = j; });

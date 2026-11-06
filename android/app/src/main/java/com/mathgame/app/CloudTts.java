@@ -29,8 +29,12 @@ final class CloudTts {
     private static final long CACHE_CAP = 50L << 20;
     private static final long BACKOFF_MS = 20_000;
 
+    private static final String BUNDLE_DIR = "tts_bundled";
+
     private final File dir;
     private final String cuid;
+    private final android.content.res.AssetManager assets;
+    private final java.util.Set<String> bundled = new java.util.HashSet<>();
     private volatile long downUntil = 0;
 
     static boolean configured() {
@@ -43,6 +47,11 @@ final class CloudTts {
         String id = BuildConfig.TTS_CUID;
         if (id.isEmpty()) id = Settings.Secure.getString(ctx.getContentResolver(), Settings.Secure.ANDROID_ID);
         cuid = id == null ? "" : id;
+        assets = ctx.getAssets();
+        try {
+            String[] names = assets.list(BUNDLE_DIR);
+            if (names != null) bundled.addAll(Arrays.asList(names));
+        } catch (java.io.IOException e) { /* 没有内置音频就全靠联网 */ }
     }
 
     private File cacheFile(String text) {
@@ -58,6 +67,7 @@ final class CloudTts {
         boolean stream = BuildConfig.TTS_STREAM;
         File f = cacheFile(text);
         if (f.length() > 0) { f.setLastModified(System.currentTimeMillis()); return f; }
+        if (installBundled(f)) return f;
         if (System.currentTimeMillis() < downUntil) return null;
         try {
             byte[] audio = stream ? fetchStream(text) : fetchPlain(text);
@@ -73,11 +83,29 @@ final class CloudTts {
         }
     }
 
-    /** 后台逐句预下载固定短句：已缓存的只刷新使用时间（不被淘汰），第一次失败就停（没网时不空转）。返回新下载的句数。 */
+    /** 安装包里自带的音频（固定短句 + L1/L2/L4/L5 题目）：缓存里没有时直接复制进缓存，不联网；复制失败当没有，走联网。 */
+    private boolean installBundled(File f) {
+        if (!bundled.contains(f.getName())) return false;
+        File tmp = new File(dir, f.getName() + "." + Thread.currentThread().getId() + ".tmp");
+        try (InputStream in = assets.open(BUNDLE_DIR + "/" + f.getName()); OutputStream o = new FileOutputStream(tmp)) {
+            byte[] buf = new byte[8192];
+            int n;
+            while ((n = in.read(buf)) > 0) o.write(buf, 0, n);
+        } catch (Exception e) {
+            tmp.delete();
+            return false;
+        }
+        if (tmp.length() == 0 || !tmp.renameTo(f)) { tmp.delete(); return false; }
+        return true;
+    }
+
+    /** 后台逐句预下载固定短句：已缓存的只刷新使用时间（不被淘汰），安装包自带的不用下载，第一次下载失败就停（没网时不空转）。返回新下载的句数。 */
     int prefetch(java.util.List<String> texts) {
-        int fetched = 0, covered = 0;
+        int fetched = 0, covered = 0, builtin = 0;
         for (String t : texts) {
-            boolean had = cacheFile(t).length() > 0;
+            File f = cacheFile(t);
+            boolean had = f.length() > 0;
+            if (!had && bundled.contains(f.getName())) { covered++; builtin++; continue; }
             if (get(t, true) == null) break;
             covered++;
             if (!had) {
@@ -85,7 +113,7 @@ final class CloudTts {
                 try { Thread.sleep(200); } catch (InterruptedException e) { break; }
             }
         }
-        Log.i(TAG, "prefetch done: " + fetched + " new, " + covered + " of " + texts.size() + " cached");
+        Log.i(TAG, "prefetch done: " + fetched + " new, " + covered + " of " + texts.size() + " cached (" + builtin + " in apk)");
         return fetched;
     }
 

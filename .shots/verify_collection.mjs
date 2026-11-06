@@ -62,7 +62,7 @@ const PROBE = seed => `(() => {
     nGold: grid.querySelectorAll('.stamp-cell.gold').length,
     nLocked: [...grid.querySelectorAll('.stamp-medal use')].filter(u => u.getAttribute('href') === '#i-lock').length,
     nDim: grid.querySelectorAll('.stamp-cell.dim').length,
-    nOnStars: grid.querySelectorAll('.star.on').length,
+    nOnStars: [...grid.querySelectorAll('.stamp-cell')].reduce((t, c) => t + c.querySelectorAll('.fr-row')[0].querySelectorAll('path[fill="#FFB62E"]').length, 0),
     sub: document.getElementById('collectionSub').textContent,
     cell0Name: cells[0] ? cells[0].querySelector('.stamp-name').textContent : '',
     emojiInGrid: emoji,

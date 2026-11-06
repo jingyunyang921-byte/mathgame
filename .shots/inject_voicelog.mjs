@@ -9,7 +9,7 @@ function sh(c){ try { return execSync(c,{stdio:['ignore','pipe','ignore']}).toSt
 function relaunch(){
   sh('adb shell monkey -p com.mathgame.app -c android.intent.category.LAUNCHER 1');
   let pid='';
-  for(let i=0;i<20;i++){ pid=sh('adb shell cat /proc/net/unix').split('\n').filter(l=>/webview_devtools_remote/.test(l)).map(l=>l.replace(/.*webview_devtools_remote_/,'').trim())[0]||''; if(pid) break; execSync('sleep 0.4'); }
+  for(let i=0;i<20;i++){ pid=sh('adb shell pidof com.mathgame.app').split(/\s+/)[0]||''; if(pid && sh('adb shell cat /proc/net/unix').includes('webview_devtools_remote_'+pid)) break; pid=''; execSync('sleep 0.4'); }
   if(pid){ sh('adb forward --remove-all'); sh(`adb forward tcp:9222 localabstract:webview_devtools_remote_${pid}`); }
   return pid;
 }
@@ -47,11 +47,13 @@ const info=(await c.ev(`(()=>{
   try {
     if (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.Vosk && !window.__vlogVosk) {
       window.__vlogVosk = true;
-      Capacitor.Plugins.Vosk.addListener('partialResult', d => window.__vlog.push({k:'partial', text:(d&&d.text)||''}));
-      Capacitor.Plugins.Vosk.addListener('result',        d => window.__vlog.push({k:'FINAL',   text:(d&&d.text)||''}));
+      const fmt = d => ((d && d.words) || []).map(w => w.w + '(c' + (+w.c).toFixed(2) + ' ' + (+w.s).toFixed(2) + '-' + (+w.e).toFixed(2) + ')').join(' ');
+      Capacitor.Plugins.Vosk.addListener('partialResult', d => window.__vlog.push({k:'partial', text:(d&&d.text)||'', words:fmt(d), t:Date.now()%100000}));
+      Capacitor.Plugins.Vosk.addListener('result',        d => window.__vlog.push({k:'FINAL',   text:(d&&d.text)||'', words:fmt(d), t:Date.now()%100000}));
     }
   } catch(e){}
   if (g._extractNumber && !g.__vlogE) { g.__vlogE=true; const o=g._extractNumber.bind(g); g._extractNumber=function(t){const r=o(t); window.__vlog.push({k:'extract',in:JSON.stringify(t),out:r}); return r;}; }
+  if (g._setVoiceHeard && !g.__vlogH) { g.__vlogH=true; const o=g._setVoiceHeard.bind(g); g._setVoiceHeard=function(t){ if(t) window.__vlog.push({k:'BOX',text:t}); return o(t); }; }
   for (const m of ['_processVoiceAnswer','_processVoiceResult']) {
     if (g[m] && !g['__vlog'+m]) { g['__vlog'+m]=true; const o=g[m].bind(g);
       g[m]=function(res){ let ts=[]; try{for(let i=0;i<res.length;i++)ts.push(res[i].transcript);}catch(e){} window.__vlog.push({k:'>>> COMMIT',texts:JSON.stringify(ts),answer:g.currentAnswer}); return o(res); }; }
@@ -59,5 +61,5 @@ const info=(await c.ev(`(()=>{
   return { level:g.level, isNative:!!g._isNativeVoice, answer:g.currentAnswer };
 })()`)).result.value;
 console.log('probe installed:', JSON.stringify(info), '| url:', c.url);
-console.log('READY — 请对着设备清楚说「七十二」2~3 次，然后回复我。');
+console.log('READY — 请对着设备清楚说目标数字（如「九」）几次，然后回复我。');
 c.close(); process.exit(0);

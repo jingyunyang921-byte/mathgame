@@ -48,28 +48,34 @@
     const id = 'eg' + (++eggUid), body = EGG_BASE + (s >= 2 ? EGG_PAT : '') + (s >= 4 ? EGG_CHEEK : '');
     let defs = '', pre = '', g = body, post = '';
     if (s >= 5) {
-      defs = '<radialGradient id="h' + id + '"><stop offset="0" stop-color="#FFF3B0" stop-opacity=".95"/><stop offset="1" stop-color="#FFF3B0" stop-opacity="0"/></radialGradient>';
-      pre = '<circle cx="32" cy="37" r="33" fill="url(#h' + id + ')" opacity="' + (s === 5 ? .55 : s === 6 ? .8 : 1) + '"/>';
+      defs = '<radialGradient id="h' + id + '"><stop offset="0" stop-color="#FFF3B0" stop-opacity="1"/><stop offset=".55" stop-color="#FFE680" stop-opacity=".7"/><stop offset="1" stop-color="#FFE680" stop-opacity="0"/></radialGradient>';
+      pre = '<circle class="eg-halo" cx="32" cy="37" r="' + (s === 5 ? 32 : s === 6 ? 34 : 35) + '" fill="url(#h' + id + ')" opacity="' + (s === 5 ? .75 : .95) + '"/>';
     }
     if (s === 1) {
-      g = '<g transform="rotate(-7 32 56)">' + body + '</g>';
-      post = '<path d="M7 36q-3 5 0 11M2 33q-4 8 0 17M57 36q3 5 0 11M62 33q4 8 0 17" fill="none" stroke="#E7A740" stroke-width="2" stroke-linecap="round" opacity=".8"/>';
-    } else if (s === 2) post = eggStar(50, 20, 1.2) + eggStar(14, 52, .8, '#FFE48A');
-    else if (s === 3) post = '<g transform="translate(49 11)"><path d="M-8-6h16a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3h-9l-4 4v-4h-3a3 3 0 0 1-3-3v-6a3 3 0 0 1 3-3z" fill="#fff" stroke="#E7A740" stroke-width="1.4"/><circle cx="-4" cy="0" r="1.3" fill="#E7A740"/><circle cx="0" cy="0" r="1.3" fill="#E7A740"/><circle cx="4" cy="0" r="1.3" fill="#E7A740"/></g>';
+      g = '<g transform="rotate(-10 32 56)">' + body + '</g>';
+      post = '<path d="M6 34q-4 6 0 13M0 30q-6 11 0 21M58 34q4 6 0 13M64 30q6 11 0 21" fill="none" stroke="#E7A740" stroke-width="3" stroke-linecap="round"/>';
+    } else if (s === 2) post = eggStar(50, 18, 2) + eggStar(12, 52, 1.4, '#FFE48A') + eggStar(56, 46, 1);
+    else if (s === 3) post = '<g transform="translate(48 5) scale(1.45)"><path d="M-8-6h16a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3h-9l-4 4v-4h-3a3 3 0 0 1-3-3v-6a3 3 0 0 1 3-3z" fill="#fff" stroke="#E7A740" stroke-width="1.5"/><circle cx="-4" cy="0" r="1.5" fill="#E7A740"/><circle cx="0" cy="0" r="1.5" fill="#E7A740"/><circle cx="4" cy="0" r="1.5" fill="#E7A740"/></g>';
     else if (s === 4) {
-      g = '<g transform="rotate(6 32 56)">' + body + '</g>';
-      post = '<path transform="translate(54 12)" d="M0 7C-6 3-7-1-4.5-2.5-2.5-3.7-.5-2.5 0-1 .5-2.5 2.5-3.7 4.5-2.5 7-1 6 3 0 7Z" fill="#FF8A9A" stroke="#E86477" stroke-width="1"/><path d="M7 30q-3 4 0 8M3 27q-4 7 0 14" fill="none" stroke="#E7A740" stroke-width="1.8" stroke-linecap="round" opacity=".7"/>';
-    } else if (s === 5) post = eggStar(8, 17, 1.2) + eggStar(57, 26, 1) + eggStar(10, 53, .9, '#FFE48A') + eggStar(55, 55, .7, '#FFE48A');
-    else if (s === 6) {
-      const crack = 'M31 15l-3 6 5 4-4 6 5 4';
-      post = '<path d="' + crack + '" fill="none" stroke="#FFF3B0" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="' + crack + '" fill="none" stroke="#8A531B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>' + eggStar(8, 17, 1) + eggStar(57, 26, .9);
+      g = '<g transform="rotate(9 32 56)">' + body + '</g>';
+      const heart = 'M0 7C-6 3-7-1-4.5-2.5-2.5-3.7-.5-2.5 0-1 .5-2.5 2.5-3.7 4.5-2.5 7-1 6 3 0 7Z';
+      post = '<path transform="translate(55 8) scale(2)" d="' + heart + '" fill="#FF8A9A" stroke="#E86477" stroke-width="1"/><path transform="translate(9 24) scale(1.2)" d="' + heart + '" fill="#FFB3BD" stroke="#E86477" stroke-width="1"/><path d="M5 38q-4 5 0 10M0 34q-6 11 0 20" fill="none" stroke="#E7A740" stroke-width="2.6" stroke-linecap="round"/>';
+    } else if (s === 5) {
+      g = body + '<ellipse cx="32" cy="37" rx="22.5" ry="26.5" fill="none" stroke="#FFD23D" stroke-width="3.4" opacity=".8"/>';
+      post = eggStar(7, 16, 1.9) + eggStar(58, 24, 1.6) + eggStar(9, 54, 1.3, '#FFE48A') + eggStar(56, 56, 1.1, '#FFE48A') + eggStar(32, 2, 1.2, '#FFE48A');
+    } else if (s === 6) {
+      const main = 'M30 14l-4 8 7 5-6 8 7 5-4 7', side = 'M26 22l-8 2-4 6M33 27l8-2 3-5M27 35l-9 3';
+      const cr = (d, a, b) => '<path d="' + d + '" fill="none" stroke="#FFF3B0" stroke-width="' + a + '" stroke-linecap="round" stroke-linejoin="round"/><path d="' + d + '" fill="none" stroke="#7A4414" stroke-width="' + b + '" stroke-linecap="round" stroke-linejoin="round"/>';
+      g = '<g transform="rotate(-5 32 56)">' + body + cr(main, 7.5, 2.6) + cr(side, 5, 1.9) + '</g>';
+      post = '<path d="M46 9l5-4 1 6zM16 10l-5 2 3 5z" fill="#FFE6A8" stroke="#E7A740" stroke-width="1.4" stroke-linejoin="round"/>' + eggStar(6, 20, 1.6) + eggStar(59, 30, 1.4) + eggStar(8, 54, 1.1, '#FFE48A') + eggStar(57, 56, 1.2, '#FFE48A');
     } else if (s === 7) {
       const tp = 'M-10-10H80V30L54 30L47 36L41 29L35 36L29 29L23 36L17 29L10 35H-10Z', bt = 'M-10 35H10L17 29L23 36L29 29L35 36L41 29L47 36L54 30H80V80H-10Z';
-      const line = '<path d="M10 35' + EGG_ZZ + '" fill="none" stroke="#8A531B" stroke-width="1.5" stroke-linejoin="round"/>';
-      defs += '<clipPath id="t' + id + '"><path d="' + tp + '"/></clipPath><clipPath id="b' + id + '"><path d="' + bt + '"/></clipPath>';
-      g = '<g clip-path="url(#b' + id + ')">' + body + '</g><path d="M10 35' + EGG_ZZ + '" fill="none" stroke="#FFF3B0" stroke-width="6" stroke-linejoin="round"/>' + line
-        + '<g transform="translate(0 -5) rotate(-6 32 30)"><g clip-path="url(#t' + id + ')">' + body + '</g>' + line + '</g>';
-      post = '<path d="M7 30l-5-3M6 38l-6 1M57 30l5-3M58 38l6 1M32 21v-8" fill="none" stroke="#FFD23D" stroke-width="2" stroke-linecap="round"/>';
+      const line = '<path d="M10 35' + EGG_ZZ + '" fill="none" stroke="#7A4414" stroke-width="2" stroke-linejoin="round"/>';
+      defs += '<clipPath id="t' + id + '"><path d="' + tp + '"/></clipPath><clipPath id="b' + id + '"><path d="' + bt + '"/></clipPath><radialGradient id="l' + id + '"><stop offset="0" stop-color="#FFFDE8"/><stop offset=".6" stop-color="#FFF3B0" stop-opacity=".9"/><stop offset="1" stop-color="#FFE680" stop-opacity="0"/></radialGradient>';
+      const rays = '<path d="M9 27L-2 22M8 33L-3 35M55 27L66 22M56 33L67 35M13 22L4 13M51 20L60 11" fill="none" stroke="#FFD23D" stroke-width="3.2" stroke-linecap="round"/>';
+      g = rays + '<g clip-path="url(#b' + id + ')">' + body + '</g><ellipse cx="34" cy="27" rx="22" ry="11" fill="url(#l' + id + ')"/><path d="M10 35' + EGG_ZZ + '" fill="none" stroke="#FFF3B0" stroke-width="7" stroke-linejoin="round" opacity=".8"/>' + line
+        + '<g class="eg-lid"><g transform="translate(-1 -11) rotate(-11 32 30)"><g clip-path="url(#t' + id + ')">' + body + '</g>' + line + '</g></g>';
+      post = '<path d="M58 14l4 2-3 4zM6 12l-4 3 3 3z" fill="#FFE6A8" stroke="#E7A740" stroke-width="1.4" stroke-linejoin="round"/>' + eggStar(6, 5, 1.6) + eggStar(59, 4, 1.4) + eggStar(63, 40, 1.2) + eggStar(1, 44, 1.1, '#FFE48A');
     }
     return (defs ? '<defs>' + defs + '</defs>' : '') + pre + g + post;
   }
@@ -82,6 +88,20 @@
       return '<span class="en-mark ' + cls + '" style="left:' + (x.at / g.max * 100) + '%">' + (withNums ? '<i>' + x.at + '</i>' : '') + '</span>';
     }).join('');
     return '<div class="en-bar" role="progressbar" aria-label="成长能量" aria-valuemin="0" aria-valuemax="' + g.max + '" aria-valuenow="' + g.energy + '"><div class="en-fill" style="width:' + (g.energy / g.max * 100) + '%"></div>' + marks + '</div>';
+  }
+  // 小窝成长小路：上排 7 颗里程碑小蛋（各占一种彩虹色圈），下面一条彩虹能量条，已走过的段落是饱和色、没走到的是淡色；已到的蛋实心圈、下一颗带光圈、没到的虚线圈。不放数字，读屏看 aria-label。
+  function energyPath(g) {
+    const ph = root.MG_PET.phases, n = ph.length - 1, nx = g.next ? g.next.index : -1;
+    let j = 0;
+    while (j < n && g.energy >= ph[j + 1].at) j++;
+    const cx = k => k ? (k - .5) / n * 100 : 0;
+    const w = j >= n ? cx(n) : cx(j) + (g.energy - ph[j].at) / (ph[j + 1].at - ph[j].at) * (cx(j + 1) - cx(j));
+    const cls = k => g.hatched || g.phase >= k ? 'got' : (k === nx ? 'nx' : 'far');
+    const stops = ph.slice(1).map((x, i) => '<span class="en-stop ' + cls(i + 1) + '"><b>' + egg(i + 1) + '</b></span>').join('');
+    const ticks = ph.slice(1).map((x, i) => '<s class="en-tk ' + cls(i + 1) + '" style="left:' + cx(i + 1).toFixed(2) + '%"></s>').join('');
+    const say = !g.adopted ? '领养萌蛋，答对题让它长大' : g.hatched ? '见面啦！一起学了 ' + g.studyDays + ' 天' : g.ready ? '出生的时刻到啦！' : (g.next ? '下一站：' + g.next.name : '快要出生啦');
+    return '<div class="en-path' + (g.ready ? ' ready' : '') + '" role="progressbar" aria-label="成长能量，' + say + '" aria-valuemin="0" aria-valuemax="' + g.max + '" aria-valuenow="' + g.energy + '"><div class="en-stops">' + stops
+      + '</div><div class="en-trk"><span class="en-fill" style="width:' + w.toFixed(1) + '%;background-size:' + Math.round(10000 / Math.max(w, 1)) + '% 100%"></span>' + ticks + '<i class="orb en-tip" style="left:' + w.toFixed(1) + '%"></i></div></div>';
   }
   // 小窝摆件插画：地面件 24×24 视窗，挂饰 300×40 横幅；id 与 MG_PET.items 一一对应。
   const ITEM_G = s => '<g stroke-linejoin="round" stroke-linecap="round" stroke-width="1">' + s + '</g>';
@@ -202,17 +222,83 @@
     } catch (ignored) { stopSound(); }
   }
   function stopSound() { if (audio) { const old = audio; audio = null; old.close().catch(function () {}); } }
+  // 故事卡 = 一幅画 + 一句话：这句话同时显示和朗读；原来的长段文字只留给读屏（.ps-sr）。
+  const REACT = ['萌蛋晃一晃，真开心！', '数宝笑啦，真开心！'];
+  const ICON_X = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>';
+  const ICON_OK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5L10 17.5L19 7" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  function sayFor(s) {
+    const P = root.MG_PET;
+    if (s.grow) return s.title;
+    if (s.level === 7) return '蛋壳里有悄悄话！';
+    return s.phase ? P.gifts[s.level] + '派上用场啦！' : FRIENDS[s.level] + '送来' + P.gifts[s.level] + '！';
+  }
+  // 点灰色贴纸时念的「怎么解锁」：还没拿到礼物 → 过第几关；拿到了 → 用上几份材料；其余 → 答题喂萌蛋。
+  const CN = ['', '一', '二', '三', '四', '五', '六'];
+  const FEED_LINE = '答题喂萌蛋，就解锁！', HATCH_LINE = '等萌蛋出生，就解锁！';
+  const passLine = lv => '过第' + CN[lv] + '关，就有礼物！';
+  const tierLine = (lv, row) => '用上' + root.MG_PET.tiers[row - 1] + '份' + root.MG_PET.mats[lv].name + '！';
+  function lockLine(p, lv, row) {
+    if (lv <= 6 && !p.gifts.includes(lv)) return passLine(lv);
+    if (typeof row === 'number') return tierLine(lv, row);
+    return lv === 6 && row === 'echo' ? HATCH_LINE : FEED_LINE;
+  }
+  function sayLines() {
+    const P = root.MG_PET, set = new Set(REACT);
+    P.stories.forEach(s => set.add(sayFor(s)));
+    P.phases.forEach(x => set.add(x.name));
+    for (let lv = 1; lv <= 6; lv++) { set.add(passLine(lv)); for (let r = 1; r <= 3; r++) set.add(tierLine(lv, r)); }
+    set.add(FEED_LINE); set.add(HATCH_LINE);
+    return Array.from(set);
+  }
+  function speak(text) {
+    try {
+      if (typeof root.mgSay === 'function') root.mgSay(text);
+      else if (typeof root._mgSpeakAwait === 'function') root._mgSpeakAwait(text, 1.0, 'zh-CN');
+    } catch (ignored) {}
+  }
+  function hush() { try { if (typeof root.mgSayStop === 'function') root.mgSayStop(); } catch (ignored) {} }
+  // 手记 = 贴纸册：上面一排蛋蛋长大的 8 张贴纸，下面按朋友分列，每列依次是礼物、长大后的回声、三档升级。
+  const ECHO = { 1: 'rest-1', 2: 'basket-2', 3: 'song-3', 4: 'trail-4', 5: 'sea-5', 6: 'light-6' };
+  const ALB_COLS = [1, 2, 7, 3, 4, 5, 6];
+  function album(p) {
+    const P = root.MG_PET, pending = p.stories.pending, st = p.stage;
+    const eggs = P.phases.map((x, i) => {
+      const got = st || i <= p.phase;
+      return '<button type="button" class="alb-egg' + (got ? '' : ' lock') + (!st && i === p.phase ? ' now' : '') + '"' + (got ? ' onclick="MG_PET_STORY.hear(' + i + ')" aria-label="' + x.name + '"' : ' aria-disabled="true" data-hint="' + FEED_LINE + '" onclick="MG_PET_STORY.lockHint(this)" aria-label="' + FEED_LINE + '"') + '>' + egg(i, 'alb-art') + '</button>';
+    }).join('');
+    const cell = (lv, row) => {
+      const id = row === 'gift' ? 'gift-' + lv : row === 'echo' ? ECHO[lv] : 'grow-' + lv + '-' + row;
+      if (lv === 7 && row !== 'gift') return '<i class="alb-gap"></i>';
+      const s = P.storyFor(p, id), mark = row === 'echo' ? '<u class="alb-mark">✧</u>' : row === 'gift' ? '' : '<span class="alb-stars">' + tierStars(row) + '</span>';
+      if (!s) { const hint = lockLine(p, lv, row); return '<button type="button" class="alb-s lock" aria-disabled="true" data-hint="' + hint + '" aria-label="' + hint + '" onclick="MG_PET_STORY.lockHint(this)">' + giftArt(lv) + '</button>'; }
+      const fresh = pending.includes(id);
+      return '<button type="button" class="alb-s' + (fresh ? ' new' : '') + '" aria-label="' + s.title + (fresh ? '，新贴纸' : '') + '" onclick="MG_PET_STORY.show(\'' + id + '\')">' + giftArt(lv) + mark + (fresh ? '<b class="alb-dot"></b>' : '') + '</button>';
+    };
+    const rows = ['gift', 'echo', 1, 2, 3].map(r => ALB_COLS.map(lv => cell(lv, r)).join('')).join('');
+    return '<div class="alb"><div class="alb-eggs" role="group" aria-label="蛋蛋长大的贴纸">' + eggs + '</div><div class="alb-grid" role="group" aria-label="朋友们的礼物贴纸">' + rows + '</div></div>';
+  }
+  function lockHint(el) {
+    const line = el.getAttribute('data-hint') || FEED_LINE;
+    speak(line);
+    try { if (typeof root.petMessage === 'function') root.petMessage(line); } catch (ignored) {}
+    el.classList.remove('nope'); void el.offsetWidth; el.classList.add('nope');
+    clearTimeout(el._nopeT); el._nopeT = setTimeout(function () { el.classList.remove('nope'); }, 520);
+  }
+  function hear(i) {
+    const P = root.MG_PET, p = P.get(), x = P.phases[i];
+    if (x && (p.stage || i <= p.phase)) speak(x.name);
+  }
   function mount() {
     let m = document.getElementById('petStoryModal');
     if (m) return m;
     m = document.createElement('div'); m.id = 'petStoryModal'; m.className = 'pet-story-modal'; m.setAttribute('aria-hidden', 'true');
-    m.innerHTML = '<div class="ps-shade"></div><div class="ps-card" role="dialog" aria-modal="true" aria-labelledby="petStoryTitle"><div id="petStoryEyebrow" class="ps-eyebrow"></div><h2 id="petStoryTitle"></h2><div id="petStoryScene"></div><p id="petStoryText" class="ps-text"></p><p id="petStoryResponse" class="ps-response" aria-live="polite" hidden></p><div class="ps-actions"><button type="button" id="petStoryLater" class="ps-later">留在手记里</button><button type="button" id="petStoryAction" class="ps-action"></button></div><p class="ps-footnote">每份心意都留在小窝里，陪我们慢慢长大</p></div>';
+    m.innerHTML = '<div class="ps-shade"></div><div class="ps-card" role="dialog" aria-modal="true" aria-labelledby="petStoryTitle"><button type="button" id="petStoryLater" class="ps-close" aria-label="关上">' + ICON_X + '</button><div id="petStoryScene"></div><h2 id="petStoryTitle" class="ps-say"></h2><p id="petStoryText" class="ps-sr"></p><p id="petStoryResponse" class="ps-sr" aria-live="polite"></p><div class="ps-actions"><button type="button" id="petStoryAction" class="ps-action"></button></div></div>';
     document.body.appendChild(m);
-    m.querySelector('.ps-shade').onclick = close;
-    m.querySelector('#petStoryLater').onclick = close;
+    m.querySelector('.ps-shade').onclick = dismiss;
+    m.querySelector('#petStoryLater').onclick = dismiss;
     m.querySelector('#petStoryAction').onclick = act;
     m.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); }
+      if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); dismiss(); }
       if (e.key !== 'Tab') return;
       const buttons = Array.from(m.querySelectorAll('button')).filter(b => !b.hidden), first = buttons[0], last = buttons[buttons.length - 1];
       if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
@@ -228,15 +314,15 @@
       if (!current) previousFocus = document.activeElement;
       current = { id, reacted: false };
       const P = root.MG_PET, grown = s.grow ? P.tiers.indexOf(s.grow) + 1 : 0, tier = s.level < 7 ? (grown || P.tierFor(p, s.level)) : 0;
-      document.getElementById('petStoryEyebrow').textContent = s.level === 7 ? '成长礼物 · ' + P.gifts[7] : s.grow ? '长大的礼物 · ' + P.giftName(s.level, grown) : s.phase ? '长大的回声 · ' + FRIENDS[s.level] + '的礼物' : '旅行第 ' + s.level + ' 章 · ' + P.gifts[s.level];
-      document.getElementById('petStoryTitle').textContent = s.title;
+      const say = sayFor(s), action = document.getElementById('petStoryAction');
+      document.getElementById('petStoryTitle').textContent = say;
       document.getElementById('petStoryScene').innerHTML = scene(s.level, s.phase && s.phase < 7 ? Object.assign({}, p, { stage: 0, phase: s.phase }) : p, false, tier);
-      document.getElementById('petStoryText').textContent = s.text;
-      const response = document.getElementById('petStoryResponse'); response.textContent = ''; response.hidden = true;
-      document.getElementById('petStoryAction').textContent = s.action;
-      document.getElementById('petStoryLater').textContent = '留在手记里';
+      document.getElementById('petStoryText').textContent = s.title + '。' + s.text;
+      document.getElementById('petStoryResponse').textContent = '';
+      action.innerHTML = '<i>' + giftArt(s.level) + '</i><span>点点看</span>'; action.setAttribute('aria-label', s.action); action.classList.add('nudge');
       m.classList.add('show'); m.setAttribute('aria-hidden', 'false');
-      m.querySelector('.ps-card').scrollTop = 0; document.getElementById('petStoryAction').focus();
+      m.querySelector('.ps-card').scrollTop = 0; action.focus();
+      speak(say);
       return true;
     } catch (e) { report(e); return false; }
   }
@@ -245,46 +331,48 @@
     try {
       const s = root.MG_PET.story(current.id); if (!s) { close(); return; }
       if (current.reacted) {
-        root.MG_PET.finishStory(s.id); close();
-        if (typeof root.renderPet === 'function' && document.getElementById('petModal').classList.contains('show')) root.renderPet();
+        root.MG_PET.finishStory(s.id); close(); refreshView();
         return;
       }
-      const p = root.MG_PET.get(), response = document.getElementById('petStoryResponse');
-      response.textContent = p.stage && s.baby ? s.baby : s.response; response.hidden = false;
+      const p = root.MG_PET.get(), action = document.getElementById('petStoryAction'), line = REACT[p.stage ? 1 : 0];
+      document.getElementById('petStoryResponse').textContent = p.stage && s.baby ? s.baby : s.response;
+      document.getElementById('petStoryTitle').textContent = line;
       document.querySelector('#petStoryScene .ps-scene').classList.add('ps-reacted');
-      document.getElementById('petStoryAction').textContent = '收好这段回忆';
-      document.getElementById('petStoryLater').textContent = '下次再看';
-      current.reacted = true; sound(s.level);
-      response.scrollIntoView({ block: 'nearest' });
+      action.innerHTML = '<i>' + ICON_OK + '</i><span>收好啦</span>'; action.setAttribute('aria-label', '收好这段回忆'); action.classList.remove('nudge');
+      current.reacted = true; sound(s.level); speak(line);
     } catch (e) { report(e); }
   }
   function report(e) {
-    const el = document.getElementById('petStoryResponse');
-    if (el) { el.hidden = false; el.textContent = e.message || '这段回忆还没有保存，请稍后再试。'; }
+    const el = document.getElementById('petStoryTitle');
+    if (el) el.textContent = e.message || '这段回忆还没有保存，请稍后再试。';
   }
   function close() {
     const m = document.getElementById('petStoryModal'); if (m) { m.classList.remove('show'); m.setAttribute('aria-hidden', 'true'); }
+    if (current) hush();
     current = null; stopSound();
     if (previousFocus && previousFocus.isConnected) previousFocus.focus({ preventScroll: true });
     previousFocus = null;
   }
-  function maybe() {
-    if (document.querySelector('.locked-modal.show') || isOpen()) return;
+  // 孩子主动关掉（按钮 / 点空白 / Esc / 返回键）就算看过：故事留在手记里，不再弹出；程序性关闭仍用 close。
+  function dismiss() {
+    const id = current && current.id;
+    close();
+    if (id) { try { root.MG_PET.finishStory(id); } catch (ignored) {} refreshView(); }
+  }
+  function refreshView() {
     try {
-      root.MG_PET.syncGifts();
-      const p = root.MG_PET.get(); if (p.stories.pending.length) show(p.stories.pending[0]);
+      const m = document.getElementById('petModal');
+      if (typeof root.renderPet === 'function' && m && m.classList.contains('show')) root.renderPet();
+      if (typeof root.refreshPetDot === 'function') root.refreshPetDot();
     } catch (ignored) {}
   }
   function isOpen() { return !!current; }
-  // 结算卡里的故事行：只一行「谁送来什么 · 第几阶段用上」+ 进入按钮，不再讲一遍剧情。
+  // 结算卡里的故事行：小图标 + 一句话 + 进入按钮，不再讲一遍剧情。
   function teaser(id) {
     const s = root.MG_PET.story(id); if (!s) return '';
-    const P = root.MG_PET, gift = (P.gifts && P.gifts[s.level]) || '旅行礼物', phase = P.giftPhase && P.giftPhase[s.level];
-    const line = s.grow ? '「' + P.giftName(s.level, P.tiers.indexOf(s.grow) + 1) + '」长大啦 · ' + s.title
-      : /^gift-/.test(s.id) ? (FRIENDS[s.level] || '朋友们') + '送来「' + gift + '」' + (phase != null ? ' · 第' + (phase + 1) + '阶段用上' : '') : s.title;
-    return '<div class="ps-teaser"><span class="ps-teaser-line">' + line + '</span><button type="button" onclick="MG_PET_STORY.show(\'' + s.id + '\')">看故事</button></div>';
+    return '<div class="ps-teaser"><i class="ps-teaser-ico">' + giftArt(s.level) + '</i><span class="ps-teaser-line">' + sayFor(s).replace(/！$/, '') + '</span><button type="button" onclick="MG_PET_STORY.show(\'' + s.id + '\')">看看</button></div>';
   }
   root.addEventListener('pagehide', stopSound);
   document.addEventListener('visibilitychange', function () { if (document.hidden) stopSound(); });
-  root.MG_PET_STORY = { giftArt, matArt, tierStars, nestItems, itemArt, itemPrev, scene, show, close, maybe, isOpen, teaser, egg, eggInner, energyBar };
+  root.MG_PET_STORY = { giftArt, matArt, tierStars, nestItems, itemArt, itemPrev, scene, show, close, dismiss, isOpen, teaser, sayFor, sayLines, speak, hear, lockHint, lockLine, album, egg, eggInner, energyBar, energyPath };
 })(window);

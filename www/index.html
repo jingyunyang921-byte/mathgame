@@ -95,8 +95,15 @@ body{background:var(--c-sky-bottom);color:var(--c-ink)}
 @keyframes haloBreath{0%,100%{opacity:.72;transform:scale(.95)}50%{opacity:1;transform:scale(1.06)}}
 @keyframes twinkle{0%,100%{opacity:.25;transform:scale(.6) rotate(0deg)}50%{opacity:1;transform:scale(1.15) rotate(20deg)}}
 @keyframes flagWave{0%,100%{transform:scaleX(1) skewY(0deg)}50%{transform:scaleX(.82) skewY(-6deg)}}
+/* 学龄前引导小手：只用 transform/opacity，不挂 filter；不挡触摸 */
+#mg-point{position:fixed;left:0;top:0;width:0;height:0;z-index:3000;pointer-events:none}
+#mg-point .pt-hand{position:absolute;width:60px;height:72px;transform-origin:46% 4%;animation:mgPointTap 1.7s ease-in-out infinite}
+#mg-point .pt-hand svg{display:block;width:100%;height:100%;transform:rotate(-14deg)}
+#mg-point .pt-rip{position:absolute;box-sizing:border-box;border-radius:50%;border:4px solid rgba(255,170,40,.95);opacity:0;animation:mgPointRip 1.7s ease-out infinite}
+@keyframes mgPointTap{0%,55%,100%{transform:translateY(0) scale(1)}22%{transform:translateY(-6px) scale(.88)}}
+@keyframes mgPointRip{0%{transform:scale(.35);opacity:.95}55%{transform:scale(1);opacity:0}100%{transform:scale(1);opacity:0}}
 @media (prefers-reduced-motion:reduce){
-  .anim-slide,.anim-pop,.anim-float,.anim-cta,.cta-halo::before,.spark,.medallion::after,.island-card.selected::before,.sprint-pill .sp-ring{animation:none!important}
+  .anim-slide,.anim-pop,.anim-float,.anim-cta,.cta-halo::before,.spark,.medallion::after,.island-card.selected::before,.sprint-pill .sp-ring,#mg-point .pt-hand,#mg-point .pt-rip{animation:none!important}
 }
 
 /* ── 布局：整页是一幅岛屿地图。#sceneBg 是固定的远景插画层，#menuScreen 透明地叠在它上面 ── */
@@ -144,7 +151,7 @@ body{background:var(--c-sky-bottom);color:var(--c-ink)}
 .icon-dot{display:none;position:absolute;top:calc(-2px*var(--ui));right:calc(-2px*var(--ui));
   width:calc(13px*var(--ui));height:calc(13px*var(--ui));border-radius:50%;box-sizing:border-box;
   background:#E8503A;border:calc(2px*var(--ui)) solid var(--sc-cream)}
-.icon-btn.has-due .icon-dot{display:block}
+.icon-btn.has-due .icon-dot,.icon-btn.need-adopt .icon-dot,.icon-btn.has-new .icon-dot{display:block}
 /* 顶栏右侧按钮组：多于一个图标钮时，space-between 才不会把它们推到中间 */
 .topbar-actions{display:flex;align-items:center;gap:calc(10px*var(--ui))}
 /* 窄屏竖屏（手机）：顶栏要容下 4 枚圆钮（萌宠/错题/图鉴/齿轮）+ 铭牌 + 星币，
@@ -463,31 +470,65 @@ body{background:var(--c-sky-bottom);color:var(--c-ink)}
 @media (prefers-reduced-motion: reduce){.pet-art.cheer{animation:none}}
 
 /* 暖窝与旅行手记：横屏左右展开，列表内部滚动，底部操作一直可见。 */
-#petModal .pet-card{width:min(740px,100%);padding:20px;display:flex;flex-direction:column;overflow-y:auto}
+#petModal .pet-card{width:min(740px,100%);padding:20px;display:flex;flex-direction:column;overflow-y:auto;border:4px solid #DDAA68;background:radial-gradient(circle at 14px 14px,rgba(255,255,255,.6) 0 3px,transparent 4px) 0 0/36px 36px,radial-gradient(circle at 32px 32px,rgba(255,236,206,.7) 0 2px,transparent 3px) 0 0/36px 36px,linear-gradient(180deg,#FFE3BD,#FFD0A0);box-shadow:inset 0 0 0 3px rgba(255,246,226,.75),var(--shadow-raised),0 20px 50px rgba(74,42,16,.3)}
 .pet-eyebrow{font-size:11px;font-weight:900;letter-spacing:.12em;color:#A2774B;margin-bottom:5px}
 .pet-layout{display:grid;grid-template-columns:minmax(210px,.9fr) minmax(260px,1.1fr);gap:20px;flex:1 1 auto;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;text-align:left}
 .pet-home{text-align:center;min-width:0;padding:0 10px 8px;border-radius:22px;background:var(--home-bg,#FAEED9)}
-.pet-nest{position:relative;width:200px;height:170px;margin:0 auto}
+.pet-nest{--k:1;position:relative;width:200px;height:170px;margin:0 auto calc(170px*(var(--k) - 1));transform:scale(var(--k));transform-origin:50% 0}
 .nest-basket{position:absolute;width:200px;height:150px;bottom:0;left:0}
-.pet-nest .pet-art{position:absolute;width:112px;height:112px;left:44px;bottom:37px;margin:0;transform-origin:50% 80%}
-.pet-nest-label{position:absolute;bottom:0;left:0;right:0;font-size:11px;color:#8A6B4A;font-weight:800}
+.pet-nest .pet-art{position:absolute;width:112px;height:112px;left:44px;bottom:37px;margin:0;transform-origin:50% 80%;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.pet-nest .pet-art:focus,.pet-nest .pet-art:focus-visible{outline:none}
+.pet-art .egg-idle{transform-box:fill-box;transform-origin:50% 88%}
+@keyframes eggSway{0%,60%,100%{transform:rotate(0)}10%{transform:rotate(-6deg)}22%{transform:rotate(6deg)}34%{transform:rotate(-4deg)}46%{transform:rotate(3deg)}}
+@keyframes eggGlow{0%,100%{opacity:.6}50%{opacity:1}}
+@keyframes eggLid{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.pet-art[data-ph="5"] .eg-halo,.pet-art[data-ph="6"] .eg-halo,.pet-art[data-ph="7"] .eg-halo{animation:eggGlow 2.2s ease-in-out infinite;pointer-events:none}
+.pet-art[data-ph="6"] .egg-idle{animation:eggSway 3s ease-in-out infinite}
+.pet-art[data-ph="7"] .egg-idle{animation:eggSway 1.8s ease-in-out infinite}
+.pet-art[data-ph="7"] .eg-lid{animation:eggLid .9s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.pet-art .egg-idle,.pet-art .eg-halo,.pet-art .eg-lid{animation:none}}
+.pet-heart{position:absolute;bottom:96px;width:22px;height:22px;opacity:0;pointer-events:none;z-index:4;animation:petHeart .95s ease-out forwards}
+.pet-heart svg{display:block;width:100%;height:100%}
+@keyframes petHeart{0%{opacity:0;transform:translateY(0) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translateY(-50px) scale(1.1)}}
+@media (prefers-reduced-motion: reduce){.pet-heart{animation:none;opacity:1}}
 .pet-home .pet-desc{margin:4px 0 8px;font-size:13px;min-height:2.6em}
 .pet-home .pet-stage-name{margin-top:9px}
-.pet-nest .pet-art.egg-view{width:134px;height:134px;left:33px;bottom:22px}
+.pet-nest .pet-art.egg-view{width:166px;height:166px;left:17px;bottom:14px}
 .pet-home .energy{margin-top:2px}
-.pet-home .en-done{font-size:12px;line-height:1.5}
-.pet-response{font-size:12px;min-height:2.5em;color:#996020;font-weight:800;margin-top:8px;line-height:1.4}
+.pet-response{font-size:12px;color:#996020;font-weight:800;line-height:1.4}
 .pet-journal{display:flex;flex-direction:column;min-height:0;min-width:0;max-height:345px}
-.pet-tabs{display:flex;gap:3px;flex:none;border-bottom:2px solid #EEDDC3;margin-bottom:10px}
-.pet-tabs button{border:0;flex:1;padding:9px 4px;border-radius:12px 12px 0 0;color:#987653;background:#F4EADB;font:inherit;font-size:13px;font-weight:900;cursor:pointer}
-.pet-tabs button[aria-selected="true"]{background:#E8A85E;color:#fff}
+.pet-tabs{display:flex;box-sizing:border-box;gap:8px;flex:none;padding:0 2px 4px;margin-bottom:6px}
+#petTitle{align-self:center;flex:none;padding:0 22px;border-radius:11px;color:#6A4421;background:repeating-linear-gradient(90deg,rgba(150,95,40,.08) 0 2px,transparent 2px 9px),linear-gradient(#F4DEB6,#E7C48A);box-shadow:0 3px 0 #C99A5B,inset 0 1px 0 rgba(255,255,255,.6)}
+.pet-tabs button{position:relative;display:flex;align-items:center;justify-content:center;gap:5px;border:0;flex:1;height:36px;padding:0 4px;border-radius:11px;color:#7A5430;background:repeating-linear-gradient(90deg,rgba(150,95,40,.08) 0 2px,transparent 2px 9px),linear-gradient(#F4DEB6,#E7C48A);box-shadow:0 3px 0 #C99A5B,inset 0 1px 0 rgba(255,255,255,.6);font:inherit;font-size:15px;font-weight:900;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.pet-tabs button .ic{width:20px;height:20px;flex:none;stroke-width:2}
+.pet-tabs button[aria-selected="true"]{background:linear-gradient(#FFB964,#EE8A32);color:#fff;box-shadow:0 3px 0 #B8651D,inset 0 1px 0 rgba(255,255,255,.45)}
+.pet-tabs button:focus-visible{outline:3px solid #7598A5;outline-offset:2px}
+.pet-tabs button.has-new:after{content:'';position:absolute;right:-3px;top:-4px;width:10px;height:10px;border-radius:50%;background:#E8503A;border:2px solid #fff;box-sizing:content-box}
+.pet-journal.unadopted .pet-tabs,.pet-journal.unadopted .pet-panel,.pet-journal.unadopted #petPanelToday{display:none}
+.pet-preview{display:none;align-items:center;justify-content:center;gap:6px;box-sizing:border-box;min-height:132px;padding:14px 8px;border-radius:20px;background:linear-gradient(#FBF0DA,#F3E1BC);box-shadow:inset 0 -5px 0 #DDB97F}
+.pet-journal.unadopted .pet-preview{display:flex}
+.pj-step{flex:none;display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:56px;height:56px;border-radius:50%;background:#fff;border:3px solid #F0C98A;box-shadow:0 3px 0 #D9B27A;color:#5B8FB0}
+.pj-step svg{display:block;width:32px;height:32px}
+.pj-step svg.mat-art{width:34px;height:34px}
+.pj-arrow{flex:none;width:18px;height:18px}
+.pet-adopt{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;margin:6px 0 2px;padding:0 26px;border:0;border-radius:99px;background:#FF8A3D;color:#fff;font:inherit;font-size:21px;font-weight:900;box-shadow:0 4px 0 #C25510;cursor:pointer;-webkit-tap-highlight-color:transparent;animation:psNudge 1.5s ease-in-out infinite}
+.pet-adopt .ic{width:26px;height:26px;flex:none}
+.pet-adopt:focus-visible{outline:3px solid #7598A5;outline-offset:2px}
+.pet-panel .today-head{position:relative;gap:6px;padding:3px 6px;margin:0 0 9px;border-radius:14px;background:linear-gradient(#F2DAAA,#E6C285);box-shadow:0 3px 0 #C99A5B}
+@media (prefers-reduced-motion:reduce){.pet-adopt{animation:none}}
 .pet-panel{overflow-y:auto;overscroll-behavior:contain;min-height:0;padding:0 5px 4px 0}
 .pet-panel[hidden]{display:none}
 .pet-note{font-size:12px;color:#8A6B4A;line-height:1.65;margin:7px 0 12px}
 .pet-note-title{display:block;font-size:14px;color:#684321;font-weight:900;line-height:1.5;margin:5px 0}
 .pet-panel .locked-modal-btn{font-size:13px;padding:11px 4px;margin:5px 0}
-.pet-visitor{display:flex;gap:9px;align-items:center;border-top:1px dashed #DCC5A3;margin-top:14px;padding-top:10px;font-size:12px;line-height:1.6;color:#82623E}
-.pet-visitor svg{width:40px;height:40px;flex:none}
+.pet-visitor{flex:none;margin:0 0 0 auto}
+.pv-btn{position:relative;display:block;width:56px;height:46px;margin:0;padding:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.pv-btn:before{content:"";position:absolute;left:0;right:0;bottom:0;height:22px;border-radius:50%;background:radial-gradient(ellipse at 50% 30%,#CFE9AE,#A9D17E)}
+.pv-btn svg{position:absolute;left:8px;bottom:7px;width:40px;height:40px;transform-origin:50% 100%}
+.pv-btn svg.hop{animation:pvHop .5s ease}
+@keyframes pvHop{0%,100%{transform:translateY(0)}35%{transform:translateY(-12px) scale(1.08)}65%{transform:translateY(0) scale(1.02,.94)}}
+@media (prefers-reduced-motion:reduce){.pv-btn svg.hop{animation:none}}
+.pv-btn:focus-visible{outline:3px solid #7598A5;outline-offset:2px;border-radius:14px}
 .pet-shop-head{display:flex;align-items:center;gap:8px;margin:2px 0 6px}
 .pet-shop-head .pet-note-title{margin:0;flex:1 1 auto;min-width:0}
 .pet-shop-head .pet-shop-count{font-size:11px;color:#9A7A55;font-weight:800;margin-left:4px}
@@ -515,32 +556,88 @@ body{background:var(--c-sky-bottom);color:var(--c-ink)}
 .pet-gifts{display:grid;grid-template-columns:1fr;gap:6px}
 .pet-gift{display:flex;gap:8px;align-items:center;padding:8px;border:1px dashed #DDC7A8;border-radius:10px;color:#A48F75;font-size:11px;line-height:1.5}
 .pet-gift.owned{background:#FFF2DC;color:#7D5429;border-style:solid}
+.pet-gift.lock{opacity:.8}
+button.pet-gift{box-sizing:border-box;width:100%;margin:0;font:inherit;text-align:left;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button.pet-gift:focus-visible{outline:3px solid #7598A5;outline-offset:2px}
+.pet-gift.nope{animation:albNope .45s ease}
 .pet-gift svg{width:28px;height:28px;flex:none}
 .pet-gift .pg-main{flex:1;min-width:0}
-.pet-gift .pg-main b{display:flex;align-items:center;gap:6px;font-size:13px;color:#684321}
-.pet-gift .pg-main small{display:block;font-size:10.5px;color:#98704C}
-.pet-gift .pg-main small.up{color:#B0642E;font-weight:800}
-.pet-gift .tier-stars{width:30px;height:10px}
-.pet-gift .pg-act{display:flex;flex-direction:column;gap:4px;flex:none}
-.pet-gift .pg-act .pet-link{min-height:30px;padding:6px 10px}
+.pet-gift .tier-stars{width:48px;height:15px}
+.pet-gift .pg-art{display:block;flex:none;box-sizing:border-box;width:46px;height:46px;padding:5px;margin:0;border:2px solid #E9C98E;border-radius:12px;background:#FFF9EC;font:inherit;cursor:pointer}
+.pet-gift .pg-art svg{display:block;width:100%;height:100%}
+.pet-gift.lock .pg-art{border:2px dashed #E2D3BA;background:#F6EEDF;cursor:default}
+.pet-gift.lock .pg-art svg{opacity:.22;filter:grayscale(1)}
+.pet-gift .pg-q{font-size:20px;font-weight:900;color:#C9B393}
+.pet-gift .pg-bar{position:relative;display:block;height:9px;margin-top:6px;border-radius:99px;background:rgba(94,55,22,.14)}
+.pet-gift .pg-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#FFC94A,#F28B2E)}
+.pet-gift .pg-bar s{position:absolute;top:-2px;bottom:-2px;width:3px;margin-left:-3px;border-radius:2px;background:#C9A06A;text-decoration:none}
 .pet-link:disabled{opacity:.45;cursor:default}
-.pet-want{display:flex;gap:9px;align-items:center;margin:8px 0 4px;padding:8px 10px;border-radius:12px;background:#FFF1DC;border:1.5px solid #F2C48C;font-size:12px;line-height:1.55;color:#7D5429;text-align:left}
-.pet-want[hidden]{display:none}
-.pet-want .mat-art{width:34px;height:34px}
-.pet-want span{flex:1;min-width:0}
-.pet-want b{display:block;font-size:13px;color:#684321}
-.pet-bag{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0}
-.pet-bag-chip{display:inline-flex;align-items:center;gap:4px;min-height:36px;padding:4px 10px 4px 6px;border:1.5px solid #E9A04B;border-radius:99px;background:#FFF0D4;color:#775839;font:inherit;font-size:12px;font-weight:900;cursor:pointer}
-.pet-bag-chip .mat-art{width:22px;height:22px}
-.pet-bag-chip:active{transform:translateY(1px)}
+.pet-top{position:sticky;top:0;z-index:6;flex:none;height:0}
+.pet-x{position:absolute;right:-6px;top:-8px;display:flex;align-items:center;justify-content:center;width:44px;height:44px;margin:0;padding:0;border:2px solid #F0A862;border-radius:50%;background:#FFF7E9;color:#C25510;box-shadow:0 3px 0 #E3B98A;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.pet-x .ic{width:22px;height:22px;fill:currentColor;stroke:none}
+.pet-x:active{transform:translateY(2px);box-shadow:0 1px 0 #E3B98A}
+.pet-x:focus-visible{outline:3px solid #7598A5;outline-offset:2px}
+.pet-xp{margin:8px 0 0;text-align:center;color:#8A5B22}
+.pet-xp[hidden]{display:none}
+.pet-xp .xp-n{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:900}
+.pet-xp .xp-n b{font-size:22px;line-height:1;color:#C25510}
+.pet-xp .xp-n .orb{width:14px;height:14px}
+.pet-xp .xp-gap{display:block;margin-top:3px;font-size:13px;font-weight:800;color:#996020}
+.today-bowls{display:inline-flex;align-items:center;gap:6px;margin:0;padding:4px 10px;border-radius:99px;background:#FFF3D8;border:2px solid #F6DDAE;box-shadow:inset 0 2px 4px rgba(150,100,40,.16)}
+.today-bowls[hidden]{display:none}
+.today-bowls svg{display:block;width:34px;height:26px}
+.today-bowls .bw path{fill:#FFFDF6;stroke:#D2B07C}
+.today-bowls .bw circle{display:none}
+.today-bowls .bw.on path{fill:#FFE2A0;stroke:#D98F2B}
+.today-bowls .bw.on circle{display:block;fill:#FFB62E;stroke:#fff}
+.today-head .today-dots,.today-head .today-bowls{box-sizing:border-box;min-height:44px;align-items:center;margin:0;font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.pet-panel .today-dots{gap:2px;padding:4px 5px}
+.pet-panel .today-bowls{gap:3px;padding:4px 8px}
+.pet-panel .today-bowls svg{width:30px;height:23px}
+.pet-panel .pet-story-invite button{width:50px}
+.today-head .today-dots:focus-visible,.today-head .today-bowls:focus-visible{outline:3px solid #7598A5;outline-offset:2px}
+.today-head .today-dots:active,.today-head .today-bowls:active{transform:translateY(2px)}
+@keyframes tdPop{0%,100%{transform:scale(1)}40%{transform:scale(1.35)}}
+.today-dots.tap s,.today-bowls.tap svg{animation:tdPop .5s ease both}
+.today-dots.tap s:nth-child(2),.today-bowls.tap svg:nth-child(2){animation-delay:.07s}
+.today-dots.tap s:nth-child(3),.today-bowls.tap svg:nth-child(3){animation-delay:.14s}
+.today-dots.tap s:nth-child(4){animation-delay:.21s}
+.today-dots.tap s:nth-child(5){animation-delay:.28s}
+.pet-head-tip{position:absolute;left:0;right:0;top:100%;z-index:6;margin:6px 0 0;font-size:13px;box-shadow:0 4px 10px rgba(94,55,22,.2);pointer-events:none}
+.pet-bag{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,1fr);gap:9px;margin:0 0 4px;padding:10px 10px 14px;border-radius:16px;background:linear-gradient(#F8EAD0,#F2DDB8);box-shadow:inset 0 -6px 0 #D9B27A}
+#petPanelToday:not([hidden]){display:flex;flex-direction:column}
+#petPanelToday>.today-head{flex:none}
+#petBagBox:not([hidden]){display:flex;flex-direction:column;flex:1 0 auto}
+#petBagBox>.pet-bag{flex:1 0 auto}
+.pet-bag-chip,.pet-bag-slot{position:relative;display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:100px;padding:4px;margin:0;border-radius:16px;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.pet-bag-chip{border:2px solid #E9A04B;background:#FFF8EA;box-shadow:0 3px 0 #D9B27A}
+.pet-bag-slot{border:2px dashed #E0C79B;background:rgba(255,255,255,.5)}
+.pet-bag-chip .mat-art,.pet-bag-slot .mat-art{width:62px;height:62px}
+.pet-bag-slot .mat-art{opacity:.28}
+.pe-cell{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-width:0;box-sizing:border-box;margin:0;padding:0;border:0;background:none;font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.pe-cell:focus-visible{outline:3px solid #7598A5;outline-offset:2px;border-radius:14px}
+.pe-gift{position:relative;display:flex;align-items:center;justify-content:center;flex:none;width:44px;height:44px;box-sizing:border-box;border-radius:50%;background:#FFFDF6;border:2px solid #E9C98E;box-shadow:0 2px 0 #D9B27A}
+.pe-gift:after{content:"";position:absolute;left:50%;bottom:-7px;width:11px;height:11px;margin-left:-5px;box-sizing:border-box;background:#FFFDF6;border:solid #E9C98E;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.pe-gift .mat-art{width:32px;height:32px}
+.pe-pal{position:relative;display:block;flex:none;width:76px;height:70px}
+.pe-mound{position:absolute;left:0;bottom:0;display:block;width:100%;height:auto}
+.pe-pal .pe-an{position:absolute;left:10px;bottom:8px;width:56px;height:56px;transform-origin:50% 100%}
+.pe-pal .pe-an.hop{animation:pvHop .5s ease}
+.pbc-pal{position:absolute;left:3px;bottom:3px;width:28px;height:28px;box-sizing:border-box;padding:2px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(94,55,22,.32);pointer-events:none}
+.pet-fly{position:fixed;z-index:1060;width:56px;height:56px;margin:0;pointer-events:none;will-change:transform}
+.pet-fly .mat-art{width:100%;height:100%}
+.pet-gain{position:absolute;left:50%;bottom:128px;z-index:5;margin-left:-24px;width:48px;text-align:center;color:#E8731A;font-size:26px;font-weight:900;line-height:1;pointer-events:none;text-shadow:0 2px 0 #fff,0 -2px 0 #fff,2px 0 0 #fff,-2px 0 0 #fff;animation:petGain 1s ease-out forwards}
+@keyframes petGain{0%{opacity:0;transform:translateY(8px) scale(.6)}20%{opacity:1;transform:translateY(0) scale(1.15)}100%{opacity:0;transform:translateY(-44px) scale(1)}}
+@media (prefers-reduced-motion:reduce){.pe-pal .pe-an.hop{animation:none}.pet-gift.nope{animation:none}.pet-gain{animation:none}.today-dots.tap s,.today-bowls.tap svg{animation:none}}
+.pet-bag-chip span{position:absolute;right:-6px;top:-8px;min-width:22px;height:22px;padding:0 3px;box-sizing:border-box;border:2px solid #fff;border-radius:99px;background:#E9A04B;color:#fff;font-size:13px;font-weight:900;line-height:18px;text-align:center}
+.pet-bag-chip:active{transform:translateY(2px);box-shadow:0 1px 0 #D9B27A}
+.pet-bag-chip:focus-visible,.pet-bag-slot:focus-visible{outline:3px solid #7598A5;outline-offset:2px}
+.pet-visitor:empty{display:none}
+.ps-sr.ps-sr{min-height:0;margin:-1px}
 .pet-use-tip{margin:6px 0 2px;padding:8px 12px;border:1.5px solid #F2C48C;border-radius:12px;background:#FFF6DA;color:#8A5A1E;font-size:12px;font-weight:800;line-height:1.55;text-align:left;animation:petTipIn .22s ease-out}
 @keyframes petTipIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.pet-use-tip{animation:none}}
-.pet-log-entry{position:relative;border-left:2px solid #E2C7A3;padding:2px 0 12px 13px;margin-left:5px;color:#85603C;font-size:12px;line-height:1.5}
-.pet-log-entry:before{content:'';position:absolute;left:-5px;top:7px;width:8px;height:8px;border-radius:50%;background:#E7A64E}
 .pet-link{border:0;border-radius:9px;padding:8px;background:#F0E1CA;color:#886031;font:inherit;font-size:11px;font-weight:900;cursor:pointer}
-.pet-footer{margin-top:14px;flex:none}
-.pet-footer .locked-modal-btn{padding:11px 5px;font-size:14px;justify-content:center;align-items:center}
 #petBirthModal{z-index:1050}
 .pet-birth-card{width:min(390px,100%)}
 .pet-birth-art{position:relative;width:145px;height:140px;margin:5px auto}
@@ -550,11 +647,16 @@ body{background:var(--c-sky-bottom);color:var(--c-ink)}
 .pet-name-input{display:block;width:75%;margin:8px auto 15px;border:2px solid #EAC591;border-radius:12px;background:#FFF9EB;padding:10px;text-align:center;color:#77502A;font:inherit;font-weight:900}
 @keyframes petHello{from{transform:translateY(20px) scale(.45);opacity:0}to{transform:none;opacity:1}}
 @keyframes petShell{from{transform:translateY(-25px)}to{transform:translateX(var(--shell-x)) rotate(var(--shell-r))}}
-@media(max-height:580px) and (min-width:601px){#petModal .pet-card{padding:14px 18px}.pet-nest{height:145px}.pet-nest .pet-art{width:98px;height:98px;left:51px;bottom:31px}.pet-nest .pet-art.egg-view{width:106px;height:106px;left:47px;bottom:27px}.pet-journal{max-height:285px}.pet-home .pet-stage-name{margin-top:4px}.pet-home .pet-desc{font-size:12px}.pet-response{margin-top:2px;min-height:1.5em}.pet-home .en-head{margin-bottom:6px}.pet-home .en-bar{margin-bottom:15px}.pet-home .en-next{padding:6px 10px}.pet-footer{margin-top:6px}#petModal .locked-modal-title{font-size:22px;margin-bottom:5px}}
-@media(max-height:520px) and (min-width:601px){.pet-nest{zoom:.78}.pet-nest .nest-item{min-width:36px;min-height:36px}.pet-home .pet-stage-name{font-size:17px;margin-top:2px}.pet-home .pet-desc{font-size:11px;min-height:0;margin:2px 0 5px}.pet-home .en-next small,.pet-home .en-next b{display:inline}.pet-home .en-next small{margin-right:6px}.pet-home .en-next .th{width:40px;height:40px}.pet-home .en-next .th svg{width:40px;height:40px}.pet-footer .locked-modal-btn{padding-top:9px;padding-bottom:9px}}
-@media(max-width:600px){#petModal .pet-card{overflow-y:auto;padding:16px}.pet-layout{display:block}.pet-nest{height:140px}.pet-nest .pet-art{width:100px;height:100px;left:50px;bottom:30px}.pet-nest .pet-art.egg-view{width:120px;height:120px;left:40px;bottom:26px}.pet-home{padding-bottom:10px}.pet-journal{margin-top:12px;max-height:300px}.pet-panel{max-height:230px}.pet-footer{position:sticky;bottom:-16px;padding:10px 0;background:#FFF7E9}}
+@media(max-height:580px) and (min-width:601px){#petModal .pet-card{padding:14px 18px}.pet-journal{max-height:285px}.pet-home .pet-stage-name{margin-top:2px}#petModal .locked-modal-title{font-size:22px;margin-bottom:5px}}
+@media(max-height:520px) and (min-width:601px){.pet-home .pet-stage-name{font-size:17px;margin-top:0}}
+@media(max-width:600px){#petModal .pet-card{overflow-y:auto;padding:16px}.pet-layout{display:block}.pet-nest{height:140px}.pet-nest .pet-art{width:100px;height:100px;left:50px;bottom:30px}.pet-nest .pet-art.egg-view{width:120px;height:120px;left:40px;bottom:26px}.pet-home{padding-bottom:10px}.pet-journal{margin-top:12px;max-height:300px}.pet-panel{max-height:230px}}
 @media(min-width:601px){.pet-journal{contain:size;max-height:none;min-height:350px;position:relative;display:block}.pet-tabs{position:absolute;top:0;left:0;right:0;height:40px;margin-bottom:0}.pet-panel{position:absolute;top:50px;left:0;right:0;bottom:0}}
 @media(min-width:601px) and (max-height:520px){.pet-journal{min-height:324px}}
+@media(min-width:860px){#petModal .pet-card{width:min(800px,100%)}.pet-nest{--k:1.38}}
+@media(min-width:601px) and (max-width:859px){.pet-panel .today-dots{gap:2px;padding:4px 5px}.pet-panel .today-dots s{width:18px;height:18px}.pet-panel .today-bowls{gap:3px;padding:4px 7px}.pet-panel .today-bowls svg{width:26px;height:20px}.pet-bag{gap:7px;padding:8px 8px 12px}.pet-bag-chip,.pet-bag-slot{min-height:78px}.pet-bag-chip .mat-art,.pet-bag-slot .mat-art{width:48px;height:48px}.pe-gift{width:34px;height:34px}.pe-gift .mat-art{width:24px;height:24px}.pe-cell{gap:5px}.pe-pal{width:58px;height:52px}.pe-pal .pe-an{left:8px;bottom:5px;width:42px;height:42px}.pj-step{width:50px;height:50px}.pj-step svg{width:28px;height:28px}.pj-step svg.mat-art{width:30px;height:30px}.pj-arrow{width:14px;height:14px}.pet-adopt{font-size:19px;min-height:44px;padding:0 20px}}
+@media(min-width:860px){.pj-step{width:68px;height:68px}.pj-step svg{width:38px;height:38px}.pj-step svg.mat-art{width:40px;height:40px}.pj-arrow{width:22px;height:22px}}
+@media(min-width:601px){.pet-preview{position:absolute;top:0;left:0;right:0;bottom:0;min-height:0}}
+@media(max-width:600px){.pet-bag-chip,.pet-bag-slot{min-height:84px}.pet-bag-chip .mat-art,.pet-bag-slot .mat-art{width:52px;height:52px}.pe-gift{width:40px;height:40px}.pe-gift .mat-art{width:28px;height:28px}.pe-cell{gap:4px}.pe-pal{width:64px;height:58px}.pe-pal .pe-an{left:9px;bottom:6px;width:46px;height:46px}}
 @media(max-width:600px){.pet-journal{max-height:440px}.pet-panel{max-height:380px}}
 @media(prefers-reduced-motion:reduce){.pet-birth-art svg,.pet-shell{animation:none}.pet-art.cheer{animation:none}}
 
@@ -616,15 +718,27 @@ body{background:var(--c-sky-bottom);color:var(--c-ink)}
 .mist-ok{padding:2px 8px;border-radius:var(--r-chip);background:rgba(255,138,61,0.16);color:var(--c-primary-deep)}
 .mist-sub{color:var(--c-ink-soft);font-size:var(--fs-sm);font-weight:800;margin-bottom:10px}
 
-/* ── 图鉴：6 关印章收集册网格（未解锁=灰锁 / 已通关=点亮 / 三星=镀金） ── */
+/* ── 旅行伙伴：每位朋友 = 头像 + 3 颗星（通关）+ 3 颗爱心（礼物升档）；点一下听它自我介绍 ── */
 .collection-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
-.stamp-cell{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px 8px;
+@media(min-width:600px){.collection-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}}
+.stamp-cell{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px 8px;margin:0;font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;
   border-radius:var(--r-card);background:var(--c-surface-warm);border:2px solid rgba(74,42,16,0.08)}
+.stamp-cell:active{transform:translateY(1px)}
+.stamp-cell:focus-visible{outline:3px solid #7598A5;outline-offset:2px}
+.fr-row{display:flex;gap:2px;justify-content:center;height:14px}
+.fr-row svg{display:block;width:14px;height:14px}
+.stamp-cell.bestie{background:#FFF3D6;box-shadow:0 0 0 3px rgba(255,198,61,.4)}
+.fr-meter{display:flex;align-items:center;gap:8px;margin:0 4px 12px}
+.fr-meter>i{display:block;width:26px;height:26px;flex:none}
+.fr-meter>i svg{display:block;width:100%;height:100%}
+.fr-bar{flex:1;height:14px;border-radius:99px;background:#EBDCC0;box-shadow:inset 0 2px 4px rgba(94,55,22,.26);overflow:hidden}
+.fr-bar b{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#FF9AA9,#F26A7E)}
+.stamp-medal svg.hop{animation:pvHop .5s ease}
+@media (prefers-reduced-motion:reduce){.stamp-medal svg.hop{animation:none}}
 .stamp-medal{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;
   font-weight:900;font-size:19px;color:#fff;background:#CBB9A6;box-shadow:var(--shadow-inset-hi)}
 .stamp-medal .ic{width:22px;height:22px;color:#fff;stroke:currentColor}
 .stamp-name{font-size:var(--fs-xs);font-weight:800;color:var(--c-ink-soft);line-height:1.2;text-align:center}
-.stamp-stars{font-size:11px;min-height:1em;white-space:nowrap}
 .stamp-cell.lit .stamp-medal{background:linear-gradient(var(--grad-angle),var(--c-primary),var(--c-primary-deep))}
 .stamp-cell.lit .stamp-name{color:var(--c-ink)}
 .stamp-cell.gold{border-color:var(--c-gold)}
@@ -633,7 +747,7 @@ body{background:var(--c-sky-bottom);color:var(--c-ink)}
 /* 步骤3 · 旅行伙伴：彩色伙伴放在淡色圆底上（点亮/镀金都换淡底，让多彩动物看清）；.dim=已解锁未通关伙伴剪影（opacity 调暗，不用 filter） */
 .stamp-medal .pic{width:34px;height:34px}
 .stamp-medal.partner,.stamp-cell.lit .stamp-medal.partner,.stamp-cell.gold .stamp-medal.partner{background:#FFF6E8}
-.stamp-cell.dim{opacity:0.5}
+.stamp-cell.dim{opacity:0.6}
 /* 步骤3 · 大结局「全家福」：6 只伙伴一排，居中换行，静态无动画 */
 .ending-family{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:2px 0 14px}
 .ending-family .pic{width:40px;height:40px}
@@ -763,6 +877,8 @@ body{background:var(--c-sky-bottom);color:var(--c-ink)}
   <symbol id="i-gift" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10.5" rx="1.6" fill="none" stroke="currentColor" stroke-width="2"/><rect x="3" y="7" width="18" height="3.6" rx="1.2" fill="none" stroke="currentColor" stroke-width="2"/><line x1="12" y1="7" x2="12" y2="20.5" stroke="currentColor" stroke-width="2"/><path d="M12 7 C12 7 10.4 2.6 7.7 3.5 C5.8 4.1 7 7 12 7 Z M12 7 C12 7 13.6 2.6 16.3 3.5 C18.2 4.1 17 7 12 7 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5 L10 17.5 L19 6.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-book" viewBox="0 0 24 24"><rect x="4" y="3.5" width="16" height="17" rx="2.4" fill="none" stroke="currentColor" stroke-width="2"/><line x1="8.2" y1="3.5" x2="8.2" y2="20.5" stroke="currentColor" stroke-width="2"/><line x1="11.4" y1="8" x2="16.8" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="11.4" y1="12" x2="16.8" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="11.4" y1="16" x2="16.8" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6 18 18M18 6 6 18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 24 24"><path d="M7 12.5V7a1.5 1.5 0 0 1 3 0V5a1.5 1.5 0 0 1 3 0v1a1.5 1.5 0 0 1 3 0v2.5a1.5 1.5 0 0 1 3 0V16a6 6 0 0 1-6 6h-1.4a6 6 0 0 1-4.6-2.1L3.8 15.2a1.6 1.6 0 0 1 2.4-2.1L7 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 7v5M13 6v6M16 8.5V12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
   <!-- 图鉴入口：卡册网格（3 格 + 一枚星），和 i-book 的「翻页书」区分开 -->
   <symbol id="i-album" viewBox="0 0 24 24"><rect x="3.4" y="3.4" width="7.6" height="7.6" rx="1.7" fill="none" stroke="currentColor" stroke-width="2"/><rect x="13" y="3.4" width="7.6" height="7.6" rx="1.7" fill="none" stroke="currentColor" stroke-width="2"/><rect x="3.4" y="13" width="7.6" height="7.6" rx="1.7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16.8 13.1 L17.9 15.6 L20.7 15.8 L18.6 17.6 L19.3 20.4 L16.8 18.9 L14.3 20.4 L15 17.6 L12.9 15.8 L15.7 15.6 Z" fill="currentColor" stroke="none"/></symbol>
   <!-- 勋章墙入口 + 奖牌造型：绶带两条斜带 + 圆牌 + 内嵌星，和 i-star/i-crown 区分开 -->
@@ -889,7 +1005,7 @@ body{background:var(--c-sky-bottom);color:var(--c-ink)}
   <!-- 顶栏 -->
   <div class="topbar band anim-slide" style="animation-delay:0.1s">
     <div class="topbar-left">
-      <div class="profile-badge" onclick="showProfile()" role="button" tabindex="0" aria-label="我的档案">
+      <div class="profile-badge" onclick="mgSayPick(MG_SAY.profile,'profile',1);showProfile()" role="button" tabindex="0" aria-label="我的档案">
         <span class="avatar" aria-hidden="true"><svg class="crest" viewBox="0 0 46 50"><use href="#s-crest"/></svg><svg class="ic" viewBox="0 0 24 24"><use href="#i-user"/></svg></span>
         <span class="profile-meta">
           <span id="rankTitle" class="rank-title">小小旅人</span>
@@ -897,15 +1013,15 @@ body{background:var(--c-sky-bottom);color:var(--c-ink)}
         </span>
       </div>
       <!-- 连续天数。没有连续记录时整块不出现（见 .streak-pill 默认 display:none）。点开 = 连签日历（步骤4） -->
-      <span id="streakPill" class="streak-pill" onclick="showDaily()" role="button" tabindex="0" aria-label="打卡日历"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-flame"/></svg><span id="streakNum">0</span> 天<i class="streak-dot" aria-hidden="true"></i></span>
+      <span id="streakPill" class="streak-pill" onclick="mgSayPick(MG_SAY.streak,'streak',1);showDaily()" role="button" tabindex="0" aria-label="打卡日历"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-flame"/></svg><span id="streakNum">0</span> 天<i class="streak-dot" aria-hidden="true"></i></span>
       <!-- 星币钱包：做题赚币的总额，始终显示 -->
       <span id="coinPill" class="coin-pill" role="img" aria-label="星币"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-coin"/></svg><span id="coinCount">0</span></span>
     </div>
     <div class="topbar-actions">
-      <button class="icon-btn" onclick="showPet()" aria-label="我的萌宠"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-pet"/></svg></button>
-      <button id="mistakeBtn" class="icon-btn" onclick="showMistakes()" aria-label="错题本"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-book"/></svg><i class="icon-dot" aria-hidden="true"></i></button>
-      <button class="icon-btn" onclick="showCollection()" aria-label="旅行伙伴"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-album"/></svg></button>
-      <button class="icon-btn" onclick="showSettings()" aria-label="设置"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-gear"/></svg></button>
+      <button id="petBtn" class="icon-btn" onclick="showPet()" aria-label="我的萌宠"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-pet"/></svg><i class="icon-dot" aria-hidden="true"></i></button>
+      <button id="mistakeBtn" class="icon-btn" onclick="mgSayPick(MG_SAY.mistake,'mistake',1);showMistakes()" aria-label="错题本"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-book"/></svg><i class="icon-dot" aria-hidden="true"></i></button>
+      <button class="icon-btn" onclick="mgSayPick(MG_SAY.album,'album',1);showCollection()" aria-label="旅行伙伴"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-album"/></svg></button>
+      <button class="icon-btn" onclick="mgSayPick(MG_SAY.settings,'settings',1);showSettings()" aria-label="设置"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-gear"/></svg></button>
     </div>
   </div>
 
@@ -921,10 +1037,10 @@ body{background:var(--c-sky-bottom);color:var(--c-ink)}
 
   <!-- 模式选择器 -->
   <div class="mode-wrap anim-slide" style="animation-delay:0.2s" role="group" aria-label="模式选择">
-    <button id="btnVisual" onclick="setMode('visual')" class="mode-btn active" aria-pressed="true">
+    <button id="btnVisual" onclick="setMode('visual');mgSay(MG_SAY.visual)" class="mode-btn active" aria-pressed="true">
       <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-eye"/></svg> 口算模式
     </button>
-    <button id="btnAudio" onclick="setMode('audio')" class="mode-btn inactive" aria-pressed="false">
+    <button id="btnAudio" onclick="setMode('audio');mgSay(MG_SAY.audio)" class="mode-btn inactive" aria-pressed="false">
       <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-ear"/></svg> 听算模式
     </button>
   </div>
@@ -1069,7 +1185,7 @@ body{background:var(--c-sky-bottom);color:var(--c-ink)}
       <span id="sprintPillGo" class="sp-go" aria-hidden="true">去打卡</span>
     </button>
     <!-- 速算难度小标签：叠在打卡卡右上角（红「!」左边），点开选 10 以内 / 20 以内 / 100 以内；与卡片并列而不是嵌进按钮里 -->
-    <button type="button" id="tierChip" class="tier-chip anim-slide" style="animation-delay:0.6s" onclick="showTier()" aria-label="选择速算难度，现在是 10 以内"><span id="tierChipTx">10以内</span><svg class="tc-caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1.2 1.2L5 4.8L8.8 1.2"/></svg></button>
+    <button type="button" id="tierChip" class="tier-chip anim-slide" style="animation-delay:0.6s" onclick="mgSayPick(MG_SAY.tier,'tier',1);showTier()" aria-label="选择速算难度，现在是 10 以内"><span id="tierChipTx">10以内</span><svg class="tc-caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1.2 1.2L5 4.8L8.8 1.2"/></svg></button>
     </div>
   </div>
 
@@ -1128,52 +1244,46 @@ body{background:var(--c-sky-bottom);color:var(--c-ink)}
 <div id="petModal" class="locked-modal" aria-hidden="true">
   <div class="locked-modal-bg" onclick="hidePet()"></div>
   <div class="locked-modal-card pet-card" role="dialog" aria-modal="true" aria-labelledby="petTitle">
-    <div class="pet-eyebrow">一颗萌蛋 · 一起长大的约定</div>
+    <div class="pet-top"><button type="button" id="petCloseBtn" class="pet-x" aria-label="收好手记" onclick="hidePet()"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-close"/></svg></button></div>
+    <div class="pet-eyebrow ps-sr">一颗萌蛋 · 一起长大的约定</div>
     <div id="petTitle" class="locked-modal-title">数宝的旅行小窝</div>
     <div class="pet-layout">
       <div class="pet-home">
         <div id="petNest" class="pet-nest">
           <svg class="nest-basket" viewBox="0 0 200 150" aria-hidden="true"><ellipse cx="100" cy="124" rx="77" ry="12" fill="#DEC7A6" opacity=".4"/><path d="M29 94 Q100 61 171 94 L155 121 Q100 148 45 121Z" fill="var(--nest-color,#DDEDCB)" stroke="#A57A47" stroke-width="3"/><path d="M31 94 Q100 121 169 94M44 104L51 123M69 112L72 132M100 116V136M130 112L127 132M155 104L148 123" fill="none" stroke="#A57A47" stroke-width="2" opacity=".6"/><path d="M32 83Q18 55 43 59Q61 63 53 88M152 88Q153 59 175 67Q183 81 161 90" fill="#9BBB75" stroke="#6E945A" stroke-width="2"/></svg>
           <div id="petNestItems" class="nest-items" aria-label="已经安放的旅行礼物"></div>
-          <svg id="petArt" class="pet-art" viewBox="0 0 64 64" aria-hidden="true"><use href="#pet-egg"/></svg>
-          <span id="petNestLabel" class="pet-nest-label">带着萌蛋出发吧</span>
+          <svg id="petArt" class="pet-art" viewBox="0 0 64 64" role="button" tabindex="0" aria-label="摸一摸萌蛋" onclick="touchEgg()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();touchEgg()}"><use href="#pet-egg"/></svg>
         </div>
         <div id="petName" class="pet-stage-name">萌蛋</div>
-        <div id="petDesc" class="pet-desc"></div>
+        <button type="button" class="pet-adopt" id="petAdoptBtn" aria-label="领养萌蛋" onclick="adoptPet()"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-pet"/></svg><span>领养</span></button>
+        <div id="petDesc" class="pet-desc ps-sr"></div>
         <div id="petEnergy" class="energy"></div>
-        <div id="petResponse" class="pet-response" aria-live="polite"></div>
+        <div id="petEnergyNum" class="pet-xp" hidden></div>
+        <div id="petResponse" class="pet-response ps-sr" aria-live="polite"></div>
       </div>
       <div class="pet-journal">
-        <div class="pet-tabs" role="tablist" aria-label="小窝手记">
-          <button type="button" id="petTabToday" role="tab" aria-controls="petPanelToday" aria-selected="true" onclick="petTab('Today')">今天</button>
-          <button type="button" id="petTabNest" role="tab" aria-controls="petPanelNest" aria-selected="false" onclick="petTab('Nest')">小窝</button>
-          <button type="button" id="petTabLog" role="tab" aria-controls="petPanelLog" aria-selected="false" onclick="petTab('Log')">手记</button>
+        <div class="pet-tabs" role="tablist" aria-label="旅行小窝">
+          <button type="button" id="petTabToday" role="tab" aria-controls="petPanelToday" aria-selected="true" onclick="mgSay(MG_SAY.tabs.Today);petTab('Today')"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11h17c0 5.2-3.4 8.5-8.5 8.5S3.5 16.2 3.5 11Z M9 7.4c0-1.4 1.4-1.6 1.4-3 M14 7.4c0-1.4 1.4-1.6 1.4-3" stroke-linecap="round" stroke-linejoin="round"/></svg><span>喂蛋</span></button>
+          <button type="button" id="petTabNest" role="tab" aria-controls="petPanelNest" aria-selected="false" onclick="mgSay(MG_SAY.tabs.Nest);petTab('Nest')"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11.5 12 4l8.5 7.5 M6 10v9.5h12V10 M10 19.5v-5h4v5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>布置</span></button>
+          <button type="button" id="petTabLog" role="tab" aria-controls="petPanelLog" aria-selected="false" onclick="mgSay(MG_SAY.tabs.Log);petTab('Log')"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-album"/></svg><span>贴纸</span></button>
         </div>
+        <div id="petPreview" class="pet-preview" role="img" aria-label="玩游戏带回材料，喂给萌蛋，萌蛋长成数宝"></div>
         <div class="pet-panel" id="petPanelToday" role="tabpanel" aria-labelledby="petTabToday">
-          <div id="petDailyStatus" class="pet-note-title"></div><div id="petTodayDots" class="today-dots" role="img"></div><div id="petTaskText" class="pet-note"></div>
-          <div id="petWant" class="pet-want" hidden></div>
-          <button type="button" class="locked-modal-btn" id="petStartBtn" onclick="startPetTask()">做一轮小练习</button>
-          <div id="petBagBox" hidden><div class="pet-note-title">我的背包</div><div id="petBag" class="pet-bag"></div><p id="petBagNote" class="pet-note"></p></div>
-          <div id="petVisitor" class="pet-visitor"></div>
-          <div id="petStoryInvite" class="pet-story-invite" hidden></div>
-          <p class="pet-note">每天答对 5 题打卡 +4 点；通关会带回朋友的一份材料，在这里用上就 +3 点（每天最多用 3 份）。萌蛋每天最多吸收 10 点成长能量，休息几天也不会掉。</p>
+          <div class="today-head"><button type="button" id="petTodayDots" class="today-dots" onclick="petTapHint('dots',this)"></button><button type="button" id="petTodayBowls" class="today-bowls" onclick="petTapHint('bowls',this)" hidden></button><div id="petDailyStatus" class="ps-sr"></div><div id="petVisitor" class="pet-visitor"></div><div id="petStoryInvite" class="pet-story-invite" hidden></div></div>
+          <div id="petBagBox" hidden><div class="pet-note-title ps-sr">我的背包</div><div id="petBag" class="pet-bag"></div><p id="petBagNote" class="ps-sr"></p></div>
+          <p class="pet-note ps-sr">每天答对 5 题打卡 +4 点；通关会带回朋友的一份材料，在这里用上就 +3 点（每天最多用 3 份）。萌蛋每天最多吸收 10 点成长能量，休息几天也不会掉。</p>
         </div>
         <div class="pet-panel" id="petPanelNest" role="tabpanel" aria-labelledby="petTabNest" hidden>
           <div class="pet-coins-line"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-coin"/></svg> 我的星币：<span id="petCoins">0</span></div>
           <div class="pet-shop-head"><div class="pet-note-title">小窝商店<span class="pet-shop-count" id="petShopCount"></span></div><span class="pet-shop-hint" id="petShopHint">左右滑动看更多</span><button type="button" class="pet-shop-btn" id="petShopPrev" aria-label="往左看" onclick="petShopScroll(-1)">&lsaquo;</button><button type="button" class="pet-shop-btn" id="petShopNext" aria-label="往右看" onclick="petShopScroll(1)">&rsaquo;</button></div>
           <div class="pet-shelves" id="petShelves" role="group" aria-label="商店货架"><button type="button" class="pet-shelf" data-shelf="0" aria-pressed="true" onclick="petShelf(0)">窝色<i></i></button><button type="button" class="pet-shelf" data-shelf="1" aria-pressed="false" onclick="petShelf(1)">摆件<i></i></button><button type="button" class="pet-shelf" data-shelf="2" aria-pressed="false" onclick="petShelf(2)">挂饰<i></i></button></div>
-          <div id="petDecors" class="pet-decors"></div><div class="pet-note-title">朋友送来的旅行礼物</div><div id="petGifts" class="pet-gifts"></div>
-          <p class="pet-note">通关会带回朋友的材料，用上一份，礼物就长大一点；用到 10、30、60 份，礼物会换上更漂亮的样子，还会解锁新故事。背包每种最多存 9 份，每天最多用 3 份。</p>
+          <div id="petDecors" class="pet-decors"></div><div class="pet-note-title">朋友的礼物</div><div id="petGifts" class="pet-gifts"></div>
+          <p class="pet-note ps-sr">通关会带回朋友的材料，用上一份，礼物就长大一点；用到 10、30、60 份，礼物会换上更漂亮的样子，还会解锁新故事。背包每种最多存 9 份，每天最多用 3 份。</p>
         </div>
         <div class="pet-panel" id="petPanelLog" role="tabpanel" aria-labelledby="petTabLog" hidden>
           <div id="petLog" class="pet-log"></div><button type="button" id="petReplay" class="pet-link" onclick="showPetBirth(true)">重看出生纪念</button>
         </div>
       </div>
-    </div>
-    <div class="locked-modal-btns pet-footer">
-      <button type="button" class="locked-modal-btn ghost" onclick="hidePet()">收好手记</button>
-      <button type="button" class="locked-modal-btn" id="petAdoptBtn" onclick="adoptPet()">领养萌蛋</button>
-      <button type="button" class="locked-modal-btn" id="petFeedBtn" onclick="feedPet()">摸一摸</button>
     </div>
   </div>
 </div>
@@ -1192,10 +1302,11 @@ body{background:var(--c-sky-bottom);color:var(--c-ink)}
 <!-- 图鉴：6 关印章收集册。数据纯派生自 mathgameStars（每关最佳星数）+ 解锁进度，这里只读/只渲染 -->
 <div id="collectionModal" class="locked-modal" aria-hidden="true">
   <div class="locked-modal-bg" onclick="hideCollection()"></div>
-  <div class="locked-modal-card" role="dialog" aria-modal="true" aria-labelledby="collectionTitle" style="width:min(420px,100%)">
+  <div class="locked-modal-card" role="dialog" aria-modal="true" aria-labelledby="collectionTitle" style="width:min(600px,100%)">
     <span class="modal-icon warm" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><use href="#i-album"/></svg></span>
     <div id="collectionTitle" class="locked-modal-title">旅行伙伴</div>
-    <div id="collectionSub" class="mist-sub"></div>
+    <div id="collectionSub" class="mist-sub ps-sr"></div>
+    <div id="collectionMeter" class="fr-meter"></div>
     <div id="collectionGrid" class="collection-grid"></div>
     <div class="locked-modal-btns">
       <button type="button" class="locked-modal-btn" onclick="hideCollection()">好的！</button>
@@ -1406,50 +1517,98 @@ function petTab(tab) {
   if (tab === 'Nest') petShopSync();
 }
 function petGiftArt(lv) { return MG_PET_STORY.giftArt(lv); }
-function petEnergyHTML(g) {
-  if (!g.adopted) return '<div class="en-done">领养后，每天的学习都会变成成长能量</div>';
-  if (g.hatched) return '<div class="en-done">已经见面啦 · 累计学习 ' + g.studyDays + ' 天</div>';
-  const head = '<div class="en-head"><span class="t"><i class="orb"></i>成长能量</span><span><b>' + g.energy + '</b> / ' + g.max + ' 点</span></div>' + MG_PET_STORY.energyBar(g, true);
-  const n = g.next;
-  if (g.ready || !n) return head + '<div class="en-done">出生的时刻到啦！点下面的按钮迎接数宝</div>';
-  const gap = '还差 <em>' + n.gap + '</em> 点能量';
-  const when = '攒到 ' + n.energyAt + ' 点开启';
-  return head + '<div class="en-next"><div class="th">' + MG_PET_STORY.egg(n.index) + '<u>?</u></div><div><small>下一站</small><b>' + n.name + '</b><span class="gap">' + gap + '</span><span class="when">' + when + '</span></div></div>';
-}
+function petEnergyHTML(g) { return MG_PET_STORY.energyPath(g); }
 function petGiftRows(p) {
+  const top = MG_PET.tiers[MG_PET.tiers.length - 1];
   return [1, 2, 7, 3, 4, 5, 6].map(lv => {
     const owned = lv === 7 ? !!MG_PET.storyFor(p, 'gift-7') : p.gifts.includes(lv);
     if (lv === 7 && !owned && p.stage) return '';
-    const when = '第' + (MG_PET.giftPhase[lv] + 1) + '阶段派上用场';
-    if (!owned) return '<div class="pet-gift">' + petGiftArt(lv) + '<span class="pg-main"><b>' + MG_PET.gifts[lv] + '</b><small>' + (lv === 7 ? '萌蛋长到第 4 阶段，朋友们合送' : '结识伙伴后获得') + ' · ' + when + '</small></span></div>';
-    const story = '<button type="button" class="pet-link" onclick="MG_PET_STORY.show(\'gift-' + lv + '\')">故事</button>';
-    if (lv === 7) return '<div class="pet-gift owned">' + petGiftArt(lv) + '<span class="pg-main"><b>' + MG_PET.gifts[lv] + '</b><small>' + MG_PET.stories.find(x => x.id === 'gift-7').use + ' · ' + when + '</small></span><span class="pg-act">' + story + '</span></div>';
-    const t = MG_PET.tierFor(p, lv), used = p.used[lv] || 0, bag = p.bag[lv] || 0, m = MG_PET.mats[lv], next = MG_PET.tiers.find(n => used < n) || 0;
-    const prog = next ? '再用 ' + (next - used) + ' 份，换成「' + MG_PET.giftName(lv, t + 1) + '」' : '已经是最漂亮的样子啦';
-    return '<div class="pet-gift owned">' + petGiftArt(lv) + '<span class="pg-main"><b>' + MG_PET.giftName(lv, t) + MG_PET_STORY.tierStars(t, true) + '</b>'
-      + '<small>' + m.friend + '的「' + m.name + '」· 已用上 ' + used + ' 份</small><small class="up">' + prog + '</small></span>'
-      + '<span class="pg-act"><button type="button" class="pet-link" onclick="useBagMaterial(' + lv + ',this)"' + (bag ? '' : ' disabled') + '>' + (bag ? '用上 ×' + bag : '背包空') + '</button>' + story + '</span></div>';
+    if (!owned) { const hint = MG_PET_STORY.lockLine(p, lv); return '<button type="button" class="pet-gift lock" aria-disabled="true" data-hint="' + hint + '" aria-label="' + MG_PET.gifts[lv] + '，还没有。' + hint + '" onclick="MG_PET_STORY.lockHint(this)"><span class="pg-art" aria-hidden="true">' + petGiftArt(lv) + '</span><span class="pg-main"><span class="pg-q">?</span></span></button>'; }
+    const t = lv === 7 ? 0 : MG_PET.tierFor(p, lv), gname = MG_PET.giftName(lv, t);
+    const art = '<button type="button" class="pg-art" aria-label="' + gname + '，看看它的故事" onclick="MG_PET_STORY.show(\'gift-' + lv + '\')">' + petGiftArt(lv) + '</button>';
+    if (lv === 7) return '<div class="pet-gift owned">' + art + '<span class="pg-main"><b class="ps-sr">' + gname + '</b></span></div>';
+    const used = p.used[lv] || 0;
+    const bar = '<span class="pg-bar" role="img" aria-label="已用上 ' + used + ' 份"><i style="width:' + Math.min(100, used / top * 100) + '%"></i>' + MG_PET.tiers.map(n => '<s style="left:' + (n / top * 100) + '%"></s>').join('') + '</span>';
+    return '<div class="pet-gift owned">' + art + '<span class="pg-main"><b class="ps-sr">' + gname + '</b>' + MG_PET_STORY.tierStars(t, true) + bar + '</span></div>';
   }).join('');
 }
-function petWantLevel(p) {
-  const used = (p || MG_PET.get()).used || {};
-  let best = 0;
-  for (let n = 1; n <= TOTAL_LEVELS; n++) if (isLevelUnlocked(n) && (!best || (used[n] || 0) < (used[best] || 0))) best = n;
-  return best || 1;
+const PET_MOUND = (() => {
+  const L = 'stroke-linecap="round" stroke-linejoin="round"';
+  const fl = (x, y, c) => '<g fill="' + c + '"><circle cx="' + (x - 1.8) + '" cy="' + y + '" r="1.7"/><circle cx="' + (x + 1.8) + '" cy="' + y + '" r="1.7"/><circle cx="' + x + '" cy="' + (y - 1.8) + '" r="1.7"/><circle cx="' + x + '" cy="' + (y + 1.8) + '" r="1.7"/></g><circle cx="' + x + '" cy="' + y + '" r="1.2" fill="#FFE27A"/>';
+  const tuft = (c, xs) => '<path d="' + xs.map(x => 'M' + x + ' 14l1.3-5 1.7 4.5').join('') + '" fill="none" stroke="' + c + '" stroke-width="1.5" ' + L + '/>';
+  return {
+    1: '<ellipse cx="38" cy="14" rx="36.5" ry="12.5" fill="#C9EAA1" stroke="#8EC265" stroke-width="1.5"/>' + tuft('#7DB255', [8, 65]) + fl(15, 20, '#FFB1C6') + fl(60, 23, '#FFB1C6') + fl(37, 24, '#D8C2F5'),
+    2: '<path d="M7 12V20Q7 27.5 38 27.5Q69 27.5 69 20V12Z" fill="#C98B5A" stroke="#A8692F" stroke-width="1.5" stroke-linejoin="round"/><ellipse cx="38" cy="12" rx="31" ry="9.5" fill="#EFCF9E" stroke="#A8692F" stroke-width="1.5"/>'
+      + '<ellipse cx="38" cy="12" rx="21" ry="6.2" fill="none" stroke="#D1A06A" stroke-width="1.2"/><ellipse cx="38" cy="12" rx="11" ry="3.2" fill="none" stroke="#D1A06A" stroke-width="1.2"/>'
+      + '<path d="M17 18v6M30 21v6M47 21v6M60 18v6" stroke="#A8692F" stroke-width="1.2" opacity=".55" ' + L + '/><path d="M11 9Q9 4 14 3Q15.5 8 11 9Z" fill="#9CD07A" stroke="#6BA24C" stroke-width="1" stroke-linejoin="round"/>',
+    3: '<path d="M14 25Q3 25 4 18Q5 12 12 12.5Q12.5 6 20 6.5Q25 1.5 33 4.5Q40 1 46 5Q53 3 56 9Q66 8 69 14Q73 19 66 22.5Q64 25 58 25Z" fill="#F7FCFF" stroke="#A9DDF2" stroke-width="1.5" stroke-linejoin="round"/>'
+      + '<path d="M16 21Q20 18 24 21M44 22Q49 19 53 22" fill="none" stroke="#CDEBF7" stroke-width="1.4" ' + L + '/>',
+    4: '<path d="M4 20Q2 11 12 7.5Q22 3 38 3.5Q54 3 64 7.5Q74 11 72 20Q70 27.5 38 27.5Q6 27.5 4 20Z" fill="#D9D6E6" stroke="#A9A3C4" stroke-width="1.5" stroke-linejoin="round"/>'
+      + '<path d="M10 9Q20 3.5 31 5Q27 10 20 10Q13 12 10 9Z" fill="#A9D48A" stroke="#7FB05C" stroke-width="1" stroke-linejoin="round"/><path d="M46 17l4 3.5-2.5 4M24 20l3-2.5" fill="none" stroke="#B7B1CF" stroke-width="1.3" ' + L + '/>'
+      + '<ellipse cx="63" cy="19" rx="5.5" ry="3.6" fill="#E8E5F2" stroke="#A9A3C4" stroke-width="1.2"/>',
+    5: '<ellipse cx="38" cy="14" rx="36.5" ry="12.5" fill="#F8E6B4" stroke="#E2C27C" stroke-width="1.5"/><path d="M12 21Q16 17.5 20 21T28 21T36 21T44 21T52 21T60 21" fill="none" stroke="#7CCBE6" stroke-width="2" ' + L + '/>'
+      + '<path d="M22 25Q26 22.5 30 25T38 25T46 25T54 25" fill="none" stroke="#B4E3F2" stroke-width="1.6" ' + L + '/><path d="M57 15Q57 10 62 10Q67 10 67 15Z" fill="#FFC1B0" stroke="#EE9482" stroke-width="1" stroke-linejoin="round"/>'
+      + '<path d="M62 10.5V15M59.5 11.5L60.5 15M64.5 11.5L63.5 15" stroke="#EE9482" stroke-width=".8" ' + L + '/>',
+    6: '<ellipse cx="38" cy="14" rx="36.5" ry="12.5" fill="#8FCDB5" stroke="#5FA38A" stroke-width="1.5"/>' + tuft('#5FA38A', [9, 64]) + '<g fill="#FFF3A0" opacity=".6"><circle cx="14" cy="21" r="4.2"/><circle cx="62" cy="20" r="4.2"/><circle cx="38" cy="25" r="3.6"/></g>'
+      + '<g fill="#FFD93A"><circle cx="14" cy="21" r="1.9"/><circle cx="62" cy="20" r="1.9"/><circle cx="38" cy="25" r="1.7"/></g>'
+  };
+})();
+const moundArt = n => '<svg class="pe-mound" viewBox="0 0 76 28" aria-hidden="true">' + PET_MOUND[n] + '</svg>';
+const SUN_RAYS = c => '<g stroke="' + c + '" stroke-width="2.4" stroke-linecap="round"><path d="M16 2.5v3.5M16 26v3.5M2.5 16H6M26 16h3.5M6.4 6.4l2.5 2.5M23.1 23.1l2.5 2.5M25.6 6.4l-2.5 2.5M8.9 23.1l-2.5 2.5"/></g>';
+const SUN_ART = on => '<svg viewBox="0 0 32 32" aria-hidden="true">' + (on
+  ? '<circle cx="16" cy="16" r="13" fill="#FFE9A8" opacity=".55"/>' + SUN_RAYS('#FFB02E') + '<circle cx="16" cy="16" r="7.6" fill="#FFD25A" stroke="#F0A020" stroke-width="1.2"/><circle cx="13.1" cy="15" r=".95" fill="#B8690A"/><circle cx="18.9" cy="15" r=".95" fill="#B8690A"/><path d="M13.3 18q2.7 2.3 5.4 0" fill="none" stroke="#B8690A" stroke-width="1.2" stroke-linecap="round"/>'
+  : SUN_RAYS('#E3D3B3') + '<circle cx="16" cy="16" r="7.6" fill="#EFE3C8" stroke="#DCCBA4" stroke-width="1.2"/>') + '</svg>';
+const BOWL_SVG = on => '<svg class="bw' + (on ? ' on' : '') + '" viewBox="0 0 36 28" aria-hidden="true"><circle cx="18" cy="10" r="6.5" stroke-width="1.6"/><path d="M3 13H33C33 22 27 26 18 26C9 26 3 22 3 13Z" stroke-width="2" stroke-linejoin="round"/></svg>';
+function petGapText(g) {
+  if (g.hatched) return '一起学了 ' + g.studyDays + ' 天';
+  if (g.ready) return '出生的时刻到啦';
+  if (!g.next) return '快要出生啦';
+  return '还差 ' + g.next.gap + ' 点，' + (g.next.index >= MG_PET.phases.length - 1 ? '就能和数宝见面啦' : '蛋有新变化');
 }
-function renderPetMaterials(p, g, due) {
+function renderPetMaterials(p, g, full) {
   petClearUseTip();
-  const want =document.getElementById('petWant'), btn = document.getElementById('petStartBtn'), box = document.getElementById('petBagBox');
-  want.hidden = box.hidden = !p.adopted;
-  if (!p.adopted) { btn.textContent = '做一轮小练习'; return; }
-  const lv = petWantLevel(p), m = MG_PET.mats[lv];
-  const tail = p.stage ? '用上能让「' + MG_PET.giftName(lv, MG_PET.tierFor(p, lv)) + '」再长大一点' : (g.dayFull ? '今天萌蛋吃饱啦，材料先收进背包，明天再用' : '用上一份，萌蛋 +' + MG_PET.xp.clear + ' 点能量');
-  want.innerHTML = MG_PET_STORY.matArt(lv) + '<span><b>今天想要：' + m.name + '</b>' + m.friend + '在第 ' + lv + ' 关等你，通关带回一份，' + tail + '。</span>'
-    + (due > 0 ? '<button type="button" class="pet-link" onclick="startWantedLevel()">去第 ' + lv + ' 关</button>' : '');
-  btn.textContent = due > 0 ? '先复习到期的题' : '去第 ' + lv + ' 关找「' + m.name + '」';
-  const chips = [1, 2, 3, 4, 5, 6].filter(n => p.bag[n] > 0).map(n => '<button type="button" class="pet-bag-chip" aria-label="用上一份' + MG_PET.mats[n].name + '，背包里有 ' + p.bag[n] + ' 份" onclick="useBagMaterial(' + n + ',this)">' + MG_PET_STORY.matArt(n) + MG_PET.mats[n].name + ' ×' + p.bag[n] + '</button>');
-  document.getElementById('petBag').innerHTML = chips.join('');
-  petText('petBagNote', chips.length ? '点一份材料就能用上：' + (p.stage ? '礼物会长大一点。' : '萌蛋 +' + MG_PET.xp.clear + ' 点能量，礼物也长大一点。') + '今天还能用 ' + g.usesLeft + ' 份。' : '背包空空的。通关带回的材料会当场用上；萌蛋当天吃饱，或已经用满 ' + MG_PET.useDaily + ' 份时，多出来的才会收进这里。');
+  const box = document.getElementById('petBagBox'), bowls = document.getElementById('petTodayBowls'), bag = document.getElementById('petBag');
+  box.hidden = !p.adopted; bowls.hidden = !p.adopted;
+  if (!p.adopted) { bag.classList.add('pe'); bag.innerHTML = ''; petText('petBagNote', ''); return; }
+  const total = MG_PET.useDaily, used = !p.stage && (g.dayFull || full) ? total : total - g.usesLeft;
+  bowls.setAttribute('aria-label', '今天已用上 ' + used + ' 份材料，最多 ' + total + ' 份，点一点听说明'); bowls.dataset.n = used; bowls.dataset.t = total;
+  bowls.innerHTML = Array.from({ length: total }, (_, i) => BOWL_SVG(i < used)).join('');
+  const own = [1, 2, 3, 4, 5, 6].filter(n => p.bag[n] > 0).length;
+  bag.classList.toggle('pe', !own);
+  if (!own) {
+    bag.innerHTML = [1, 2, 3, 4, 5, 6].map(n => '<button type="button" class="pe-cell" data-n="' + n + '" aria-label="' + MG_SAY.bagFriend[n] + '" onclick="peekEmptyBag(this)"><span class="pe-gift">' + MG_PET_STORY.matArt(n)
+      + '</span><span class="pe-pal">' + moundArt(n) + '<svg class="pe-an" viewBox="0 0 24 24" aria-hidden="true"><use href="#' + MG_PARTNERS[n].sym + '"/></svg></span></button>').join('');
+  } else bag.innerHTML = [1, 2, 3, 4, 5, 6].map(n => p.bag[n] > 0
+    ? '<button type="button" class="pet-bag-chip" data-lv="' + n + '" aria-label="用上一份' + MG_PET.mats[n].name + '，背包里有 ' + p.bag[n] + ' 份" onclick="useBagMaterial(' + n + ')">' + MG_PET_STORY.matArt(n) + '<svg class="pbc-pal" viewBox="0 0 24 24" aria-hidden="true"><use href="#' + MG_PARTNERS[n].sym + '"/></svg><span>×' + p.bag[n] + '</span></button>'
+    : '<button type="button" class="pet-bag-slot" aria-label="' + MG_SAY.bagFriend[n] + '" onclick="mgSay(MG_SAY.bagFriend[' + n + '])">' + MG_PET_STORY.matArt(n) + '</button>').join('');
+  petText('petBagNote', own ? '今天还能用 ' + g.usesLeft + ' 份' : '背包空空的');
+}
+function peekEmptyBag(el) {
+  const s = el.querySelector('.pe-an');
+  if (s) { s.classList.remove('hop'); void s.getBoundingClientRect(); s.classList.add('hop'); }
+  mgSay(MG_SAY.bagFriend[el.dataset.n]);
+}
+// 点五个圆点 / 三只小碗：圆点或碗弹一下、念一句，并在顶部木条下贴一行短字（6 秒后自己收起）。
+function petTapHint(kind, el) {
+  const n = +el.dataset.n || 0, t = +el.dataset.t || 3, dots = kind === 'dots';
+  const done = dots ? n >= 5 : n >= t;
+  petClearUseTip();
+  const tip = document.createElement('p');
+  tip.className = 'pet-use-tip pet-head-tip'; tip.setAttribute('role', 'status');
+  tip.textContent = dots ? (done ? '今天 5 题都答对啦，打卡成功！' : '今天答对 ' + n + ' / 5 题，答满 5 题就打卡')
+    : (done ? '今天喂满 ' + t + ' 份啦，明天再喂' : '今天喂了 ' + n + ' / ' + t + ' 份，每份 +3 点');
+  el.closest('.today-head').appendChild(tip);
+  _petTipTimer = setTimeout(petClearUseTip, 6000);
+  el.classList.remove('tap'); void el.getBoundingClientRect(); el.classList.add('tap');
+  clearTimeout(el._tapT); el._tapT = setTimeout(() => el.classList.remove('tap'), 800);
+  mgSay(dots ? MG_SAY.dots : done ? MG_SAY.full : MG_SAY.bowls);
+}
+// 还没领养时右栏的小路：玩游戏 → 带回材料 → 喂萌蛋 → 长成数宝，只有图，没有字。
+function petPreviewHTML() {
+  const go = '<svg class="pj-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h14M13 6l6 6-6 6" fill="none" stroke="#D98F2B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const step = inner => '<span class="pj-step">' + inner + '</span>';
+  return step('<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sail"/></svg>') + go + step(MG_PET_STORY.matArt(1)) + go
+    + step(MG_PET_STORY.egg(3, 'pj-egg')) + go + step('<svg viewBox="0 0 64 64" aria-hidden="true"><use href="#pet-baby"/></svg>');
 }
 function renderPet() {
   MG_PET.syncGifts();
@@ -1457,69 +1616,110 @@ function renderPet() {
   const art = document.getElementById('petArt');
   art.classList.toggle('egg-view', !st);
   art.setAttribute('viewBox', st ? '0 0 64 64' : '-8 -8 80 80');
-  art.innerHTML = st ? '<use href="' + PET_STAGE_SYMS[st] + '"/>' : MG_PET_STORY.eggInner(p.adopted ? p.phase : 0);
+  art.setAttribute('data-ph', st ? '' : (p.adopted ? p.phase : 0));
+  art.innerHTML = st ? '<use href="' + PET_STAGE_SYMS[st] + '"/>' : '<g class="egg-idle">' + MG_PET_STORY.eggInner(p.adopted ? p.phase : 0) + '</g>';
   petText('petName', !p.adopted ? '领养一颗萌蛋' : (st ? p.name + (st === 2 ? ' · 成年' : ' · 幼年') : v.phase.name));
   petText('petDesc', !p.adopted ? '带它认识岛上的朋友，约三个月后，迎接自己的数宝出生。' : (st ? '每天一小段学习，一起发现旅行里的新鲜事。' : v.phase.text));
-  petText('petNestLabel', !p.adopted ? '一场旅行，从一颗萌蛋开始' : (v.doneToday ? '今天的陪伴已记好 ✓' : '暖窝一直为你留着'));
   const curDecor = MG_PET.decors.find(d => d.id === p.decor), homeEl = document.querySelector('#petModal .pet-home');
   document.getElementById('petNest').style.setProperty('--nest-color', curDecor.color);
   if (curDecor.bg) homeEl.style.setProperty('--home-bg', curDecor.bg); else homeEl.style.removeProperty('--home-bg');
   document.getElementById('petNestItems').innerHTML = MG_PET_STORY.nestItems(p);
   document.getElementById('petEnergy').innerHTML = petEnergyHTML(g);
+  const xp = document.getElementById('petEnergyNum');
+  xp.hidden = !p.adopted;
+  xp.innerHTML = p.adopted ? '<span class="xp-n"><i class="orb"></i>经验 <b>' + g.energy + '</b> / ' + g.max + '</span><span class="xp-gap">' + petGapText(g) + '</span>' : '';
   document.getElementById('petAdoptBtn').style.display = p.adopted ? 'none' : 'inline-flex';
-  const feed = document.getElementById('petFeedBtn');
-  feed.style.display = p.adopted ? 'inline-flex' : 'none'; feed.disabled = false;
-  feed.textContent = v.ready ? '迎接数宝出生' : (st ? '喂一份小零食' : (p.phase >= 3 ? '听一听，打个招呼' : '摸一摸，暖暖窝'));
+  document.getElementById('petEnergy').style.display = p.adopted ? '' : 'none';
+  document.querySelector('#petModal .pet-journal').classList.toggle('unadopted', !p.adopted);
+  const pv = document.getElementById('petPreview');
+  if (!p.adopted && !pv.firstChild) pv.innerHTML = petPreviewHTML();
+  art.setAttribute('aria-label', !p.adopted ? '领养萌蛋' : v.ready ? '出生啦，迎接数宝出生' : st ? '摸一摸，和' + p.name + '打招呼' : p.phase >= 3 ? '听一听，萌蛋在回应' : '摸一摸萌蛋');
   petText('petCoins', coins);
-  const due = countDueWrong(), met = Object.keys(MG_PARTNERS).map(Number).filter(n => getLevelStars(n) >= 1 || p.gifts.includes(n));
-  const friend = met.length ? MG_PARTNERS[met[Math.floor(v.studyDays / 5) % met.length]] : null;
+  const met = Object.keys(MG_PARTNERS).map(Number).filter(n => getLevelStars(n) >= 1 || p.gifts.includes(n));
+  const fl = met.length ? met[Math.floor(v.studyDays / 5) % met.length] : 0;
   const lit = v.doneToday ? 5 : g.todayCorrect;
   const full = p.adopted && !st && g.energy >= g.max;
-  petText('petDailyStatus', !p.adopted ? '今天，和萌蛋一起练一小段' : full ? '成长能量已经攒满啦' : (st ? (v.doneToday ? '今天的学习已收好 ✓' : '今天的学习：再答对 ' + g.need + ' 题')
-    : g.dayFull ? '今天的能量吃饱啦 ✓ 明天再来长大一点' : (v.doneToday ? '今天已吃 ' + g.today + ' / ' + g.dayCap + ' 点，再通关还能多吃一点' : '今天的能量：再答对 ' + g.need + ' 题打卡')));
+  petText('petDailyStatus', !p.adopted ? '和萌蛋一起练一练' : full ? '能量攒满啦！' : (st ? (v.doneToday ? '今天学好啦 ✓' : '再答对 ' + g.need + ' 题')
+    : g.dayFull ? '今天吃饱啦 ✓' : (v.doneToday ? '今天吃了 ' + g.today + ' / ' + g.dayCap : '再答对 ' + g.need + ' 题')));
   const dots = document.getElementById('petTodayDots');
   dots.hidden = !p.adopted || full;
-  dots.setAttribute('aria-label', '今天已答对 ' + lit + ' / 5 题');
-  dots.innerHTML = [0, 1, 2, 3, 4].map(i => '<s' + (i < lit ? ' class="on"' : '') + '></s>').join('');
-  petText('petTaskText', due > 0 ? '有 ' + due + ' 道到期复习，慢慢想一想，萌蛋也在听哦。' : (friend ? friend.name + '邀请你练一轮，再一起看看小窝里的新变化。' : '从适合自己的小岛开始，小伙伴们会陪你练习。'));
-  document.getElementById('petTaskText').hidden = p.adopted && due <= 0;
-  document.getElementById('petVisitor').innerHTML = friend ? '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#' + friend.sym + '"/></svg><span>' + friend.name + (st ? '：今天也一起去旅行吧！' : '：我来陪萌蛋说说话，每一份照顾都会被记住。') + '</span>' : '<span>岛上还有许多朋友等你认识，照顾萌蛋不用通完全部关卡。</span>';
-  renderPetMaterials(p, g, due);
+  dots.setAttribute('aria-label', '今天已答对 ' + lit + ' / 5 题，点一点听说明'); dots.dataset.n = lit;
+  dots.innerHTML = [0, 1, 2, 3, 4].map(i => '<s' + (i < lit ? ' class="on"' : '') + '>' + SUN_ART(i < lit) + '</s>').join('');
+  document.getElementById('petVisitor').innerHTML = fl ? '<button type="button" class="pv-btn" aria-label="' + MG_PARTNERS[fl].name + '来看你啦，点一点" onclick="visitFriend(' + fl + ',this)"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#' + MG_PARTNERS[fl].sym + '"/></svg></button>' : '';
+  renderPetMaterials(p, g, full);
   renderPetShop(p, coins);
   document.getElementById('petGifts').innerHTML = petGiftRows(p);
   const pending = p.stories.pending, invite = document.getElementById('petStoryInvite');
   invite.hidden = !pending.length;
-  if (pending.length) {
-    const next = MG_PET.storyFor(p, pending[0]);
-    invite.innerHTML = '<span class="pet-note-title">小窝有一段新故事</span><span class="pet-note">' + next.title + '</span><br><button type="button" class="pet-link" onclick="MG_PET_STORY.show(\'' + next.id + '\')">和数宝一起看看</button>';
-  } else invite.innerHTML = '';
-  const logs = [];
-  if (p.adopted) logs.push('<div class="pet-log-entry">' + p.adoptedDay + ' · 我们的旅行开始啦</div>');
-  MG_PET.phases.slice(1, p.phase + 1).forEach(x => logs.push('<div class="pet-log-entry">' + x.name + '<br>' + x.text + '</div>'));
-  const count = Math.floor(v.studyDays / 5);
-  for (let i = Math.max(1, count - 4); i <= count; i++) logs.push('<div class="pet-log-entry">第 ' + (i * 5) + ' 个学习日 · ' + (met.length ? MG_PARTNERS[met[(i - 1) % met.length]].name + '来分享今天的旅行见闻。' : '又多了五天一起学习的回忆。') + '</div>');
-  MG_PET.stories.filter(s => MG_PET.storyFor(p, s.id)).forEach(s => logs.push('<button type="button" class="pet-story-entry" onclick="MG_PET_STORY.show(\'' + s.id + '\')"><strong>' + s.title + '</strong><span' + (pending.includes(s.id) ? ' class="pet-story-new"' : '') + '>' + (pending.includes(s.id) ? '新故事 · 一起看看' : '旅行回忆 · 点开重看') + '</span></button>'));
-  if (st) logs.push('<div class="pet-log-entry">' + (p.legacy ? '老朋友的陪伴继续着' : p.hatchDay + ' · 数宝出生啦') + '</div>');
-  document.getElementById('petLog').innerHTML = logs.length ? logs.reverse().join('') : '<p class="pet-note">领养以后，每一个小小的变化都会写在这里。</p>';
+  document.getElementById('petTabLog').classList.toggle('has-new', pending.length > 0);
+  invite.innerHTML = pending.length ? '<button type="button" aria-label="新贴纸，点开看看" onclick="MG_PET_STORY.show(\'' + pending[0] + '\')">' + MG_PET_STORY.giftArt(MG_PET.storyFor(p, pending[0]).level) + '</button>' : '';
+  document.getElementById('petLog').innerHTML = MG_PET_STORY.album(p);
   document.getElementById('petReplay').hidden = !st;
 }
 function showPet() {
-  try { renderPet(); petTab('Today'); petMessage(''); document.getElementById('petModal').classList.add('show'); document.getElementById('petModal').setAttribute('aria-hidden', 'false'); }
+  try {
+    renderPet(); petTab('Today'); petMessage(''); document.getElementById('petModal').classList.add('show'); document.getElementById('petModal').setAttribute('aria-hidden', 'false');
+    if (!MG_PET.info().pet.adopted) mgSay(MG_SAY.adoptBtn);
+    else mgSayPick(MG_SAY.pet, 'pet', 1);
+  }
   catch (e) { petError(e); }
 }
-function hidePet() { const m = document.getElementById('petModal'); m.classList.remove('show'); m.setAttribute('aria-hidden', 'true'); }
+function hidePet() { const m = document.getElementById('petModal'); m.classList.remove('show'); m.setAttribute('aria-hidden', 'true'); mgPointStop(); }
 function _petCheer() { const art = document.getElementById('petArt'); art.classList.remove('cheer'); void art.getBoundingClientRect(); art.classList.add('cheer'); }
 function adoptPet() {
-  try { MG_PET.adopt(); renderPet(); _petCheer(); petMessage('你好呀，萌蛋！一起慢慢认识这座岛吧。'); }
+  try { MG_PET.adopt(); renderPet(); refreshPetDot(); petTab('Today'); _petCheer(); petHearts(); mgSay(MG_SAY.hello); petMessage('你好呀，萌蛋！一起慢慢认识这座岛吧。'); }
   catch (e) { petError(e); }
 }
-function feedPet() {
+// 顶栏萌宠钮的小红点：还没领养萌蛋，或小窝里有没看过的新贴纸；首次进菜单弹一次领养引导，点「去领养」直接打开小窝。
+function refreshPetDot() {
+  const b = document.getElementById('petBtn');
+  let need = false, fresh = false;
+  try { MG_PET.syncGifts(); const p = MG_PET.info().pet; need = !p.adopted; fresh = p.adopted && p.stories.pending.length > 0; } catch (e) {}
+  if (b) { b.classList.toggle('need-adopt', need); b.classList.toggle('has-new', fresh); }
+  return need;
+}
+async function maybeGuideAdopt() {
+  if (!refreshPetDot()) return;
+  try { if (sessionStorage.getItem('mgAdoptGuide')) return; } catch (e) { return; }
+  if (document.querySelector('[aria-hidden="false"]')) return;   // 别的庆祝正在占屏，留到下次进菜单
+  try { sessionStorage.setItem('mgAdoptGuide', '1'); } catch (e) {}
+  const ask = mgConfirm({ title: '先领一颗萌蛋吧', msg: '萌蛋会陪你一起玩，每次答对都能帮它长大一点。先领养它，再出发吧！', okText: '去领养', cancelText: '先去玩', icon: 'i-pet', tone: 'warm' });
+  mgGuide(MG_SAY.adopt, 'confirmOkBtn');
+  const go = await ask;
+  mgPointStop();
+  if (!go) { mgSayStop(); return; }
+  showPet();
+}
+const HEART_D = 'M12 21S3.6 15.6 3.6 9.2C3.6 6.2 5.8 4.2 8.3 4.2c1.5 0 2.8.8 3.7 2.1.9-1.3 2.2-2.1 3.7-2.1 2.5 0 4.7 2 4.7 5C20.4 15.6 12 21 12 21z';
+const HEART_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + HEART_D + '" fill="#F26A7E" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+function petHearts() {
+  const nest = document.getElementById('petNest');
+  if (!nest || nest.querySelectorAll('.pet-heart').length > 5) return;
+  for (let i = 0; i < 3; i++) {
+    const h = document.createElement('i');
+    h.className = 'pet-heart'; h.setAttribute('aria-hidden', 'true');
+    h.style.left = (58 + Math.floor(Math.random() * 84)) + 'px'; h.style.animationDelay = (i * 110) + 'ms';
+    h.innerHTML = HEART_SVG; nest.appendChild(h);
+    setTimeout(function () { h.remove(); }, 1300);
+  }
+}
+let _eggAt = 0;
+// 摸蛋：蛋晃一下、飘爱心、念一句；连点只晃不念，免得把话切碎。还没领养就提醒领养，可以出生就进出生卡。
+function touchEgg() {
   try {
-    const v = MG_PET.info(); if (!v.pet.adopted) return;
+    const v = MG_PET.info(), p = v.pet;
+    if (!p.adopted) { _petCheer(); const t = Date.now(); if (t - _eggAt > 900) { _eggAt = t; mgSay(MG_SAY.adoptBtn); } return; }
     if (v.ready) { showPetBirth(false); return; }
-    MG_PET.care(); _petCheer();
-    petMessage(v.pet.stage ? '小零食收到了！谢谢你今天的陪伴。' : (v.pet.phase >= 3 ? '咚咚，蛋里传来轻轻的回应。' : '萌蛋在暖窝里轻轻晃了晃。'));
+    MG_PET.care(); _petCheer(); petHearts();
+    const now = Date.now(), pool = p.stage ? MG_SAY.eggPet : p.phase >= 3 ? MG_SAY.eggLate : MG_SAY.eggEarly;
+    if (now - _eggAt > 900) { _eggAt = now; mgSayPick(pool, p.stage ? 'eggPet' : p.phase >= 3 ? 'eggLate' : 'eggEarly', 1); }
+    petMessage(p.stage ? '小零食收到了！谢谢你今天的陪伴。' : (p.phase >= 3 ? '咚咚，蛋里传来轻轻的回应。' : '萌蛋在暖窝里轻轻晃了晃。'));
   } catch (e) { petError(e); }
+}
+function visitFriend(n, el) {
+  const s = el && el.querySelector('svg');
+  if (s) { s.classList.remove('hop'); void s.getBoundingClientRect(); s.classList.add('hop'); }
+  mgSay(MG_SAY.visit[n]);
 }
 function petDecorPreview(d) {
   return '<span class="pd-prev"' + (d.bg ? ' style="background:' + d.bg + '"' : '') + '><svg viewBox="14 38 172 112" aria-hidden="true"><ellipse cx="100" cy="72" rx="22" ry="28" fill="#FFE29A" stroke="#E7A740" stroke-width="3"/><path d="M29 94 Q100 61 171 94 L155 121 Q100 148 45 121Z" fill="' + d.color + '" stroke="#A57A47" stroke-width="3"/><path d="M31 94 Q100 121 169 94M44 104L51 123M69 112L72 132M100 116V136M130 112L127 132M155 104L148 123" fill="none" stroke="#A57A47" stroke-width="2" opacity=".6"/></svg></span>';
@@ -1585,53 +1785,79 @@ function choosePetItem(id) {
   }
   catch (e) { petError(e); }
 }
-function startWantedLevel() {
-  hidePet();
-  selectLevel(petWantLevel());
-  startGame();
-}
-function startPetTask() {
-  hidePet();
-  if (countDueWrong() > 0) { startReview(); return; }
-  if (MG_PET.get().adopted) { selectLevel(petWantLevel()); startGame(); return; }
-  if (getLevelStars(selectedLevel) < 1 && selectedLevel > 1) selectLevel(Math.max(1, selectedLevel - 1));
-  startGame();
-}
-// 今天用不了时的小提示：贴在被点的材料/礼物旁边（小窝左栏的提示行在滚动区外，孩子看不到），几秒后自己收起。
+// 今天用不了时的小提示：贴在材料格下面（小窝左栏的提示行在滚动区外，孩子看不到），几秒后自己收起。
 let _petTipTimer = 0;
 function petClearUseTip() {
   clearTimeout(_petTipTimer);
   document.querySelectorAll('#petModal .pet-use-tip').forEach(n => n.remove());
 }
-function petUseTip(text, from) {
+function petUseTip(text) {
   petClearUseTip();
-  const tip = document.createElement('p'), row = from && from.closest ? from.closest('.pet-gift') : null;
+  const tip = document.createElement('p');
   tip.className = 'pet-use-tip'; tip.setAttribute('role', 'status'); tip.textContent = text;
-  (row || document.getElementById('petBag')).insertAdjacentElement('afterend', tip);
+  document.getElementById('petBag').insertAdjacentElement('afterend', tip);
   tip.scrollIntoView({ block: 'nearest' });
   _petTipTimer = setTimeout(petClearUseTip, 6000);
 }
 function petUseBlockedText(reason, m) {
-  if (reason === 'full') return '今天已经用了 ' + MG_PET.useDaily + ' 份材料啦，萌蛋要歇一歇。材料先好好放在背包里，明天再用吧。';
+  if (reason === 'full') return '今天已经用了 ' + MG_PET.useDaily + ' 份啦，明天再用。';
   if (reason === 'fed') {
     const p = MG_PET.get();
-    return !p.stage && p.xp >= MG_PET.energyMax ? '萌蛋的能量已经攒满啦，等它出生以后再来用吧。材料先留在背包里。'
-      : '萌蛋今天已经吃饱啦，每天最多吸收 ' + MG_PET.xp.daily + ' 点能量。材料先放在背包里，明天再用吧。';
+    return !p.stage && p.xp >= MG_PET.energyMax ? '能量攒满啦，等它出生再用。' : '萌蛋今天吃饱啦（最多 ' + MG_PET.xp.daily + ' 点），明天再用。';
   }
-  if (reason === 'empty') return '背包里没有' + (m ? m.name : '这份材料') + '啦，通关就能带回来。';
+  if (reason === 'empty') return '背包里没有' + (m ? m.name : '这份材料') + '啦，玩游戏就能收到。';
   if (reason === 'unadopted') return '先领养萌蛋吧。';
   return '现在还不能用，等一会儿再试试。';
 }
 // 把背包里的一份材料用上：礼物累计 +1（够 10/30/60 份就升级，并弹出新故事），萌蛋再吃一点能量。
-function useBagMaterial(lv, from) {
+// 存档和界面立刻更新；材料图标飞进萌蛋是纯动画，落点时蛋欢呼、冒爱心、浮出「+N」，再念一句（升级则弹故事）。
+function petFeedFly(lv, from, gain, then) {
+  let done = false;
+  const land = () => { try { _petCheer(); petHearts(); petGainPop(gain); then(); } catch (e) { petError(e); } };
+  const art = document.getElementById('petArt');
+  const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!from || calm || !art || !art.animate) { land(); return; }
+  const to = art.getBoundingClientRect(), size = 56;
+  const x0 = from.left + from.width / 2 - size / 2, y0 = from.top + from.height / 2 - size / 2;
+  const dx = to.left + to.width / 2 - size / 2 - x0, dy = to.top + to.height * 0.55 - size / 2 - y0;
+  const f = document.createElement('span');
+  f.className = 'pet-fly'; f.setAttribute('aria-hidden', 'true');
+  f.style.left = x0 + 'px'; f.style.top = y0 + 'px';
+  f.innerHTML = MG_PET_STORY.matArt(lv);
+  document.body.appendChild(f);
+  const end = () => { if (done) return; done = true; f.remove(); if (document.getElementById('petModal').classList.contains('show')) land(); };
+  const an = f.animate([
+    { transform: 'translate(0,0) scale(1)', opacity: 1 },
+    { transform: 'translate(' + dx * 0.45 + 'px,' + (dy * 0.45 - 46) + 'px) scale(1.2)', opacity: 1, offset: 0.5 },
+    { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(0.5)', opacity: 0.85 }
+  ], { duration: 560, easing: 'cubic-bezier(.4,0,.6,1)', fill: 'forwards' });
+  an.onfinish = end; an.oncancel = end;
+  setTimeout(end, 900);
+}
+function petGainPop(gain) {
+  const nest = document.getElementById('petNest');
+  if (!nest || !(gain > 0)) return;
+  nest.querySelectorAll('.pet-gain').forEach(n => n.remove());
+  const b = document.createElement('b');
+  b.className = 'pet-gain'; b.setAttribute('aria-hidden', 'true'); b.textContent = '+' + gain;
+  nest.appendChild(b);
+  setTimeout(() => b.remove(), 1100);
+}
+function useBagMaterial(lv) {
   try {
+    const chip = document.querySelector('#petBag .pet-bag-chip[data-lv="' + lv + '"]'), from = chip && chip.offsetWidth ? chip.getBoundingClientRect() : null;
     const r = MG_PET.useMaterial(lv), m = MG_PET.mats[lv];
-    if (!r.ok) { petUseTip(petUseBlockedText(r.reason, m), from); return; }
-    renderPet(); _petCheer();
+    if (!r.ok) {
+      petUseTip(petUseBlockedText(r.reason, m));
+      const p0 = MG_PET.get();
+      if (r.reason === 'full' || (r.reason === 'fed' && (p0.stage || p0.xp < MG_PET.energyMax))) mgSay(MG_SAY.full);
+      return;
+    }
+    renderPet();
     const gift = '「' + MG_PET.giftName(lv, r.tier) + '」';
-    petMessage('用上了' + m.friend + '的「' + m.name + '」！' + (r.gain > 0 ? '萌蛋吃到 ' + r.gain + ' 点能量。' : '')
-      + (r.tierUp ? gift + '长大啦，看看新故事吧。' : r.nextAt ? '再用 ' + (r.nextAt - r.used) + ' 份，' + gift + '就会升级。' : gift + '已经是最漂亮的样子。'));
-    if (r.tierUp) MG_PET_STORY.show('grow-' + lv + '-' + r.tier);
+    petMessage('用上了' + m.friend + '的「' + m.name + '」！' + (r.gain > 0 ? r.gain + ' 点能量。' : '')
+      + (r.tierUp ? gift + '长大啦！' : r.nextAt ? '再用 ' + (r.nextAt - r.used) + ' 份升级。' : ''));
+    petFeedFly(lv, from, r.gain, () => { if (r.tierUp) MG_PET_STORY.show('grow-' + lv + '-' + r.tier); else mgSay(MG_SAY.ate); });
   } catch (e) { petError(e); }
 }
 function showPetBirth(replay) {
@@ -1839,31 +2065,52 @@ function hideMistakes() {
 }
 // ===== 图鉴：6 关印章收集册。纯派生自 mathgameStars（每关最佳星数）+ 解锁进度，这里只读 =====
 // 步骤3 · 「旅行伙伴」：每关一位岛上朋友。未解锁→灰锁；已解锁未完成→伙伴剪影(.dim 调暗)；
-// 已完成(星≥1)→彩色伙伴点亮；三星→镀金光圈。全部派生自 mathgameStars/解锁进度，无新 key、resetProgress 免改。
+// 已完成(星≥1)→彩色伙伴点亮；三星→镀金光圈。友情 = 通关星 + 礼物升档爱心（MG_PET.tierFor），都派生自现有存档，无新 key、resetProgress 免改。
+const STAR_D = 'M12 2.6l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17l-5.7 3.1 1.2-6.4L2.8 9.3l6.4-.8z';
+function friendIcons(d, on, n) {
+  let s = '';
+  for (let i = 1; i <= 3; i++) s += '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + d + '" fill="' + (i <= n ? on : '#EADFCB') + '"/></svg>';
+  return '<span class="fr-row">' + s + '</span>';
+}
 function renderCollection() {
   const grid = document.getElementById('collectionGrid');
   const sub = document.getElementById('collectionSub');
-  const unlocked = getUnlockedLevel();
-  let lit = 0, gold = 0, html = '';
+  const unlocked = getUnlockedLevel(), pet = MG_PET.get();
+  let lit = 0, gold = 0, sum = 0, html = '';
   for (let n = 1; n <= TOTAL_LEVELS; n++) {
-    const stars = getLevelStars(n);
+    const stars = getLevelStars(n), tier = MG_PET.tierFor(pet, n);
     const cleared = stars >= 1;
     const p = MG_PARTNERS[n];
     if (cleared) lit++;
     if (stars >= 3) gold++;
+    sum += stars + tier;
     let cls = 'stamp-cell';
     let face;
     const partnerFace = '<span class="stamp-medal partner"><svg class="pic" viewBox="0 0 24 24" aria-hidden="true"><use href="#' + p.sym + '"/></svg></span>';
-    if (cleared) { cls += ' lit' + (stars >= 3 ? ' gold' : ''); face = partnerFace; }
+    if (cleared) { cls += ' lit' + (stars >= 3 ? ' gold' : '') + (stars >= 3 && tier >= 3 ? ' bestie' : ''); face = partnerFace; }
     else if (n <= unlocked) { cls += ' dim'; face = partnerFace; }
     else face = '<span class="stamp-medal">' + icHTML('i-lock') + '</span>';
-    const starRow = cleared ? starsHTML(stars) : '';
-    html += '<div class="' + cls + '">' + face
+    html += '<button type="button" class="' + cls + '" aria-label="' + p.name + '，' + stars + ' 颗星，' + tier + ' 颗爱心，点一点听它说话" onclick="meetFriend(' + n + ',this)">'
+      + face
       + '<span class="stamp-name">' + p.name + '</span>'
-      + '<span class="stamp-stars">' + starRow + '</span></div>';
+      + friendIcons(STAR_D, '#FFB62E', stars) + friendIcons(HEART_D, '#F26A7E', tier) + '</button>';
   }
   grid.innerHTML = html;
-  sub.textContent = '已结识 ' + lit + ' / ' + TOTAL_LEVELS + ' 位伙伴' + (gold ? ' · ' + gold + ' 位熟悉伙伴' : '');
+  const top = TOTAL_LEVELS * 6, pct = sum ? Math.max(6, sum / top * 100) : 0;
+  const meter = document.getElementById('collectionMeter');
+  meter.setAttribute('role', 'progressbar');
+  meter.setAttribute('aria-valuemin', '0'); meter.setAttribute('aria-valuemax', String(top)); meter.setAttribute('aria-valuenow', String(sum));
+  meter.setAttribute('aria-label', '友情值 ' + sum + ' / ' + top);
+  meter.innerHTML = '<i>' + HEART_SVG + '</i><span class="fr-bar"><b style="width:' + pct.toFixed(1) + '%"></b></span>';
+  sub.textContent = '已结识 ' + lit + ' / ' + TOTAL_LEVELS + ' 位伙伴' + (gold ? ' · ' + gold + ' 位熟悉伙伴' : '') + '，友情值 ' + sum + ' / ' + top;
+}
+function meetFriend(n, el) {
+  const s = el && el.querySelector('.stamp-medal svg');
+  if (s) { s.classList.remove('hop'); void s.getBoundingClientRect(); s.classList.add('hop'); }
+  const stars = getLevelStars(n), tier = MG_PET.tierFor(MG_PET.get(), n);
+  if (stars < 1) mgSay(MG_SAY.unmet[n]);
+  else if (stars >= 3 && tier >= 3) mgSayPick([MG_SAY.meet[n], MG_SAY.bestie], 'meet' + n);
+  else mgSay(MG_SAY.meet[n]);
 }
 function showCollection() {
   renderCollection();
@@ -1981,6 +2228,120 @@ function hideBadgeUnlock() {
   m.classList.remove('show');
   m.setAttribute('aria-hidden', 'true');
 }
+
+// ===== 学龄前引导：关键一步念一句 + 小手指一下 =====
+// 每句都要列进 mgGuideLines()，bundle_tts.mjs 才会把它打进 APK；声音跟「读题语音」走，0 档完全不调用，小手照出。
+const MG_SAY = {
+  adopt: '欢迎来到数学岛！先领一颗萌蛋吧！', adoptIdle: '先领一颗萌蛋吧！', adoptBtn: '点一下，领养萌蛋！',
+  hello: '你好呀，萌蛋！一起玩吧！', start: '点出发，开始玩吧！', daily: '今天的奖励来啦，点领取！',
+  visual: '看题，写答案！', audio: '听题，说答案！', ate: '萌蛋吃到啦，长大一点！', full: '今天吃饱啦，明天再来！',
+  // 每关两句：第一句讲这一关玩什么，第二句带关号；连点同一关轮着念。
+  levels: [['十以内加减，小兔等你！', '第一关，小小数字加减！'], ['二十以内加减，快跑呀！', '第二关，松鼠送松果！'], ['两位数加减，小鸟带路！', '第三关，大数字挑战！'],
+    ['乘法口诀，和小鹿爬山！', '第四关，乘除上山啦！'], ['乘除大冒险，海上寻宝！', '第五关，扬帆去寻宝！'], ['加减乘除，给刺猬点灯！', '第六关，四则大挑战！']],
+  profile: ['这是你的旅行名片！', '看看你有多棒！'], streak: ['每天打卡，领好礼！', '今天打卡了吗？'], pet: ['萌蛋在等你呢！', '来摸摸你的萌蛋！'],
+  mistake: ['错的题，再试一次！', '难题别怕，再来！'], album: ['来认识旅行伙伴！', '小伙伴们都在这儿！'], settings: ['调一调声音吧！', '这里能调声音哦！'],
+  tier: ['挑一挑，速算难度！', '想算多大的数呢？'], tabs: { Today: '喂萌蛋吃好吃的！', Nest: '来布置我的小窝！', Log: '看看我的贴纸！' }, dots: '答对五题，给萌蛋暖一暖！', bowls: '每天最多喂三碗哦！',
+  bagFriend: { 1: '过第一关，小兔送暖草！', 2: '过第二关，小松鼠送松果！', 3: '过第三关，小鸟送小音符！', 4: '过第四关，小鹿送落叶！', 5: '过第五关，小海龟送小贝壳！', 6: '过第六关，小刺猬送萤火！' },
+  eggEarly: ['嘻嘻，好痒呀！', '暖暖的，好舒服！', '咕噜咕噜，我在睡！', '再摸摸我吧！'], eggLate: ['咚咚！里面有动静！', '我听到心跳啦！', '蛋壳里在唱歌！'],
+  eggPet: ['嘿嘿，我好开心！', '陪我玩吧！', '今天也要加油哦！'],
+  visit: { 1: '蹦蹦跳，小兔来啦！', 2: '松鼠送来一颗松果！', 3: '小鸟叽叽喳喳来啦！', 4: '小鹿轻轻走过来！', 5: '小海龟慢慢爬来啦！', 6: '小刺猬提着灯来啦！' },
+  meet: { 1: '蹦蹦跳跳，我是小兔！', 2: '我是小松鼠，爱吃松果！', 3: '叽叽喳喳，我是小鸟！', 4: '我是小鹿，爬山最棒！', 5: '慢慢来，我是小海龟！', 6: '我是小刺猬，提着灯！' },
+  unmet: { 1: '过第一关，认识小兔！', 2: '过第二关，认识松鼠！', 3: '过第三关，认识小鸟！', 4: '过第四关，认识小鹿！', 5: '过第五关，认识海龟！', 6: '过第六关，认识刺猬！' }, bestie: '我们是最好的朋友！'
+};
+function mgGuideLines() {
+  const L = [MG_SAY.adopt, MG_SAY.adoptIdle, MG_SAY.adoptBtn, MG_SAY.hello, MG_SAY.start, MG_SAY.daily, MG_SAY.visual, MG_SAY.audio, MG_SAY.ate, MG_SAY.full, MG_SAY.dots, MG_SAY.bowls, MG_SAY.bestie];
+  MG_SAY.levels.forEach(a => L.push.apply(L, a));
+  ['profile', 'streak', 'pet', 'mistake', 'album', 'settings', 'tier', 'eggEarly', 'eggLate', 'eggPet'].forEach(k => L.push.apply(L, MG_SAY[k]));
+  ['tabs', 'bagFriend', 'visit', 'meet', 'unmet'].forEach(k => L.push.apply(L, Object.keys(MG_SAY[k]).map(i => MG_SAY[k][i])));
+  return Array.from(new Set(L.concat(MG_PET_STORY.sayLines())));
+}
+// 同一组句子轮着念：id 记住念到哪一句，start 不传就从第一句开始，传 true 就随机起头（顶栏按钮用，每次进来不一样）。
+const _pickAt = {};
+function mgSayPick(arr, id, rand) {
+  if (_pickAt[id] == null) _pickAt[id] = rand ? Math.floor(Math.random() * arr.length) : 0; else _pickAt[id] = (_pickAt[id] + 1) % arr.length;
+  mgSay(arr[_pickAt[id]]);
+}
+let _saySeq = 0, _saying = false;
+function _sayNative() {
+  return window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform() && Capacitor.Plugins && Capacitor.Plugins.Tts;
+}
+function mgSay(text) {
+  const seq = ++_saySeq, lv = getSettings().voice;
+  if (!text || !lv) { _saying = false; return; }
+  const end = function () { if (seq === _saySeq) _saying = false; };
+  _saying = true;
+  try {
+    const T = _sayNative();
+    if (T) { const p = T.speak({ text: text, rate: 1.0, volume: lv / 3, lang: 'zh-CN' }); if (p && p.then) p.then(end, end); else end(); }
+    else if (window.speechSynthesis) {
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'zh-CN'; u.volume = lv / 3; u.onend = end; u.onerror = end;
+      speechSynthesis.cancel(); speechSynthesis.speak(u);
+    } else end();
+  } catch (e) { end(); }
+}
+// 返回「刚才是否有语音在念」：调用方据此决定离页前要不要多等一拍（念到一半离页会让原生回调撞上已销毁的 WebView）
+function mgSayStop() {
+  const was = _saying;
+  _saySeq++; _saying = false;
+  try {
+    const T = _sayNative();
+    if (was && T && T.stop) { const p = T.stop(); if (p && p.catch) p.catch(function () {}); }
+    if (was && window.speechSynthesis) speechSynthesis.cancel();
+  } catch (e) {}
+  return was;
+}
+const MG_POINT_HAND = '<svg viewBox="0 0 40 48"><g fill="#fff" stroke="#C9792E" stroke-width="2.4" stroke-linejoin="round">'
+  + '<rect x="14" y="2" width="9" height="28" rx="4.5"/><rect x="8" y="22" width="27" height="23" rx="9"/>'
+  + '<rect x="24" y="19" width="7" height="14" rx="3.5" transform="rotate(8 27 26)"/><rect x="2" y="26" width="11" height="14" rx="5.5" transform="rotate(-22 7 33)"/></g>'
+  + '<path d="M13 31v7M20 31v7M27 31v7" stroke="#E9C79B" stroke-width="2" stroke-linecap="round" fill="none" transform="translate(0 2)"/></svg>';
+let _ptTimer = 0, _ptWatch = 0;
+function mgPointStop() {
+  clearTimeout(_ptTimer); clearInterval(_ptWatch);
+  document.removeEventListener('pointerdown', mgPointStop, true);
+  window.removeEventListener('resize', mgPointStop);
+  const n = document.getElementById('mg-point');
+  if (n) n.remove();
+}
+// 等 delay 毫秒（弹窗入场动画走完）后，在 el 上挂一只会点的小手；碰一下屏幕、目标消失、缩放窗口或 9 秒后收起。
+function mgPoint(el, delay) {
+  mgPointStop();
+  if (!el) return;
+  document.addEventListener('pointerdown', mgPointStop, true);
+  window.addEventListener('resize', mgPointStop);
+  _ptTimer = setTimeout(function () {
+    const r = el.getBoundingClientRect();
+    if (!el.offsetWidth || !el.offsetHeight || r.bottom <= 0 || r.top >= innerHeight) { mgPointStop(); return; }
+    const x = Math.round(r.left + r.width * 0.62), y = Math.round(Math.min(r.top + r.height * 0.62, innerHeight - 64));
+    const d = Math.min(r.width, r.height), ring = function (z, dl) { z = Math.round(z); return '<i class="pt-rip" style="left:' + Math.round(x - z / 2) + 'px;top:' + Math.round(y - z / 2) + 'px;width:' + z + 'px;height:' + z + 'px;animation-delay:' + dl + 's"></i>'; };
+    const root = document.createElement('div');
+    root.id = 'mg-point'; root.setAttribute('aria-hidden', 'true');
+    root.innerHTML = ring(Math.max(56, Math.min(84, d * 0.6)), 0.15) + ring(Math.max(84, Math.min(120, d * 0.9)), 0.3)
+      + '<div class="pt-hand" style="left:' + Math.round(x - 27.6) + 'px;top:' + Math.round(y - 2.9) + 'px">' + MG_POINT_HAND + '</div>';
+    document.body.appendChild(root);
+    _ptWatch = setInterval(function () { if (!el.offsetWidth) mgPointStop(); }, 300);
+    _ptTimer = setTimeout(mgPointStop, 9000);
+  }, delay == null ? 650 : delay);
+}
+function mgGuide(line, target, delay) {
+  mgSay(line);
+  mgPoint(typeof target === 'string' ? document.getElementById(target) : target, delay);
+}
+// 还没通关任何一关的孩子：地图静止 4 秒就提醒一次，每次进菜单最多两次；弹窗开着时顺延，不计数。
+let _hintN = 0, _hintTimer = 0;
+function mgArmHint(ms) {
+  clearTimeout(_hintTimer);
+  if (_hintN < 2) _hintTimer = setTimeout(mgIdleHint, ms);
+}
+function mgIdleHint() {
+  if (getTotalStars() > 0) return;
+  if (document.querySelector('[aria-hidden="false"], .locked-modal.show') || MG_PET_STORY.isOpen()) { mgArmHint(4000); return; }
+  _hintN++;
+  if (refreshPetDot()) mgGuide(MG_SAY.adoptIdle, 'petBtn', 0);
+  else mgGuide(MG_SAY.start, document.querySelector('.cta'), 0);
+  mgArmHint(12000);
+}
+document.addEventListener('pointerdown', function () { mgArmHint(4000); }, true);
 
 // 通用确认弹窗：返回 Promise<boolean>，替代原生 confirm()。DOM 缺失时降级回原生 confirm。
 let _confirmResolve = null;
@@ -2158,13 +2519,15 @@ function selectLevel(n) {
 
   selectedLevel = n;
   refreshLevelCards();
+  mgSayPick(MG_SAY.levels[n - 1], 'lv' + n);
 }
 
 // 全项目唯一的「跳游戏页」出口。抽出来不是洁癖：孪生校验断言这个文件里那个页面名的字面量
 // 恰好出现 1 次、与 www 副本的 diff 恰好 1 行（sync_menu_twin.mjs 的 1/1/1）。
 // 所以这条注释里也不能写出那个名字 —— 以后再加入口一律调 mgGoGame，不要自己写 location.href。
 function mgGoGame() {
-  window.location.href = 'game.html';
+  const go = function () { window.location.href = 'game.html'; };
+  if (mgSayStop()) setTimeout(go, 150); else go();
 }
 
 function startGame() {
@@ -2466,11 +2829,12 @@ function showDaily() {
   const m = document.getElementById('dailyModal');
   if (!m) return;
   m.classList.add('show'); m.setAttribute('aria-hidden', 'false');
+  if (isChestClaimable()) mgGuide(MG_SAY.daily, 'dailyBtn');
 }
 function hideDaily() {
   const m = document.getElementById('dailyModal');
   if (!m) return;
-  m.classList.remove('show'); m.setAttribute('aria-hidden', 'true');
+  m.classList.remove('show'); m.setAttribute('aria-hidden', 'true'); mgPointStop();
 }
 function claimDaily() {
   if (!isChestClaimable()) { renderDaily(); return; }   // 幂等守卫：重复点 / 竞态都不多发币
@@ -2578,7 +2942,8 @@ document.addEventListener('DOMContentLoaded', function () {
   maybeShowRankUp();   // 大结局或出生仪式占屏时让位
   maybeShowBadgeUp(evaluateBadges());   // 出生/结局/升段占屏时让位
   maybeShowDaily();    // 可领今日宝箱时自动弹连签日历
-  MG_PET_STORY.maybe(); // 已有庆祝先展示；故事未读记录留到下一次进入或主动打开手记
+  maybeGuideAdopt();    // 还没领萌蛋：点亮顶栏小红点，并在没有庆祝占屏时弹一次领养引导
+  mgArmHint(5000);      // 还没通关过的孩子：地图静止一会儿，用语音 + 小手指向下一步
 });
 
 // ===== 硬件返回键拦截（Android/Capacitor）=====
@@ -2589,7 +2954,7 @@ document.addEventListener('DOMContentLoaded', function () {
   if (!App || !App.addListener) return;
   var busy = false;
   App.addListener('backButton', async function () {
-    if (MG_PET_STORY.isOpen()) { MG_PET_STORY.close(); return; }
+    if (MG_PET_STORY.isOpen()) { MG_PET_STORY.dismiss(); return; }
     // 1) 退出确认框开着 → 返回键当「取消」，正常关闭并解析 Promise
     var cm = document.getElementById('confirmModal');
     if (cm && cm.classList.contains('show')) { hideConfirm(false); return; }
@@ -2607,7 +2972,7 @@ document.addEventListener('DOMContentLoaded', function () {
     try { ok = await mgConfirm({ title: '要退出游戏吗？', msg: '下次再来闯关大冒险吧！', okText: '退出', cancelText: '再玩一会', icon: 'i-sail', tone: 'warm' }); }
     catch (e) { ok = false; }
     busy = false;
-    if (ok && App.exitApp) App.exitApp();
+    if (ok && App.exitApp) { if (mgSayStop()) setTimeout(function () { App.exitApp(); }, 150); else App.exitApp(); }
   });
 })();
 </script>

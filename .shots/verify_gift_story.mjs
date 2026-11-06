@@ -29,7 +29,7 @@ try{
   for(let lv=1;lv<=6;lv++){
     await b.boot(lv);await b.ev('_mgCorrect=10;debugEndGame(true);true');await b.sleep(650);await b.takeChest();
     const result=await b.ev(`(() => {const box=document.querySelector('#overlay-chest .ps-teaser');return {teaser:!!box,line:box?.querySelector('.ps-teaser-line')?.textContent,gift:MG_PET.gifts[${lv}],phase:MG_PET.giftPhase[${lv}]+1,stage:MG_PET.get().stage,pending:MG_PET.get().stories.pending};})()`);
-    P(result.teaser&&result.line.includes(result.gift)&&result.line.includes('第'+result.phase+'阶段用上')&&result.pending.includes('gift-'+lv),`L${lv}点开宝箱后结算页给出一行礼物与用上的阶段，并入新故事`,result);
+    P(result.teaser&&result.line.includes(result.gift)&&result.line.includes('送来')&&result.pending.includes('gift-'+lv),`L${lv}点开宝箱后结算页给出一行图加一句话，并入新贴纸`,result);
     await b.ev(`document.querySelector('#overlay-chest .ps-teaser button').click();true`);
     const opened=await b.ev(bounds);P(opened.fit&&opened.width&&opened.hit&&opened.dangling.length===0,`L${lv}故事卡完整，互动按钮可点`,opened);
     const before=await b.ev(`({days:MG_PET.get().days.length,phase:MG_PET.get().phase,coins:mgGetCoins()})`);
@@ -46,8 +46,8 @@ try{
   const views=b.device?[[1000,576]]:[[1000,576],[900,500],[412,915]];
   for(const [w,h] of views){
     await b.viewport(w,h);
-    const items=await b.ev(`(() => {showPet();petTab('Nest');return [...document.querySelectorAll('#petNestItems button')].map(n=>{n.scrollIntoView({block:'nearest'});const r=n.getBoundingClientRect(),hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return {name:n.getAttribute('aria-label'),hit:hit===n||n.contains(hit),w:r.width,h:r.height};});})()`);
-    P(items.length===6&&items.every(i=>i.hit&&i.w>=28&&i.h>=28),`${w}×${h} 六个摆件都可点击`,items);
+    const items=await b.ev(`(() => {showPet();petTab('Nest');return [...document.querySelectorAll('#petNestItems button')].map(n=>{n.scrollIntoView({block:'nearest'});const r=n.getBoundingClientRect(),hits=[r.x+r.width/2,r.x+5,r.right-5].map(x=>{const e=document.elementFromPoint(x,r.y+r.height/2);return e===n||n.contains(e);});return {name:n.getAttribute('aria-label'),hit:hits.some(Boolean),w:r.width,h:r.height};});})()`);
+    P(items.length===6&&items.every(i=>i.hit&&i.w>=28&&i.h>=28),`${w}×${h} 六个摆件都可点击（垫子在萌蛋后面，中心被蛋盖住，点它的边缘）`,items);
     for(let lv=1;lv<=6;lv++){
       await b.ev(`MG_PET_STORY.show('gift-${lv}');true`);
       let box=await b.ev(bounds);P(box.fit&&box.width&&box.hit,`${w}×${h} 第${lv}章卡片与按钮边界`,box);
@@ -61,23 +61,41 @@ try{
   await b.ev(`MG_PET_STORY.show('gift-3');document.getElementById('petStoryAction').click();true`);
   const rm=await b.ev(bounds);P(rm.animations.every(n=>n==='none')&&rm.text.length>10,'减少动态效果时保留完整故事与回应，取消摆动动画',rm);
   await b.ev('MG_PET_STORY.close();true');await b.send('Emulation.setEmulatedMedia',{features:[]});
-  const migration=await b.ev(`(() => {const p=MG_PET.get();delete p.stories;localStorage.setItem('mathgamePet',JSON.stringify(p));MG_PET_STORY.maybe();showPet();petTab('Log');return {auto:MG_PET_STORY.isOpen(),pending:MG_PET.get().stories.pending.length,stories:document.querySelectorAll('.pet-story-entry').length};})()`);
-  P(!migration.auto&&migration.pending===0&&migration.stories===6,'历史六礼物升级后留在手记，不连续弹旧故事',migration);
+  const migration=await b.ev(`(() => {const p=MG_PET.get();delete p.stories;localStorage.setItem('mathgamePet',JSON.stringify(p));showPet();petTab('Log');refreshPetDot();return {auto:MG_PET_STORY.isOpen(),pending:MG_PET.get().stories.pending.length,stickers:document.querySelectorAll('#petLog .alb-s:not(.lock)').length,dot:document.getElementById('petBtn').classList.contains('has-new')};})()`);
+  P(!migration.auto&&migration.pending===0&&migration.stickers===6&&!migration.dot,'历史六礼物升级后收进贴纸册，不弹旧故事、不亮红点',migration);
 
   await b.viewport(1000,576);
   const growth=await b.ev(`(() => {
     const p=MG_PET.get(),now=new Date(),ago=n=>new Date(now.getFullYear(),now.getMonth(),now.getDate()-n,12);
     p.adoptedDay=MG_PET.dayKey(ago(49));p.lastDay=MG_PET.dayKey(now);p.days=Array.from({length:35},(_,i)=>MG_PET.dayKey(ago(49-i)));p.xp=525;
     localStorage.setItem('mathgamePet',JSON.stringify(p));renderPet();petTab('Today');
-    return {phase:MG_PET.get().phase,queued:MG_PET.get().stories.pending,invite:document.getElementById('petStoryInvite').textContent};
+    return {phase:MG_PET.get().phase,queued:MG_PET.get().stories.pending,invite:document.getElementById('petStoryInvite').innerHTML.includes('新贴纸')};
   })()`);
   P(growth.phase===4&&growth.queued.includes('song-3')&&!growth.queued.includes('sea-5')&&!growth.queued.includes('light-6'),'认识声音阶段解锁熟悉旋律，不提前触发裂纹或欢迎灯',growth);
   await b.ev(`MG_PET_STORY.show('song-3');document.getElementById('petStoryAction').click();true`);
   P(await b.ev(`document.getElementById('petStoryResponse').textContent.includes('回应你的声音')`),'音符挂饰在成长时再次呼应同一首歌');
   await b.shot('gift_growth_song');await b.ev('MG_PET_STORY.close();true');
-  await b.ev(`${clearModals}document.getElementById('rankUpModal').classList.add('show');MG_PET_STORY.maybe();true`);
-  P(await b.ev(`!MG_PET_STORY.isOpen()&&MG_PET.get().stories.pending.includes('song-3')`),'升段占屏时新故事让位，未读记录保留');
-  await b.ev(`${clearModals}MG_PET_STORY.maybe();true`);P(await b.ev('MG_PET_STORY.isOpen()'),'庆祝结束后再次进入可展示一个未读故事');await b.ev('MG_PET_STORY.close();true');
+  await b.ev(`${clearModals}refreshPetDot();true`);
+  P(await b.ev(`!MG_PET_STORY.isOpen()&&MG_PET.get().stories.pending.includes('song-3')&&document.getElementById('petBtn').classList.contains('has-new')`),'菜单不再自动弹故事：未读记录保留，小窝钮亮红点');
+  // 孩子主动关掉（点右上角 X / 点空白 / Esc / 返回键）就算看过：红点消失；程序性 close 不改已读状态
+  const pend = () => b.ev("MG_PET.get().stories.pending.includes('song-3')");
+  const reopen = () => b.ev(`${clearModals}MG_PET_STORY.show('song-3');true`);
+  const reset = () => b.ev("(() => { MG_PET.syncGifts(); const p = MG_PET.get(); const rest = p.stories.pending.filter(x => x !== 'song-3'); p.stories.seen = p.stories.seen.filter(x => x !== 'song-3').concat(rest); p.stories.pending = ['song-3']; localStorage.setItem('mathgamePet', JSON.stringify(p)); return true; })()");
+  await reset(); await reopen();
+  P(await b.ev('MG_PET_STORY.isOpen()') && await pend(), '从贴纸册点开未读故事：打开时仍是未读');
+  await b.ev("document.getElementById('petStoryLater').click();true");
+  P(!(await b.ev('MG_PET_STORY.isOpen()')) && !(await pend()) && !(await b.ev("document.getElementById('petBtn').classList.contains('has-new')")), '点右上角 X：关闭并记为已读，红点消失');
+  P(await b.ev("MG_PET.get().stories.seen.includes('song-3') && MG_PET.story('song-3') !== null && (MG_PET_STORY.show('song-3'), MG_PET_STORY.isOpen())"), '已读的故事仍能从贴纸册重看');
+  await b.ev('MG_PET_STORY.close();true');
+  for (const [how, js] of [['点空白', "document.querySelector('#petStoryModal .ps-shade').click()"], ['按 Esc', "document.getElementById('petStoryModal').dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))"], ['返回键', 'MG_PET_STORY.dismiss()']]) {
+    await reset(); await reopen();
+    await b.ev(js + ';true');
+    P(!(await b.ev('MG_PET_STORY.isOpen()')) && !(await pend()), how + '：关闭并记为已读');
+  }
+  await reset(); await reopen();
+  await b.ev('MG_PET_STORY.close();true');
+  P(await pend(), '程序性 close（退出页面 / 测试清场）不改已读状态');
+  await reset();
 
   const readyLamp=await b.ev(`(() => {
     ${clearModals}const p=MG_PET.get(),now=new Date(),ago=n=>new Date(now.getFullYear(),now.getMonth(),now.getDate()-n,12);
@@ -91,7 +109,7 @@ try{
     ${clearModals}localStorage.removeItem('mathgamePet');localStorage.removeItem('mathgameStars');
     const p=MG_PET.adopt(),now=new Date(),ago=n=>new Date(now.getFullYear(),now.getMonth(),now.getDate()-n,12);
     p.adoptedDay=MG_PET.dayKey(ago(89));p.lastDay=MG_PET.dayKey(now);p.days=Array.from({length:60},(_,i)=>MG_PET.dayKey(ago(89-i)));p.xp=900;p.gifts=[1,3];
-    localStorage.setItem('mathgamePet',JSON.stringify(p));maybeShowPetBirth();MG_PET_STORY.maybe();
+    localStorage.setItem('mathgamePet',JSON.stringify(p));maybeShowPetBirth();
     return {birth:document.getElementById('petBirthModal').classList.contains('show'),story:MG_PET_STORY.isOpen(),stage:MG_PET.get().stage,
       friends:document.querySelectorAll('#petBirthFriends svg').length,memories:document.querySelectorAll('#petBirthJourney .birth-gift-row').length,
       text:document.getElementById('petBirthJourney').textContent,snapshot:MG_PET.get().birthGifts};

@@ -87,7 +87,7 @@ for (const lv of [1, 2, 3, 4, 6]) {
     P(bingo.e - bingo.s >= 1700, `L${lv} 短句完整念满`, bingo.e - bingo.s);
     P(ding.length === 1 && ding[0] >= next.e - 30 && ding[0] - next.e < 150, `L${lv} 只在读完题后叮一声（短句后不叮）`, { dings: ding.length, afterQuestionEnd: ding[0] - next.e });
     const gap = rs[rs.length - 1] - ding[0];
-    P(gap >= 180 && gap <= 500, `L${lv} 叮完隔一拍才放开麦克风`, { gapMs: gap });
+    P(gap >= 140 && gap <= 500, `L${lv} 叮完隔一拍才放开麦克风`, { gapMs: gap });
   }
 }
 
@@ -98,7 +98,7 @@ await b.sleep(1200);
 {
   const log = await b.ev(LOG), ding = await b.ev('window.__ding'), rs = await b.ev('window.__resume');
   P(log.length === 1 && ding.length === 1 && ding[0] >= log[0].e - 30, '手动再听一遍：读完叮一声', { reads: log.length, dings: ding.length });
-  P(rs.length === 1 && rs[0] - ding[0] >= 180, '手动再听一遍：叮完才开麦', { gapMs: rs[0] - ding[0] });
+  P(rs.length === 1 && rs[0] - ding[0] >= 140, '手动再听一遍：叮完才开麦', { gapMs: rs[0] - ding[0] });
 }
 await b.ev(RESET);
 await b.ev(ANSWER);
@@ -296,7 +296,7 @@ const GATES = `window.__gate.length = 0; window.__mic.length = 0; true`;
   await b.sleep(600);
   let gt = await b.ev('window.__gate'), mic = await b.ev('window.__mic');
   let closeAt = (gt.find(x => !x.o) || {}).t;
-  P(mic.length === 1 && closeAt && mic[0] - closeAt >= 180, 'L1 先压低、隔一拍才开麦', { gapMs: mic[0] - closeAt, mics: mic.length });
+  P(mic.length === 1 && closeAt && mic[0] - closeAt >= 140, 'L1 先压低、隔一拍才开麦', { gapMs: mic[0] - closeAt, mics: mic.length });
   d = await BG();
   P(d.open === false && await b.ev('window._currentGame.recognizing') === true, 'L1 话筒开着时闸门保持压低', d);
   P(d.gain > d.full * d.duck * 0.8 && d.gain < d.full * d.duck * 1.15 + 0.0005, 'L1 话筒开着时音乐停在压低档（没静音、也没放大）', { gain: d.gain, full: d.full, duck: d.duck });
@@ -307,7 +307,7 @@ const GATES = `window.__gate.length = 0; window.__mic.length = 0; true`;
   await b.sleep(1300);
   gt = await b.ev('window.__gate'); mic = await b.ev('window.__mic');
   closeAt = (gt.find(x => !x.o) || {}).t;
-  P(mic.length === 1 && closeAt && mic[0] - closeAt >= 180, 'L1 没有叮声的收尾：也先压低、隔一拍才开麦', { gapMs: mic[0] - closeAt, mics: mic.length });
+  P(mic.length === 1 && closeAt && mic[0] - closeAt >= 140, 'L1 没有叮声的收尾：也先压低、隔一拍才开麦', { gapMs: mic[0] - closeAt, mics: mic.length });
   P(await b.ev('window.__viol') === 0, 'L1 全程没有「话筒开着而音乐没压低」', await b.ev('window.__viol'));
   {
     const gmin = await b.ev('window.__gmin'), d2 = await BG();

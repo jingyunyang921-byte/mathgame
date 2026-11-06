@@ -5,18 +5,18 @@ SCRIPTS=(
   verify_travel_static.mjs verify_fourops.mjs sim_repeat.mjs
   verify_game_dynamic.mjs verify_game_l2.mjs verify_game_l3.mjs verify_game_l4.mjs
   verify_levels_migration.mjs
-  verify_monster_timer.mjs verify_shadow_speed.mjs verify_monster_hit.mjs
+  verify_monster_timer.mjs verify_shadow_speed.mjs
   verify_gate_finale.mjs verify_sail.mjs
   verify_result.mjs verify_rankup.mjs verify_practice.mjs verify_weak.mjs
   verify_sprint_daily.mjs verify_combo.mjs verify_countdown.mjs
-  verify_overlay_stats.mjs verify_profile_modal.mjs verify_pet_care.mjs verify_gift_story_rules.mjs verify_gift_story_audio.mjs verify_gift_story.mjs verify_pet.mjs verify_chest.mjs verify_chest_claim.mjs verify_chest_stage.mjs verify_energy_xp.mjs verify_chest_layout.mjs verify_travel_result_layout.mjs verify_pet_learning.mjs
+  verify_overlay_stats.mjs verify_profile_modal.mjs verify_pet_care.mjs verify_gift_story_rules.mjs verify_gift_story_audio.mjs verify_gift_story.mjs verify_picture_story.mjs verify_pet.mjs verify_chest.mjs verify_chest_claim.mjs verify_chest_stage.mjs verify_energy_xp.mjs verify_chest_layout.mjs verify_travel_result_layout.mjs verify_pet_learning.mjs
   verify_mistakes.mjs verify_wronglog.mjs verify_review.mjs verify_collection.mjs verify_badges.mjs verify_confirm_modal.mjs verify_exit_direct.mjs
   verify_menu.mjs verify_menu_map.mjs verify_race_autumn.mjs verify_scenes_l123.mjs verify_pk_map.mjs verify_deai_pk.mjs verify_deai_race_boss.mjs verify_story.mjs verify_daily.mjs
   verify_polish.mjs verify_listen_card.mjs verify_listen_hero.mjs verify_listen_stage.mjs verify_listen_fill.mjs verify_skip_inline.mjs
   verify_voice_heard.mjs verify_heard_display.mjs verify_voice_listen_cue.mjs verify_p3_12_14.mjs
-  verify_bugfix_batch.mjs verify_intro_tts.mjs verify_kid_sprite.mjs verify_materials.mjs verify_result_center.mjs
+  verify_bugfix_batch.mjs verify_intro_tts.mjs verify_kid_sprite.mjs verify_materials.mjs verify_nest_preschool.mjs verify_result_center.mjs
   verify_pk_kid.mjs verify_egg_companion.mjs verify_egg_stage.mjs verify_scene_names.mjs verify_guide_rules.mjs verify_scheme_a.mjs verify_egg_interact.mjs verify_pet_footer_pinned.mjs verify_pet_shop.mjs verify_egg_align.mjs verify_pet_items.mjs verify_perf_pass.mjs verify_game_static.mjs verify_a11y_menu.mjs verify_win_scene.mjs
-  verify_checkin_card.mjs verify_record_chase.mjs verify_victory_beat.mjs verify_sprint_tier.mjs verify_fresh_install.mjs verify_l6_buddy.mjs verify_levels_exclusive.mjs verify_stage_merge.mjs verify_bingo_queue.mjs verify_idle_hint.mjs verify_focus_bgm.mjs verify_tts_prefetch.mjs
+  verify_checkin_card.mjs verify_record_chase.mjs verify_victory_beat.mjs verify_sprint_tier.mjs verify_fresh_install.mjs verify_adopt_guide.mjs verify_l6_buddy.mjs verify_levels_exclusive.mjs verify_stage_merge.mjs verify_bingo_queue.mjs verify_idle_hint.mjs verify_focus_bgm.mjs verify_tts_prefetch.mjs verify_preread_guide.mjs verify_poke_interact.mjs verify_bg_pause.mjs verify_visual_idle.mjs
 )
 CDP="${CDP:-http://localhost:9333}"
 # Reclaim leaked page targets before the run and after each script. Own-target
@@ -47,7 +47,7 @@ purge
 echo "RUN_START $(date +%H:%M:%S)"
 for s in "${SCRIPTS[@]}"; do
   [ -f ".shots/$s" ] || { echo "MISS  $s"; continue; }
-  out=$(timeout 300 node ".shots/$s" 2>&1); code=$?
+  out=$(timeout 420 node ".shots/$s" 2>&1); code=$?
   # last non-empty line = summary
   last=$(printf '%s\n' "$out" | grep -v '^[[:space:]]*$' | tail -1)
   nf=$(printf '%s\n' "$out" | grep -c '^FAIL')

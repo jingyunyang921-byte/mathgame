@@ -32,9 +32,9 @@ try {
   await b.ev(seed(1)); await b.nav(b.menu); await b.sleep(500);
   const r = await b.ev(`(() => { const o = Storage.prototype.getItem; let n = 0; Storage.prototype.getItem = function (k) { if (k === 'mathgamePet') n++; return o.apply(this, arguments); };
     try { renderPet(); } finally { Storage.prototype.getItem = o; }
-    const q = s => document.querySelectorAll(s).length; return { reads: n, logs: q('#petLog .pet-story-entry'), gifts: q('#petGifts .pet-gift'), nest: q('#petNestItems .nest-item') }; })()`);
+    const q = s => document.querySelectorAll(s).length; return { reads: n, logs: q('#petLog .alb-s:not(.lock)'), eggs: q('#petLog .alb-egg'), gifts: q('#petGifts .pet-gift'), nest: q('#petNestItems .nest-item') }; })()`);
   P(r.reads <= 3, `renderPet 只读 ${r.reads} 次存档（≤3）`, r);
-  P(r.logs >= 7 && r.gifts === 6 && r.nest === 6, '手记/礼物/小窝礼物照常画出来', r);
+  P(r.logs >= 12 && r.eggs === 8 && r.gifts === 6 && r.nest === 6, '贴纸册/礼物/小窝礼物照常画出来', r);
   await b.ev(`(() => { showPet(); const e = [...document.querySelectorAll('#petNestItems .nest-item')][0]; e.click(); return true; })()`); await b.sleep(300);
   P(await b.ev(`document.getElementById('petStoryModal').classList.contains('show') && !!document.getElementById('petStoryTitle').textContent`), '点小窝里的礼物仍能打开故事');
 

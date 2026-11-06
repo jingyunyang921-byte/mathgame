@@ -1,13 +1,20 @@
-// 每关开场：不念剧情开场白；规则卡 2.6 秒静默 + 点一下/返回键跳过；卡收起后只念「本关一句短话」+ 3-2-1。
+// 每关开场：不念剧情开场白；规则卡 2.6 秒 + 点一下/返回键跳过；本关没拿过星的孩子，卡上再念一句本关专属的规则（学龄前引导，见 verify_preread_guide）；
+// 卡收起后念「本关两句报幕之一」+ 3-2-1，视算的首题示范小手再念一句。每关的规则句和报幕句都不一样（有新鲜感）。
 // 规则卡里有「通关带回什么」奖励行（#intro-prize），说清练口算是为了帮朋友找材料。
 // 本地用 speechSynthesis 桩记录念了什么；真机包一层 Capacitor Tts.speak 记录。
 import { petBrowser, verdicts } from './pet_browser.mjs';
 const b = await petBrowser(), { check: P, finish } = verdicts();
 const LOCAL = !b.device;
-const OPEN = { 1: '和小兔答题，给萌蛋找暖草！', 2: '和小松鼠答题，给萌蛋捡松果！', 3: '和小鸟答题，给萌蛋找音符！', 4: '和小鹿答题，给萌蛋捡落叶！', 5: '和小海龟答题，给萌蛋捡贝壳！', 6: '和小刺猬答题，给萌蛋找萤火！', sprint: '一分钟速算，冲呀！' };
+const OPEN = { 1: ['暖草坡到啦，小兔等你！', '十以内加减，找暖草去！'], 2: ['松果林里，小松鼠来接你！', '二十以内加减，捡松果去！'], 3: ['音符谷里，小鸟在唱歌！', '一百以内加减，收音符去！'],
+  4: ['爬落叶山路，小鹿同行！', '乘除口诀，爬山捡落叶！'], 5: ['扬起帆，去贝壳海岸！', '两位数乘除，扬帆拾贝壳！'], 6: ['萤火小屋，小刺猬等你！', '加减乘除，点亮欢迎灯！'], sprint: ['一分钟速算，冲呀！', '看谁算得快，冲刺啦！'] };
+const RULE_V = { 1: '小兔出题，写下答案！', 2: '写对答案，松果进篮！', 3: '写对答案，小鸟唱歌！', 4: '写对答案，小鹿爬山！', 5: '看清题目，选对小门！', 6: '写对答案，点亮小灯！' };
 const PRIZE = { 1: '暖草', 2: '松果', 3: '小音符', 4: '落叶', 5: '小贝壳', 6: '萤火' };
 const MATS_FRIEND = { 1: '小兔', 2: '小松鼠', 3: '小鸟', 4: '小鹿', 5: '小海龟', 6: '小刺猬' };
 const SCENE = { 1: '暖草坡', 2: '松果林', 3: '音符谷', 4: '落叶山路', 5: '贝壳海岸', 6: '萤火小屋' };
+// load() 每次清掉 mathgameStars，所以每关都是「没拿过星」：规则卡念一句规则，卡收起后念报幕，视算首题示范小手再念一句（示范挂不上时只有前两句）。
+const RULE = lv => RULE_V[lv];
+const DEMO = lv => (lv === 5 ? '点对的门！' : '跟着小手写！');
+const flowOk = (lv, all) => all[0] === RULE(lv) && OPEN[lv].includes(all[1]) && (all.length === 2 || (all.length === 3 && all[2] === DEMO(lv)));
 const TITLE = { 1: '10以内加减 · 暖草坡', 2: '20以内加减 · 松果林', 3: '100以内加减 · 音符谷', 4: '表内乘除 · 落叶山路', 5: '两位数乘除 · 贝壳海岸', 6: '四则综合 · 萤火小屋' };
 
 const STUB = `(() => {
@@ -73,14 +80,14 @@ try {
   P(st.speech === 'undefined' && st.line === 'undefined' && st.speak === 'undefined', '开场白念白函数/文案表已删除', st);
   P(!st.hint && st.heard === null, '没有「点一下跳过」提示行，也不再记「念过完整版」', st);
 
-  // ---------- 第 1 关：规则卡 2.6 秒，期间一个字都不念；卡收起后只念本关一句短话 ----------
+  // ---------- 第 1 关：规则卡 2.6 秒，期间只念一句规则；卡收起后念本关一句短话 ----------
   const a1 = await info();
   P(a1.dur >= 2400 && a1.dur < 3600, '第 1 关规则卡停满约 2.6 秒', a1.dur);
-  P(a1.before.length === 0, '规则卡显示期间不念任何话', a1.before);
+  P(a1.before.length === 1 && a1.before[0] === RULE(1), `规则卡显示期间只念一句规则「${RULE(1)}」`, a1.before);
   await countdownDone();
   const a1b = await b.ev(`window.__spoken.map(x => x.t)`);
-  P(a1b.length === 1 && a1b[0] === OPEN[1], '卡收起后只念「本关一句短话」+ 3-2-1，不再是通用的一句', a1b);
-  P(a1b[0].length <= 15 && /^和.+答题，给萌蛋.+！$/.test(a1b[0]), '开场句式「和谁答题，给萌蛋找什么」且在 15 字以内（不含标点约 10~12 字）', a1b[0]);
+  P(flowOk(1, a1b), '先念规则，卡收起后念本关报幕两句之一 + 3-2-1，再是示范小手那一句', a1b);
+  P(a1b[1].length <= 15 && !/答题/.test(a1b[1]), '报幕句在 15 字以内，不再是千篇一律的「和xx答题，给萌蛋找xx」', a1b[1]);
   P(a1.prizeSvg && a1.prize.includes(PRIZE[1].replace(/^小/, '')) && /答对\d+题，送.+给蛋/.test(a1.prize), '第 1 关规则卡有目标行：答对几题送什么给蛋', a1.prize);
   const c1 = await capInfo();
   P(c1.title === TITLE[1] && c1.cap === SCENE[1] && c1.capShown === 'block' && c1.capBelow && c1.capIn, '第 1 关：规则卡标题「运算 · 场景名」，3-2-1 圆圈下方有场景小字且在屏内', c1);
@@ -91,9 +98,9 @@ try {
     const r = await info();
     await countdownDone();
     const sp = await b.ev(`window.__spoken.map(x => x.t)`);
-    P(r.before.length === 0 && r.dur >= 2400 && r.dur < 3600, `第 ${lv} 关：规则卡 2.6 秒、静默`, { dur: r.dur, before: r.before });
-    P(sp.length === 1 && sp[0] === OPEN[lv], `第 ${lv} 关：卡收起后念「${OPEN[lv]}」`, sp);
-    P(sp[0].length <= 15 && sp[0].startsWith('和' + MATS_FRIEND[lv]) && sp[0].includes(PRIZE[lv].replace(/^小/, '')), `第 ${lv} 关：开场句带本关小动物和材料，15 字以内`, sp[0]);
+    P(r.before.length === 1 && r.before[0] === RULE(lv) && r.dur >= 2400 && r.dur < 3600, `第 ${lv} 关：规则卡 2.6 秒、只念一句规则`, { dur: r.dur, before: r.before });
+    P(flowOk(lv, sp), `第 ${lv} 关：规则 → 卡收起后念本关报幕之一 → 示范句`, sp);
+    P(sp[1].length <= 15 && !/答题/.test(sp[1]), `第 ${lv} 关：报幕句 15 字以内，不套「答题」模板`, sp[1]);
     P(r.prizeSvg && r.prize.includes(PRIZE[lv].replace(/^小/, '')) && /答对\d+题，送.+给蛋/.test(r.prize), `第 ${lv} 关规则卡有目标行：${PRIZE[lv]}`, r.prize);
     const c = await capInfo();
     P(c.title === TITLE[lv] && c.cap === SCENE[lv] && c.capShown === 'block' && c.capBelow && c.capIn, `第 ${lv} 关：标题「${TITLE[lv]}」，倒计时小字「${SCENE[lv]}」`, c);
@@ -104,6 +111,11 @@ try {
   const c3v = await capInfo();
   P(c3v.title === TITLE[3] && c3v.cap === SCENE[3], '第 3 关视算：标题与场景小字同第 3 关听算', c3v);
 
+  // ---------- 各关不一样：12 句报幕 + 6 句规则句全部不重复，且没有「答题」模板 ----------
+  const pools = await b.ev(`({ open: mgFlat(MG_OPEN_LINE), rule: mgFlat(MG_RULE_SAY) })`);
+  P(new Set(pools.open).size === pools.open.length && new Set(pools.rule).size === pools.rule.length, '各关报幕句、规则句互不重复', [pools.open.length, pools.rule.length]);
+  P(![...pools.open, ...pools.rule].some(t => /答题|给萌蛋/.test(t)), '报幕句和规则句都没有「答题 / 给萌蛋」模板词', pools.open.concat(pools.rule).filter(t => /答题|给萌蛋/.test(t)));
+
   // ---------- 速算冲刺 ----------
   await load({ sprint: true }); await hidden();
   const sp = await info();
@@ -111,7 +123,7 @@ try {
   const spAll = await b.ev(`window.__spoken.map(x => x.t)`);
   const csp = await capInfo();
   P(sp.before.length === 0 && sp.dur < 3600, '一分钟速算：开场卡不念', sp);
-  P(spAll.length === 1 && spAll[0] === OPEN.sprint, '一分钟速算：卡收起后念「一分钟速算，冲呀！」', spAll);
+  P(spAll.length === 1 && OPEN.sprint.includes(spAll[0]), '一分钟速算：卡收起后念速算两句报幕之一', spAll);
   P(csp.cap === '' && csp.capShown === 'none', '一分钟速算：倒计时下没有场景小字', csp);
   P(sp.prizeSvg && /纪录/.test(sp.prize) && !/给蛋/.test(sp.prize), '速算规则卡的奖励行讲追纪录目标（旗是 SVG，没有材料）', sp.prize);
 

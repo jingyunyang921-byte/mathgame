@@ -15,6 +15,7 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.annotation.Permission;
 import com.getcapacitor.annotation.PermissionCallback;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.vosk.Model;
@@ -53,6 +54,12 @@ public class VoskPlugin extends Plugin {
     // partials, so frequent updates keep recognition responsive without waiting for
     // the full end-of-utterance endpoint.
     private static final int READ_CHUNK = 3200;
+
+    // 说完一个数后静音多久就判定"说完了"。model.conf 里是 0.5 秒，孩子说完到出结果要多等这么久；
+    // 太短会把中间有停顿的「七…十二」切成两段。
+    private static final float END_SILENCE_SEC = 0.3f;
+    private static final float INITIAL_SILENCE_SEC = 5.0f;
+    private static final float MAX_UTTERANCE_SEC = 20.0f;
 
     // Digits-only grammar used as a safe fallback: even if the caller's grammar
     // includes command words the model doesn't know, numbers stay constrained.
@@ -107,6 +114,13 @@ public class VoskPlugin extends Plugin {
         stopCapture();
         try {
             recognizer = createRecognizer();
+            recognizer.setWords(true);
+            recognizer.setPartialWords(true);
+            try {
+                recognizer.setEndpointerDelays(INITIAL_SILENCE_SEC, (float) (double) call.getDouble("endSec", (double) END_SILENCE_SEC), MAX_UTTERANCE_SEC);
+            } catch (Throwable t) {
+                Log.w(TAG, "setEndpointerDelays unavailable, using model.conf endpoints", t);
+            }
         } catch (IOException e) {
             Log.e(TAG, "createRecognizer failed", e);
             call.reject("Failed to create recognizer: " + e.getMessage());
@@ -173,9 +187,9 @@ public class VoskPlugin extends Plugin {
                     synchronized (this) {
                         if (recognizer == null) break;
                         if (recognizer.acceptWaveForm(buffer, n)) {
-                            emit("result", extract(recognizer.getResult(), "text"));
+                            emit("result", recognizer.getResult(), "text", "result");
                         } else {
-                            emit("partialResult", extract(recognizer.getPartialResult(), "partial"));
+                            emit("partialResult", recognizer.getPartialResult(), "partial", "partial_result");
                         }
                     }
                 } else if (n < 0) {
@@ -238,9 +252,30 @@ public class VoskPlugin extends Plugin {
 
     // ---- Helpers -------------------------------------------------------
 
-    private void emit(String event, String text) {
+    // words: per-word {w, c(onf), s(tart), e(nd)} in seconds, so the web layer can tell a spoken digit from tail noise.
+    private void emit(String event, String hypothesis, String textKey, String wordsKey) {
+        String text = "";
+        JSONArray words = new JSONArray();
+        if (hypothesis != null) {
+            try {
+                JSONObject h = new JSONObject(hypothesis);
+                text = h.optString(textKey, "");
+                JSONArray raw = h.optJSONArray(wordsKey);
+                for (int i = 0; raw != null && i < raw.length(); i++) {
+                    JSONObject w = raw.optJSONObject(i);
+                    if (w == null) continue;
+                    JSONObject o = new JSONObject();
+                    o.put("w", w.optString("word"));
+                    o.put("c", w.optDouble("conf", 1));
+                    o.put("s", w.optDouble("start", 0));
+                    o.put("e", w.optDouble("end", 0));
+                    words.put(o);
+                }
+            } catch (JSONException ignored) {}
+        }
         JSObject ret = new JSObject();
-        ret.put("text", text != null ? text : "");
+        ret.put("text", text);
+        ret.put("words", words);
         notifyListeners(event, ret);
     }
 
@@ -248,15 +283,6 @@ public class VoskPlugin extends Plugin {
         JSObject ret = new JSObject();
         ret.put("error", msg != null ? msg : "unknown");
         notifyListeners("error", ret);
-    }
-
-    private String extract(String hypothesis, String key) {
-        if (hypothesis == null) return "";
-        try {
-            return new JSONObject(hypothesis).optString(key, "");
-        } catch (JSONException e) {
-            return "";
-        }
     }
 
     @Override

@@ -29,5 +29,6 @@ console.log('url:', c.url);
 if(log===null || log==='null'){ console.log('no __vlog — 页面可能重载了或未注入，需要重跑 inject'); c.close(); process.exit(1); }
 const arr=JSON.parse(log);
 console.log('=== __vlog', arr.length, 'events（按时间顺序）===');
-for(const e of arr) console.log(JSON.stringify(e));
+for(const e of arr){ if(e.k==='extract'||((e.k==='partial'||e.k==='FINAL')&&!e.text)) continue; console.log(JSON.stringify(e)); }
+if(process.env.CLEAR){ await c.ev('window.__vlog.length=0'); console.log('(已清空日志)'); }
 c.close(); process.exit(0);
