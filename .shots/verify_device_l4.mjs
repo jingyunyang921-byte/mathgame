@@ -32,7 +32,7 @@ await ev(`window._skipOcrLoading && window._skipOcrLoading();`, false);
 await sleep(5200);
 const r = (await ev(METRICS)).result.value;
 console.log('\n--- L5 device ---', JSON.stringify(r));
-P(/Chrome\/91\./.test(r.ua), 'L5 WebView Chrome/91', (r.ua.match(/Chrome\/[\d.]+/) || [])[0]);
+P(/Chrome\/(9[1-9]|1\d\d)\./.test(r.ua), 'L5 WebView >= Chrome/91', (r.ua.match(/Chrome\/[\d.]+/) || [])[0]);
 P(!!r.surface, 'L5 --c-surface resolves', r.surface);
 P(r.grad === '160deg', 'L5 grad 160deg', r.grad);
 P(r.sceneActive, 'L5 space-scene active', r.sceneActive);

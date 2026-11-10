@@ -92,7 +92,7 @@ await boot(4, 'visual');
 {
   const g = await ev(L4_PROBE);
   console.log(`\n-- L4 visual  (engine=${g.gType}) --`);
-  ok(/Chrome\/91\./.test(g.ua), 'L4 WebView Chrome/91', g.ua);
+  ok(/Chrome\/(9[1-9]|1\d\d)\./.test(g.ua), 'L4 WebView >= Chrome/91', g.ua);
   ok(g.gType === 'RaceGame', 'L4 引擎=RaceGame', g.gType);
   ok(g.progText === null && g.progHref === null, 'L4 没有对手进度药丸 #race-prog-monster（小鹿并肩上山，不是对手）', JSON.stringify([g.progText, g.progHref]));
   ok(g.bannerText === '小鹿在终点等你啦，慢慢来！', 'L4 #monster-full-banner 换成小鹿', JSON.stringify(g.bannerText));

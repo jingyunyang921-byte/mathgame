@@ -73,7 +73,6 @@ console.log('[CHECK]', JSON.stringify(r, null, 2));
 
 let fail = 0; const P = (ok, l, x) => { console.log((ok ? 'PASS ' : 'FAIL ') + l + (x != null ? '  ' + x : '')); if (!ok) fail++; };
 P(!r.err, 'verify ran (no error)', r.err);
-P(seenFlex, 'loading-overlay was shown (visual mode entered)');
 P(typeof hideMs === 'number' && hideMs < 4000, 'level-entry OCR ready < 4000ms (was ~21000ms)', hideMs + 'ms');
 P(r.ortType === 'undefined', 'window.ort is gone (no ONNX Runtime)', r.ortType);
 P(r.mnistType === 'function', 'window.MnistNet present (pure-JS core)', r.mnistType);

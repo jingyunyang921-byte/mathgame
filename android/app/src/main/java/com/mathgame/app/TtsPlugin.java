@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
+import android.util.Log;
 
 import com.getcapacitor.JSArray;
 import com.getcapacitor.Plugin;
@@ -24,6 +25,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -36,13 +40,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 @CapacitorPlugin(name = "Tts")
 public class TtsPlugin extends Plugin {
+    private static final String TAG = "MgTts";
     private TextToSpeech tts;
     private volatile boolean ready = false;
     private final Map<String, PluginCall> pending = new HashMap<>();
     private int seq = 0;
 
     private CloudTts cloud;
-    private final ExecutorService io = Executors.newSingleThreadExecutor();
+    private final ExecutorService io = newIoPool();
     private final ExecutorService bg = Executors.newSingleThreadExecutor();
     private final AtomicBoolean prefetching = new AtomicBoolean(false);
     private final Handler main = new Handler(Looper.getMainLooper());
@@ -50,13 +55,20 @@ public class TtsPlugin extends Plugin {
     private PluginCall cloudCall;
     private int gen = 0;
 
+    // 单线程时，上一句慢下载没完，新的一句只能排在它后面等；多留几条线，让当前这句马上开始联网。
+    private static ExecutorService newIoPool() {
+        ThreadPoolExecutor p = new ThreadPoolExecutor(3, 3, 10, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+        p.allowCoreThreadTimeOut(true);
+        return p;
+    }
+
     @Override
     public void load() {
         if (CloudTts.configured()) cloud = new CloudTts(getContext());
 
         tts = new TextToSpeech(getContext(), status -> {
             ready = (status == TextToSpeech.SUCCESS);
-            if (!ready) return;
+            if (!ready) { Log.w(TAG, "system TTS init failed, status=" + status); return; }
             try { tts.setLanguage(Locale.CHINA); } catch (Exception e) { /* fall back to engine default */ }
             tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
                 @Override public void onStart(String id) { }
@@ -71,7 +83,7 @@ public class TtsPlugin extends Plugin {
         PluginCall call = pending.remove(id);
         if (call == null) return;
         if (ok) call.resolve();
-        else call.reject(err == null ? "tts-error" : err);
+        else { Log.w(TAG, "system TTS error: " + err); call.reject(err == null ? "tts-error" : err); }
     }
 
     @PluginMethod
@@ -113,6 +125,7 @@ public class TtsPlugin extends Plugin {
             cloudCall = call;
         }
         io.execute(() -> {
+            synchronized (TtsPlugin.this) { if (my != gen) return; }   // 排队时已被后一句取代，不用再下载
             File f = cloud.get(text);
             long keep = f == null ? 0 : Mp3Tail.keepBytes(f);
             main.post(() -> {
@@ -170,6 +183,7 @@ public class TtsPlugin extends Plugin {
             cloudCall = null;
             releasePlayer();
         }
+        Log.w(TAG, "cloud voice unavailable, using system engine");
         speakSystem(call);
     }
 
@@ -187,7 +201,7 @@ public class TtsPlugin extends Plugin {
     }
 
     private void speakSystem(PluginCall call) {
-        if (tts == null || !ready) { call.reject("tts-not-ready"); return; }
+        if (tts == null || !ready) { Log.w(TAG, "speak before system TTS ready"); call.reject("tts-not-ready"); return; }
         String text = call.getString("text", "");
         if (text == null || text.isEmpty()) { call.resolve(); return; }
         double rate = call.getDouble("rate", 1.0);
@@ -204,6 +218,7 @@ public class TtsPlugin extends Plugin {
             langRes = tts.setLanguage("en-US".equalsIgnoreCase(lang) ? Locale.US : Locale.CHINA);
         } catch (Exception e) { langRes = TextToSpeech.LANG_NOT_SUPPORTED; }
         if (langRes == TextToSpeech.LANG_MISSING_DATA || langRes == TextToSpeech.LANG_NOT_SUPPORTED) {
+            Log.w(TAG, "system TTS has no voice for " + lang + ", skipped");
             call.resolve();
             return;
         }
@@ -221,24 +236,47 @@ public class TtsPlugin extends Plugin {
             params.putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME,
                     (float) Math.max(0.0, Math.min(1.0, volume)));
             int res = tts.speak(text, TextToSpeech.QUEUE_FLUSH, params, id);
-            if (res != TextToSpeech.SUCCESS) { pending.remove(id); call.reject("tts-speak-failed"); }
+            if (res != TextToSpeech.SUCCESS) { Log.w(TAG, "tts.speak returned " + res); pending.remove(id); call.reject("tts-speak-failed"); }
         }
     }
 
     @PluginMethod
     public void stop(PluginCall call) {
+        stopSpeech();
+        call.resolve();
+    }
+
+    private void stopSpeech() {
         synchronized (this) { cancelCloud(); }
         if (tts != null) { try { tts.stop(); } catch (Exception e) { } }
         synchronized (this) {
             for (PluginCall c : pending.values()) { try { c.resolve(); } catch (Exception e) { } }
             pending.clear();
         }
-        call.resolve();
+    }
+
+    // 页面跳转 / 界面销毁：停声，还没完成的 speak 作废且不 resolve（事后再 resolve 会经桥落进销毁中的 WebView）。
+    void dropPageCalls() {
+        synchronized (this) {
+            gen++;
+            releasePlayer();
+            cloudCall = null;
+            pending.clear();
+        }
+        if (tts != null) { try { tts.stop(); } catch (Exception e) { } }
+    }
+
+    // 切后台就别再出声。界面正在退出时页面马上销毁，不能再 resolve；只是退到后台页面还活着，resolve 让 JS 的 _ttsSpeaking 能放下。
+    @Override
+    protected void handleOnStop() {
+        if (getActivity() != null && getActivity().isFinishing()) dropPageCalls();
+        else stopSpeech();
+        super.handleOnStop();
     }
 
     @Override
     protected void handleOnDestroy() {
-        synchronized (this) { cancelCloud(); }
+        dropPageCalls();
         io.shutdownNow();
         if (tts != null) { try { tts.stop(); tts.shutdown(); } catch (Exception e) { } tts = null; }
     }

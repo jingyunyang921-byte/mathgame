@@ -33,7 +33,7 @@ await sleep(5200);
 const r = (await ev(METRICS)).result.value;
 const hardPed = /[1-9][0-9.]*px 0px 0px/.test(r.micShadow);
 console.log('\n--- L3 device ---', JSON.stringify(r));
-P(/Chrome\/91\./.test(r.ua), 'L3 WebView Chrome/91', (r.ua.match(/Chrome\/[\d.]+/) || [])[0]);
+P(/Chrome\/(9[1-9]|1\d\d)\./.test(r.ua), 'L3 WebView >= Chrome/91', (r.ua.match(/Chrome\/[\d.]+/) || [])[0]);
 P(!!r.surface, 'L3 --c-surface resolves', r.surface);
 P(r.grad === '160deg', 'L3 grad 160deg', r.grad);
 P(!hardPed, 'L3 voice-mic no hard pedestal', r.micShadow);

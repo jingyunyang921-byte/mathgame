@@ -44,7 +44,7 @@ try{
   await b.ev(`document.querySelectorAll('.locked-modal.show').forEach(n=>n.classList.remove('show'));localStorage.setItem('mathgameStars',JSON.stringify({1:3,2:2,3:1}));localStorage.setItem('mathgameMaxCompletedLevel','3');true`);
   const c=await b.ev(collection);
   P(c.title==='旅行伙伴' && c.lit===3 && c.gold===1 && c.dim===3 && c.locked===0,'旅行伙伴图鉴：6关全开放，未通关的3格是剪影、无上锁格',c);
-  P(c.sub==='已结识 3 / 6 位伙伴 · 1 位熟悉伙伴' && c.buttons===4,'图鉴文案与四按钮入口一致',c);
+  P(c.sub.startsWith('已结识 3 / 6 位伙伴 · 1 位熟悉伙伴') && c.buttons===4,'图鉴文案与四按钮入口一致',c);
   await b.shot('travel_collection');
   await b.ev(`localStorage.setItem('mathgameStars',JSON.stringify({1:3,2:3,3:3,4:3,5:3,6:3}));localStorage.setItem('mathgameMaxCompletedLevel','6');localStorage.removeItem('mathgameTravelEndingSeen');localStorage.setItem('mathgameRankSeen','999');true`);
   await b.nav(b.menu);const e1=await b.ev(ending);

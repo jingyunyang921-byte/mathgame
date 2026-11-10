@@ -38,7 +38,7 @@ const METRICS = `(() => {
 let fail = 0; const P = (ok, l, x) => { console.log((ok ? 'PASS ' : 'FAIL ') + l + (x != null ? '  ' + x : '')); if (!ok) fail++; };
 const r = (await ev(METRICS)).result.value;
 console.log('\n--- L6 device ---', JSON.stringify(r, null, 2));
-P(/Chrome\/91\./.test(r.ua), 'L6 WebView Chrome/91', (r.ua.match(/Chrome\/[\d.]+/) || [])[0]);
+P(/Chrome\/(9[1-9]|1\d\d)\./.test(r.ua), 'L6 WebView >= Chrome/91', (r.ua.match(/Chrome\/[\d.]+/) || [])[0]);
 P(!!r.surface, 'L6 --c-surface resolves', r.surface);
 P(r.grad === '160deg', 'L6 grad 160deg', r.grad);
 // 减号是排版用的 U+2212「−」而不是 ASCII 连字符 —— 四则运算改版后 L6 会出减法题，

@@ -52,7 +52,7 @@ const N = (l, x) => console.log('NOTE ' + l + '  ' + x);
 const isTransparent = v => v === 'rgba(0, 0, 0, 0)' || v === 'transparent';
 const isNone = v => v === 'none';
 console.log('\\n===== TOUCH-FIX VERDICTS =====');
-P(/Chrome\/91\./.test(r.ua), 'WebView is Chrome/91', r.ua.match(/Chrome\/[\d.]+/)?.[0]);
+P(/Chrome\/(9[1-9]|1\d\d)\./.test(r.ua), 'WebView >= Chrome/91', r.ua.match(/Chrome\/[\d.]+/)?.[0]);
 N('viewport', r.iw + 'x' + r.ih);
 // 1) tap-highlight transparent everywhere (set on *)
 P(isTransparent(r.tapHtml), 'tap-highlight transparent @html', r.tapHtml);

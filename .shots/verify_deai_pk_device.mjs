@@ -57,7 +57,7 @@ for (const c of [{ lv: 1, mode: 'visual', eng: 'Game' }, { lv: 2, mode: 'visual'
   await sleep(5200);
   const g = await ev(GAME_PROBE);
   console.log(`\n-- ${tag}  (engine=${g.gType}) --`);
-  if (c.lv === 1) ok(/Chrome\/91\./.test(g.ua), `${tag} WebView Chrome/91`, g.ua);
+  if (c.lv === 1) ok(/Chrome\/(9[1-9]|1\d\d)\./.test(g.ua), `${tag} WebView >= Chrome/91`, g.ua);
   ok(g.gType === c.eng, `${tag} 引擎=${c.eng}`, g.gType);
   ok(g.crown === name, `${tag} 名牌=「${name}」`, JSON.stringify(g.crown));
   ok(g.href === '#' + sym, `${tag} 带路精灵=#${sym}`, JSON.stringify(g.href));

@@ -37,7 +37,7 @@ await sleep(5200);
 const r = (await ev(METRICS)).result.value;
 const hardQc = /[1-9][0-9.]*px 0px 0px/.test(r.qcShadow), hardCw = /[1-9][0-9.]*px 0px 0px/.test(r.cwShadow);
 console.log('\n--- L4 device ---', JSON.stringify(r));
-P(/Chrome\/91\./.test(r.ua), 'L4 WebView Chrome/91', (r.ua.match(/Chrome\/[\d.]+/) || [])[0]);
+P(/Chrome\/(9[1-9]|1\d\d)\./.test(r.ua), 'L4 WebView >= Chrome/91', (r.ua.match(/Chrome\/[\d.]+/) || [])[0]);
 P(!!r.surface, 'L4 --c-surface resolves', r.surface);
 P(r.grad === '160deg', 'L4 grad 160deg', r.grad);
 P(r.backColor !== 'rgb(27, 94, 32)', 'L4 race-back no deep-green identity', r.backColor);

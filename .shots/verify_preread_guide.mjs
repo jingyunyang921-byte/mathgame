@@ -2,7 +2,7 @@
 //   菜单：领养弹窗 / 小窝 / 领养后 / 空闲 4 秒出发提示（最多 2 次、有星不提示、弹窗开着顺延）/ 看题听题钮 / 六关岛 / 打卡领奖；
 //   小手：落在目标钮上、始终 aria-hidden=true、碰屏即收、不挡点击；声音跟「读题语音」走（0 档不调 TTS，小手照出）；
 //   离页：语音在播时先 Tts.stop 再延迟 150ms 跳，没在播就直接跳；
-//   游戏页：开局规则卡只在「本关还没拿过星」时念，速算 / 错题重练 / 已有星不念；首题示范小手同步念一句；
+//   游戏页：开局规则卡只在「本关还没拿过星」时念，速算 / 已有星不念；错题重练每次启动只念第一回；首题示范小手同步念一句；
 //   结算舞台：第一次通关（或本关还没拿过星又没过）时，主按钮上伸小手并念一句去向；老关安静、0 档不出声、等引擎夸奖念完再念、收舞台不补念；
 //   静态：菜单引导句和游戏页新增句都已打进 APK（assets/tts_bundled），游戏页新增句都登记在 mgTtsPrefetchLines。
 // 用法：node .shots/verify_preread_guide.mjs（需要本地 headless Chrome :9333 + http.server :8000）
@@ -192,8 +192,11 @@ r = await intro(3, 'visual', false, { 3: 1 });
 P(r.said.length === 0, 'J 本关已有星：规则卡不念', r.said);
 r = await intro(3, 'visual', true, {});
 P(r.said.length === 0, 'J 一分钟速算：规则卡不念', r.said);
+await b.ev(`sessionStorage.removeItem('mgReviewSaid'); true`);
 r = await intro(0, 'visual', false, {});
-P(r.said.length === 0, 'J 错题重练（第 0 关）：规则卡不念', r.said);
+P(JSON.stringify(r.said) === JSON.stringify(['写对答案，错题变少！']), 'J 错题重练（第 0 关）：本次启动第一回念「写对答案，错题变少！」', r.said);
+r = await intro(0, 'visual', false, {});
+P(r.said.length === 0, 'J 错题重练（第 0 关）：同一次启动里第二回不再念', r.said);
 r = await intro(3, 'visual', false, {}, true);
 P(r.ms >= 2900 && r.ms <= 3600, 'J 要念且语音挂起：规则卡最长 3 秒（_mgSpeakAwait 保险）收起，不会卡死', r.ms);
 r = await intro(3, 'visual', false, { 3: 1 }, true);

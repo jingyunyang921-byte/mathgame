@@ -59,7 +59,7 @@ const p2 = (await ev(`(() => {
     dangling, ua: navigator.userAgent, tap: getComputedStyle(document.documentElement).webkitTapHighlightColor, errs: window.__errs };
 })()`)).result.value;
 console.log('\n--- P2 answer-mark ---', JSON.stringify(p2, null, 2));
-P(/Chrome\/91\./.test(p2.ua), 'P2 WebView Chrome/91', (p2.ua.match(/Chrome\/[\d.]+/) || [])[0]);
+P(/Chrome\/(9[1-9]|1\d\d)\./.test(p2.ua), 'P2 WebView Chrome/91+', (p2.ua.match(/Chrome\/[\d.]+/) || [])[0]);
 P(p2.corrUse.includes('#i-check'), 'P2 correct → <use #i-check>', JSON.stringify(p2.corrUse));
 P(p2.corrResolve, 'P2 correct <use> resolves', String(p2.corrResolve));
 P(p2.corrColor === 'rgb(22, 163, 74)', 'P2 correct color green #16a34a (state)', p2.corrColor);

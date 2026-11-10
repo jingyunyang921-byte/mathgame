@@ -90,7 +90,7 @@ for (const c of CASES) {
     P(r.shown, 'overlay 显示', r.title + ' [' + r.titleCls + ']');
     P(r.gType !== null, '引擎类', r.gType);
     P(!r.medalNode, '结算卡不再挂皇冠/重试奖章', String(r.medalNode));
-    P(win ? r.title === WIN_TITLE[c.lv] : /这次没赢|帆船迷航/.test(r.title), win ? '胜利标题按关卡讲材料「' + WIN_TITLE[c.lv] + '」' : '失败标题', r.title);
+    P(win ? r.title === WIN_TITLE[c.lv] : /这次没赢|再试一次/.test(r.title), win ? '胜利标题按关卡讲材料「' + WIN_TITLE[c.lv] + '」' : '失败标题', r.title);
     P(r.titleCls === (win ? 'win' : 'lose'), '标题 class', r.titleCls);
     P(r.emoji === null, '结算文案无系统 emoji', r.emoji ? 'found ' + r.emoji + ' in: ' + r.allText : r.allText);
     const wantNext = win && c.next > 0;

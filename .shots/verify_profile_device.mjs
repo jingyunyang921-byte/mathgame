@@ -66,7 +66,7 @@ writeFileSync('e:/mathgame/mathgame/.shots/profile_device.png', Buffer.from(shot
 
 console.log(JSON.stringify(R, null, 2));
 let fail = 0; const P = (ok, l, x) => { console.log((ok ? 'PASS ' : 'FAIL ') + l + (x != null ? '  ' + x : '')); if (!ok) fail++; };
-P(/Chrome\/91/.test(R.ua || ''), 'WebView is Chrome 91', R.ua);
+P(/Chrome\/(9[1-9]|1\d\d)/.test(R.ua || ''), 'WebView >= Chrome 91', R.ua);
 P(R.inViewport, 'card fully inside viewport (no top/bottom jam)', 'top=' + R.cardTop + ' bottom=' + R.cardBottom + ' ih=' + R.ih);
 P(R.gapTop >= 6 && R.gapBottom >= 6, 'breathing room top & bottom (>=6px)', 'gapTop=' + R.gapTop + ' gapBottom=' + R.gapBottom);
 P(!R.cardScrolls, 'card itself does not scroll (header+footer pinned)');

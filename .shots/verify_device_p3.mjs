@@ -333,8 +333,8 @@ const stale = await ev(`(() => { localStorage.setItem('mathgameDaily', JSON.stri
     num: document.getElementById('streakNum').textContent,
     meta: document.getElementById('sprintPillMeta').textContent,
     body: !/中断|可惜|别忘/.test(document.body.innerText) }; })()`);
-P(!stale.shown && stale.num === '0' && /今天还没打卡/.test(stale.meta) && stale.body,
-  '断签 3 天 → pill 整块收起、数字归零，不说一个字', JSON.stringify(stale));
+P(stale.shown && stale.num === '9' && /今天可得/.test(stale.meta) && stale.body,
+  '断签 3 天 → pill 仍显示累计打卡 9，不说中断/可惜/别忘', JSON.stringify(stale));
 
 // ======== 9. 收摊：别让闸门自己留下状态影响下一个脚本 / 真人试玩 ========
 await ev(`['mathgameSprintBest','mathgameDaily','mathgameStars','mathgameBest',

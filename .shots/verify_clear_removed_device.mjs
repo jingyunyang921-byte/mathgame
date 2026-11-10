@@ -61,7 +61,7 @@ for (const [lv, mode, label] of CASES) {
   await goto(lv, mode);
   const r = (await ev(PROBE)).result.value;
   console.log('\n--- ' + label + ' ---', JSON.stringify({ presentIds: r.presentIds, bad: r.bad, skips: r.skips }));
-  P(/Chrome\/91\./.test(r.ua), label + ' WebView', (r.ua.match(/Chrome\/[\d.]+/) || [])[0]);
+  P(/Chrome\/(9[1-9]|1\d\d)\./.test(r.ua), label + ' WebView', (r.ua.match(/Chrome\/[\d.]+/) || [])[0]);
   P(r.presentIds.length === 0, label + ' 六个 clear 按钮 id 全部不存在', JSON.stringify(r.presentIds));
   P(r.bad.length === 0, label + ' 无可见的清除/清空草稿/i-reset 按钮', JSON.stringify(r.bad));
 }

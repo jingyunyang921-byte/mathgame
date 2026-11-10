@@ -1,4 +1,4 @@
-// On-device verification via CDP (device WebView is Chrome/91; screencap is FLAG_SECURE-blank).
+// On-device verification via CDP (device WebView >= Chrome/91; screencap is FLAG_SECURE-blank).
 // Requires: adb forward tcp:9222 localabstract:webview_devtools_remote_<pid> already set up.
 const CDP = 'http://localhost:9222';
 const targets = await (await fetch(CDP + '/json')).json();
@@ -51,7 +51,7 @@ let fail = 0;
 const P = (ok, l, x) => { console.log((ok ? 'PASS ' : 'FAIL ') + l + (x != null ? '  ' + x : '')); if (!ok) fail++; };
 const N = (l, x) => console.log('NOTE ' + l + '  ' + x);
 console.log('\\n===== DEVICE VERDICTS =====');
-P(/Chrome\/91\./.test(r.ua), 'WebView is Chrome/91', r.ua.match(/Chrome\/[\d.]+/)?.[0]);
+P(/Chrome\/(9[1-9]|1\d\d)\./.test(r.ua), 'WebView >= Chrome/91', r.ua.match(/Chrome\/[\d.]+/)?.[0]);
 N('viewport', r.iw + 'x' + r.ih + ' dpr=' + r.dpr + '  mq(<=700)=' + r.mq700 + ' mq(<=560)=' + r.mq560 + '  --ui=' + r.ui + ' --sp-2=' + r.sp2 + ' --gutter-x=' + r.gutterX);
 P(r.ctaInScreen, 'CTA in-screen', 'bottom=' + r.ctaBottom + ' top=' + r.ctaTop + ' ih=' + r.ih);
 P(r.scrollDelta <= 1, '#menuScreen no overflow (absorber works)', 'scrollDelta=' + r.scrollDelta);

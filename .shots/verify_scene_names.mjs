@@ -63,16 +63,19 @@ try {
     const g = window._currentGame, out = [];
     for (const W of [g.canvas.width, 480, 300]) {
       const c = document.createElement('canvas'); c.width = W; c.height = 300;
-      const ctx = c.getContext('2d'), calls = [], orig = ctx.fillText.bind(ctx);
-      ctx.fillText = (t, x, y) => { calls.push({ t, x, y }); orig(t, x, y); };
+      const ctx = c.getContext('2d'), calls = [], orig = ctx.drawImage.bind(ctx);
+      ctx.drawImage = (im, x, y) => { calls.push({ im, x, y }); orig(im, x, y); };
       g._drawGoalIsland(ctx, W * 0.96, 150, Math.min(W, 300) * 0.13);
-      const k = calls.filter(q => q.t === MG_SCENE[5])[0];
-      let lw = 0; if (k) { ctx.font = 'bold ' + Math.max(11, Math.min(W, 300) * 0.13 * 0.34) + 'px Nunito,sans-serif'; lw = ctx.measureText(k.t).width; }
-      out.push({ W, has: !!k, left: k ? Math.round(k.x - lw / 2) : null, right: k ? Math.round(k.x + lw / 2) : null, old: calls.some(q => q.t === '终点') });
+      const lb = g._lblCache, k = lb ? calls.filter(q => q.im === lb.cv)[0] : null;
+      out.push({ W, has: !!k, left: k ? k.x + lb.pad : null, right: k ? k.x + lb.pad + lb.w : null });
     }
-    return { out, scene: MG_SCENE[5] };
+    const labelSrc = g._islandLabel.toString(), drawSrc = g._drawGoalIsland.toString();
+    const fpx = g._lblCache.fpx, sprite = g._lblCache.cv;
+    return { out, scene: MG_SCENE[5], textIsScene: /MG_SCENE\\[5\\]/.test(labelSrc), old: /终点/.test(labelSrc + drawSrc),
+      drawBlur: /shadowBlur/.test(drawSrc), same: g._islandLabel(fpx).cv === sprite, newSize: g._islandLabel(fpx + 3).cv !== sprite };
   })()`);
-  P(l5.scene === '贝壳海岸' && l5.out.every(o => o.has && !o.old && o.left >= 0 && o.right <= o.W), 'L5：岛上标签「贝壳海岸」，画布 3 种宽度都不被切掉，旧「终点」已去', l5);
+  P(l5.scene === '贝壳海岸' && l5.textIsScene && !l5.old && l5.out.every(o => o.has && o.left >= 0 && o.right <= o.W), 'L5：岛上标签「贝壳海岸」（画在名牌小图上），画布 3 种宽度都不被切掉，旧「终点」已去', l5);
+  P(!l5.drawBlur && l5.same && l5.newSize, 'L5：岛名牌的投影只画一次存成小图，逐帧不再 shadowBlur；字号变了才重画', l5);
   await b.shot('scene_tag_L5_960x576');
 
   P(b.errors.length === 0, '无脚本异常', b.errors);

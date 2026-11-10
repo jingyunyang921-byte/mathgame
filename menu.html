@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>奇幻数学岛</title>
+<script src="mg-log.js" data-page="menu"></script>
 <!-- Reset/utilities FIRST so the design-system block below wins specificity ties (see plan: structural prerequisite) -->
 <style id="local-tw">
 /* ===== Local base reset (Tailwind preflight subset) ===== */
@@ -641,12 +642,29 @@ button.pet-gift:focus-visible{outline:3px solid #7598A5;outline-offset:2px}
 #petBirthModal{z-index:1050}
 .pet-birth-card{width:min(390px,100%)}
 .pet-birth-art{position:relative;width:145px;height:140px;margin:5px auto}
-.pet-birth-art svg{width:140px;height:140px;animation:petHello .8s ease both}
-.pet-shell{position:absolute;bottom:9px;width:34px;height:28px;background:#FFE6A8;border:2px solid #E7A740;border-radius:4px 4px 22px 22px;animation:petShell .7s ease both}
-.shell-left{left:14px;--shell-x:-14px;--shell-r:-30deg}.shell-right{right:14px;--shell-x:14px;--shell-r:30deg}
+.pet-birth-art .bt{position:absolute;left:-15px;top:-17px;width:176px;height:176px;overflow:visible;pointer-events:none}
+.bt-egg,.bt-bowl,.bt-lid,.bt-fly,.bt-glow,.bt-rays,.bt-pet,.bt-rest,.bt-pop{transform-box:fill-box;transform-origin:50% 50%}
+.bt-pet,.bt-egg{transform-origin:50% 100%}
+.bt-egg,.bt-bowl,.bt-lid,.bt-fly,.bt-rays{opacity:0}
+.bt-glow{opacity:.5;animation:btGlow 1.3s ease-out .6s both}
+.bt-rays{animation:btRays .7s ease-out .6s forwards}
+.bt-egg{animation:btEgg .6s ease-in-out forwards}
+.bt-bowl{animation:btBowl .8s ease-in .6s forwards}
+.bt-lid{transform-origin:50% 80%;animation:btLid .95s ease-in .6s forwards}
+.bt-fly{animation:btFly .9s ease-in .6s forwards}
+.bt-pet{animation:btRise 1s ease-out .6s both}
+.bt-rest{animation:btRest .4s ease-out 1.25s both}
+.bt-pop{animation:btPop .5s ease-out var(--d,1.3s) both}
 .pet-name-input{display:block;width:75%;margin:8px auto 15px;border:2px solid #EAC591;border-radius:12px;background:#FFF9EB;padding:10px;text-align:center;color:#77502A;font:inherit;font-weight:900}
-@keyframes petHello{from{transform:translateY(20px) scale(.45);opacity:0}to{transform:none;opacity:1}}
-@keyframes petShell{from{transform:translateY(-25px)}to{transform:translateX(var(--shell-x)) rotate(var(--shell-r))}}
+@keyframes btEgg{0%{opacity:1}12%{opacity:1;transform:rotate(-7deg)}28%{opacity:1;transform:rotate(6deg)}44%{opacity:1;transform:rotate(-5deg)}60%{opacity:1;transform:rotate(4deg)}82%{opacity:1;transform:rotate(-2deg) scale(1.05,.97)}99%{opacity:1}100%{opacity:0;transform:scale(1.05,.97)}}
+@keyframes btGlow{0%{opacity:0;transform:scale(.5)}20%{opacity:1;transform:scale(1.1)}100%{opacity:.5;transform:none}}
+@keyframes btRays{0%{opacity:0;transform:scale(.6)}20%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.25)}}
+@keyframes btBowl{0%,50%{opacity:1;transform:none}100%{opacity:0;transform:translateY(8px)}}
+@keyframes btLid{0%{opacity:1;transform:none;animation-timing-function:cubic-bezier(.2,.7,.4,1)}40%{opacity:1;transform:translate(12px,-14px) rotate(24deg)}100%{opacity:0;transform:translate(30px,10px) rotate(85deg)}}
+@keyframes btFly{0%{opacity:1;transform:none;animation-timing-function:cubic-bezier(.2,.7,.4,1)}40%{opacity:1;transform:translate(var(--x1),var(--y1)) rotate(var(--r1))}100%{opacity:0;transform:translate(var(--x2),var(--y2)) rotate(var(--r2))}}
+@keyframes btRise{0%{opacity:0;transform:translateY(-3px) scale(.5)}6%{opacity:1}42%{transform:translateY(-10px) scale(.94,1.1)}62%{transform:translateY(2px) scale(1.1,.9)}80%{transform:translateY(-2px) scale(.97,1.03)}100%{opacity:1;transform:none}}
+@keyframes btRest{0%{opacity:0;transform:translateY(-8px) scale(.6)}100%{opacity:1;transform:none}}
+@keyframes btPop{0%{opacity:0;transform:scale(.2)}60%{opacity:1;transform:scale(1.3)}100%{opacity:1;transform:none}}
 @media(max-height:580px) and (min-width:601px){#petModal .pet-card{padding:14px 18px}.pet-journal{max-height:285px}.pet-home .pet-stage-name{margin-top:2px}#petModal .locked-modal-title{font-size:22px;margin-bottom:5px}}
 @media(max-height:520px) and (min-width:601px){.pet-home .pet-stage-name{font-size:17px;margin-top:0}}
 @media(max-width:600px){#petModal .pet-card{overflow-y:auto;padding:16px}.pet-layout{display:block}.pet-nest{height:140px}.pet-nest .pet-art{width:100px;height:100px;left:50px;bottom:30px}.pet-nest .pet-art.egg-view{width:120px;height:120px;left:40px;bottom:26px}.pet-home{padding-bottom:10px}.pet-journal{margin-top:12px;max-height:300px}.pet-panel{max-height:230px}}
@@ -658,7 +676,7 @@ button.pet-gift:focus-visible{outline:3px solid #7598A5;outline-offset:2px}
 @media(min-width:601px){.pet-preview{position:absolute;top:0;left:0;right:0;bottom:0;min-height:0}}
 @media(max-width:600px){.pet-bag-chip,.pet-bag-slot{min-height:84px}.pet-bag-chip .mat-art,.pet-bag-slot .mat-art{width:52px;height:52px}.pe-gift{width:40px;height:40px}.pe-gift .mat-art{width:28px;height:28px}.pe-cell{gap:4px}.pe-pal{width:64px;height:58px}.pe-pal .pe-an{left:9px;bottom:6px;width:46px;height:46px}}
 @media(max-width:600px){.pet-journal{max-height:440px}.pet-panel{max-height:380px}}
-@media(prefers-reduced-motion:reduce){.pet-birth-art svg,.pet-shell{animation:none}.pet-art.cheer{animation:none}}
+@media(prefers-reduced-motion:reduce){.pet-birth-art .bt *{animation:none}.pet-art.cheer{animation:none}}
 
 /* ── 弹窗（保留 .locked-modal* 类名与 .show 显隐机制） ── */
 .locked-modal{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:var(--sp-3)}
@@ -851,8 +869,8 @@ button.pet-gift:focus-visible{outline:3px solid #7598A5;outline-offset:2px}
   <!-- 萌宠「数宝」入口图标 + 三态美术（蛋/幼/成）。纯内联 SVG，和游戏页的同名 symbol 逐字一致 -->
   <symbol id="i-pet" viewBox="0 0 24 24"><path d="M6.5 7 L5 3.8 L8.8 5.8 Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M17.5 7 L19 3.8 L15.2 5.8 Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="13" r="7" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9.6" cy="12" r="1.2" fill="currentColor"/><circle cx="14.4" cy="12" r="1.2" fill="currentColor"/><path d="M9.8 15.5 Q12 17.3 14.2 15.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
   <symbol id="pet-egg" viewBox="0 0 64 64"><ellipse cx="32" cy="37" rx="19" ry="23" fill="#FFE6A8" stroke="#E7A740" stroke-width="2.6"/><path d="M15 40 q6 5 10 0 t8 0 t8 0" fill="none" stroke="#F3C564" stroke-width="2.2" stroke-linecap="round"/><circle cx="25" cy="27" r="2.6" fill="#FFCF6B"/><circle cx="38" cy="31" r="2" fill="#FFCF6B"/><ellipse cx="24" cy="24" rx="4" ry="5.5" fill="#FFF6DC" opacity="0.85"/></symbol>
-  <symbol id="pet-baby" viewBox="0 0 64 64"><ellipse cx="26" cy="55" rx="4" ry="2.6" fill="#4FAE56"/><ellipse cx="38" cy="55" rx="4" ry="2.6" fill="#4FAE56"/><ellipse cx="32" cy="43" rx="14" ry="12" fill="#8FD98F" stroke="#4FAE56" stroke-width="2.2"/><ellipse cx="32" cy="46" rx="8" ry="7.5" fill="#EAF8E2"/><path d="M32 13 Q29 5 34 4 Q33 9 37 11 Z" fill="#4FAE56"/><circle cx="32" cy="27" r="14" fill="#8FD98F" stroke="#4FAE56" stroke-width="2.2"/><circle cx="23" cy="31" r="2.6" fill="#FFB3C1" opacity="0.75"/><circle cx="41" cy="31" r="2.6" fill="#FFB3C1" opacity="0.75"/><circle cx="27" cy="26" r="3.4" fill="#2A2A3A"/><circle cx="37" cy="26" r="3.4" fill="#2A2A3A"/><circle cx="28.2" cy="24.8" r="1.1" fill="#fff"/><circle cx="38.2" cy="24.8" r="1.1" fill="#fff"/><path d="M28 33 Q32 36 36 33" fill="none" stroke="#2A2A3A" stroke-width="1.8" stroke-linecap="round"/></symbol>
-  <symbol id="pet-adult" viewBox="0 0 64 64"><ellipse cx="25" cy="57" rx="4.6" ry="3" fill="#3E9A47"/><ellipse cx="39" cy="57" rx="4.6" ry="3" fill="#3E9A47"/><path d="M17 35 Q5 27 6 41 Q12 40 18 43 Z" fill="#6FC96F" stroke="#3E9A47" stroke-width="1.8" stroke-linejoin="round"/><path d="M47 35 Q59 27 58 41 Q52 40 46 43 Z" fill="#6FC96F" stroke="#3E9A47" stroke-width="1.8" stroke-linejoin="round"/><ellipse cx="32" cy="43" rx="16" ry="14" fill="#7FD07F" stroke="#3E9A47" stroke-width="2.4"/><ellipse cx="32" cy="46" rx="9.5" ry="9" fill="#EAF8E2"/><path d="M22 13 L19 4 L27 11 Z" fill="#FFD23D" stroke="#E7A740" stroke-width="1.4" stroke-linejoin="round"/><path d="M42 13 L45 4 L37 11 Z" fill="#FFD23D" stroke="#E7A740" stroke-width="1.4" stroke-linejoin="round"/><circle cx="32" cy="24" r="15" fill="#7FD07F" stroke="#3E9A47" stroke-width="2.4"/><circle cx="22" cy="28" r="2.8" fill="#FFB3C1" opacity="0.75"/><circle cx="42" cy="28" r="2.8" fill="#FFB3C1" opacity="0.75"/><circle cx="26" cy="23" r="3.6" fill="#2A2A3A"/><circle cx="38" cy="23" r="3.6" fill="#2A2A3A"/><circle cx="27.3" cy="21.6" r="1.2" fill="#fff"/><circle cx="39.3" cy="21.6" r="1.2" fill="#fff"/><path d="M27 30 Q32 34 37 30" fill="none" stroke="#2A2A3A" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="pet-baby" viewBox="0 0 64 64"><path d="M46.7 59.4L50.5 65.7L51.9 59.0Z" fill="#5FD3C8" stroke="#25968D" stroke-width="1.3" stroke-linejoin="round"/><path d="M53.0 58.7L59.7 61.6L56.9 55.3Z" fill="#5FD3C8" stroke="#25968D" stroke-width="1.3" stroke-linejoin="round"/><path d="M57.3 54.2L64.5 52.7L58.6 49.2Z" fill="#5FD3C8" stroke="#25968D" stroke-width="1.3" stroke-linejoin="round"/><path d="M41 56Q57 61 56.5 46" fill="none" stroke="#D97A1F" stroke-width="8.8" stroke-linecap="round"/><path d="M41 56Q57 61 56.5 46" fill="none" stroke="#FFB545" stroke-width="5.4" stroke-linecap="round"/><path transform="translate(56.5 46) scale(1.05)" d="M0 0Q-6.5-6 1-12Q6.5-5.5 0 0Z" fill="#5FD3C8" stroke="#25968D" stroke-width="1.5" stroke-linejoin="round"/><g fill="#FFB545" stroke="#D97A1F" stroke-width="2.2"><ellipse cx="24.5" cy="58.2" rx="6.2" ry="3.2"/><ellipse cx="39.5" cy="58.2" rx="6.2" ry="3.2"/></g><ellipse cx="32" cy="49" rx="13.2" ry="11.4" fill="#FFB545" stroke="#D97A1F" stroke-width="2.3"/><ellipse cx="32" cy="50.3" rx="8.2" ry="8.6" fill="#FFF0C4"/><path d="M25.5 45.2q2.1 2.4 4.2 0q2.1 2.4 4.2 0q2.1 2.4 4.2 0M27.6 49.4q2.1 2.4 4.2 0q2.1 2.4 4.2 0M25.5 53.6q2.1 2.4 4.2 0q2.1 2.4 4.2 0q2.1 2.4 4.2 0" fill="none" stroke="#F2C98A" stroke-width=".95" stroke-linecap="round"/><g fill="#FFB545" stroke="#D97A1F" stroke-width="2"><ellipse cx="23.4" cy="47.6" rx="3.7" ry="5.2" transform="rotate(14 23.4 47.6)"/><ellipse cx="40.6" cy="47.6" rx="3.7" ry="5.2" transform="rotate(-14 40.6 47.6)"/></g><path d="M19 11.6Q13.6 11 10 5.2Q16.6 4.2 19.8 7.6Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.7" stroke-linejoin="round"/><path d="M45.0 11.6Q50.4 11 54.0 5.2Q47.4 4.2 44.2 7.6Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.7" stroke-linejoin="round"/><path d="M21 17.5Q16.2 10 16.8 2.6Q24 5.4 27.6 14.4Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.7" stroke-linejoin="round"/><path d="M18.2 10.9Q21 9.4 23.8 11M17.6 6.8Q19.6 5.6 21.6 6.4" fill="none" stroke="#F0B26A" stroke-width="1.3" stroke-linecap="round"/><path d="M43.0 17.5Q47.8 10 47.2 2.6Q40.0 5.4 36.4 14.4Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.7" stroke-linejoin="round"/><path d="M45.8 10.9Q43.0 9.4 40.2 11M46.4 6.8Q44.4 5.6 42.4 6.4" fill="none" stroke="#F0B26A" stroke-width="1.3" stroke-linecap="round"/><path d="M16.5 25Q10.5 21.5 5.5 24.8Q10 26 12.5 29.8Q9.5 31 8 35Q14 34.8 17.5 33Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.9" stroke-linejoin="round"/><path d="M47.5 25Q53.5 21.5 58.5 24.8Q54.0 26 51.5 29.8Q54.5 31 56.0 35Q50.0 34.8 46.5 33Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.9" stroke-linejoin="round"/><path d="M29.3 14.8Q29.2 8.4 32 6.4Q34.8 8.4 34.7 14.8Z" fill="#5FD3C8" stroke="#25968D" stroke-width="1.9" stroke-linejoin="round"/><ellipse cx="32" cy="26" rx="19" ry="16" fill="#FFB545" stroke="#D97A1F" stroke-width="2.3"/><ellipse cx="23.5" cy="16.5" rx="5" ry="2.4" transform="rotate(-24 23.5 16.5)" fill="#FFD98A" opacity=".85"/><path transform="translate(32 17.2) scale(0.8)" d="M0-5L1.4-1.4 5 0 1.4 1.4 0 5-1.4 1.4-5 0-1.4-1.4Z" fill="#FFD23D" stroke="#E7A740" stroke-width=".55" stroke-linejoin="round"/><ellipse cx="19.2" cy="35.4" rx="3.6" ry="2.4" fill="#FF9DB0" opacity=".8"/><ellipse cx="44.8" cy="35.4" rx="3.6" ry="2.4" fill="#FF9DB0" opacity=".8"/><ellipse cx="22.5" cy="27.5" rx="4.5" ry="5.1" fill="#3B2433"/><ellipse cx="22.5" cy="30.2" rx="2.8" ry="1.5" fill="#FF8A3D" opacity=".8"/><circle cx="24" cy="25.5" r="1.7" fill="#fff"/><circle cx="20.8" cy="28.9" r=".75" fill="#fff"/><ellipse cx="41.5" cy="27.5" rx="4.5" ry="5.1" fill="#3B2433"/><ellipse cx="41.5" cy="30.2" rx="2.8" ry="1.5" fill="#FF8A3D" opacity=".8"/><circle cx="43" cy="25.5" r="1.7" fill="#fff"/><circle cx="39.8" cy="28.9" r=".75" fill="#fff"/><ellipse cx="32" cy="35.6" rx="6.6" ry="4.3" fill="#FFE0A0"/><circle cx="29.6" cy="34.6" r=".95" fill="#D97A1F"/><circle cx="34.4" cy="34.6" r=".95" fill="#D97A1F"/><path d="M29.4 37.6Q32 40 34.6 37.6" fill="none" stroke="#3B2433" stroke-width="1.7" stroke-linecap="round"/></symbol>
+  <symbol id="pet-adult" viewBox="0 0 64 64"><path d="M48.2 59.4L52.3 65.5L53.4 58.6Z" fill="#5FD3C8" stroke="#25968D" stroke-width="1.3" stroke-linejoin="round"/><path d="M54.7 58.1L61.7 60.4L58.3 54.4Z" fill="#5FD3C8" stroke="#25968D" stroke-width="1.3" stroke-linejoin="round"/><path d="M58.9 52.8L65.9 50.8L59.8 47.7Z" fill="#5FD3C8" stroke="#25968D" stroke-width="1.3" stroke-linejoin="round"/><path d="M42 56Q59 61 57.5 44" fill="none" stroke="#D97A1F" stroke-width="8.8" stroke-linecap="round"/><path d="M42 56Q59 61 57.5 44" fill="none" stroke="#FFB545" stroke-width="5.4" stroke-linecap="round"/><path transform="translate(57.5 44) scale(1.2)" d="M0 0Q-6.5-6 1-12Q6.5-5.5 0 0Z" fill="#5FD3C8" stroke="#25968D" stroke-width="1.5" stroke-linejoin="round"/><g fill="#FFB545" stroke="#D97A1F" stroke-width="2.2"><ellipse cx="24.5" cy="58.2" rx="6.2" ry="3.2"/><ellipse cx="39.5" cy="58.2" rx="6.2" ry="3.2"/></g><ellipse cx="32" cy="49" rx="13.2" ry="11.4" fill="#FFB545" stroke="#D97A1F" stroke-width="2.3"/><ellipse cx="32" cy="50.3" rx="8.2" ry="8.6" fill="#FFF0C4"/><path d="M25.5 45.2q2.1 2.4 4.2 0q2.1 2.4 4.2 0q2.1 2.4 4.2 0M27.6 49.4q2.1 2.4 4.2 0q2.1 2.4 4.2 0M25.5 53.6q2.1 2.4 4.2 0q2.1 2.4 4.2 0q2.1 2.4 4.2 0" fill="none" stroke="#F2C98A" stroke-width=".95" stroke-linecap="round"/><g fill="#FFB545" stroke="#D97A1F" stroke-width="2"><ellipse cx="23.4" cy="47.6" rx="3.7" ry="5.2" transform="rotate(14 23.4 47.6)"/><ellipse cx="40.6" cy="47.6" rx="3.7" ry="5.2" transform="rotate(-14 40.6 47.6)"/></g><path d="M19 11.6Q13.6 11 10 5.2Q16.6 4.2 19.8 7.6Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.7" stroke-linejoin="round"/><path d="M45.0 11.6Q50.4 11 54.0 5.2Q47.4 4.2 44.2 7.6Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.7" stroke-linejoin="round"/><path d="M21 17.5Q16.2 10 16.8 2.6Q24 5.4 27.6 14.4Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.7" stroke-linejoin="round"/><path d="M18.2 10.9Q21 9.4 23.8 11M17.6 6.8Q19.6 5.6 21.6 6.4" fill="none" stroke="#F0B26A" stroke-width="1.3" stroke-linecap="round"/><path d="M43.0 17.5Q47.8 10 47.2 2.6Q40.0 5.4 36.4 14.4Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.7" stroke-linejoin="round"/><path d="M45.8 10.9Q43.0 9.4 40.2 11M46.4 6.8Q44.4 5.6 42.4 6.4" fill="none" stroke="#F0B26A" stroke-width="1.3" stroke-linecap="round"/><path d="M16.5 25Q10.5 21.5 5.5 24.8Q10 26 12.5 29.8Q9.5 31 8 35Q14 34.8 17.5 33Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.9" stroke-linejoin="round"/><path d="M47.5 25Q53.5 21.5 58.5 24.8Q54.0 26 51.5 29.8Q54.5 31 56.0 35Q50.0 34.8 46.5 33Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.9" stroke-linejoin="round"/><path d="M28 14.8Q26.5 9 29 7.4Q30.4 9.4 32 5.2Q33.6 9.4 35 7.4Q37.5 9 36 14.8Z" fill="#5FD3C8" stroke="#25968D" stroke-width="1.9" stroke-linejoin="round"/><ellipse cx="32" cy="26" rx="19" ry="16" fill="#FFB545" stroke="#D97A1F" stroke-width="2.3"/><ellipse cx="23.5" cy="16.5" rx="5" ry="2.4" transform="rotate(-24 23.5 16.5)" fill="#FFD98A" opacity=".85"/><path transform="translate(32 17.2) scale(0.8)" d="M0-5L1.4-1.4 5 0 1.4 1.4 0 5-1.4 1.4-5 0-1.4-1.4Z" fill="#FFD23D" stroke="#E7A740" stroke-width=".55" stroke-linejoin="round"/><ellipse cx="19.2" cy="35.4" rx="3.6" ry="2.4" fill="#FF9DB0" opacity=".8"/><ellipse cx="44.8" cy="35.4" rx="3.6" ry="2.4" fill="#FF9DB0" opacity=".8"/><ellipse cx="22.5" cy="27.5" rx="4.5" ry="5.1" fill="#3B2433"/><ellipse cx="22.5" cy="30.2" rx="2.8" ry="1.5" fill="#FF8A3D" opacity=".8"/><circle cx="24" cy="25.5" r="1.7" fill="#fff"/><circle cx="20.8" cy="28.9" r=".75" fill="#fff"/><ellipse cx="41.5" cy="27.5" rx="4.5" ry="5.1" fill="#3B2433"/><ellipse cx="41.5" cy="30.2" rx="2.8" ry="1.5" fill="#FF8A3D" opacity=".8"/><circle cx="43" cy="25.5" r="1.7" fill="#fff"/><circle cx="39.8" cy="28.9" r=".75" fill="#fff"/><ellipse cx="32" cy="35.6" rx="6.6" ry="4.3" fill="#FFE0A0"/><circle cx="29.6" cy="34.6" r=".95" fill="#D97A1F"/><circle cx="34.4" cy="34.6" r=".95" fill="#D97A1F"/><path d="M29.4 37.6Q32 40 34.6 37.6" fill="none" stroke="#3B2433" stroke-width="1.7" stroke-linecap="round"/><path d="M19.5 40.5Q32 48.5 44.5 40.5L45 45.5Q32 53.5 19 45.5Z" fill="#E85D5D" stroke="#B93A3A" stroke-width="1.8" stroke-linejoin="round"/><path d="M26 46L25 52.5L31 51" fill="#E85D5D" stroke="#B93A3A" stroke-width="1.6" stroke-linejoin="round"/><path d="M24.5 44Q32 49.4 39.5 44" fill="none" stroke="#FFD0C8" stroke-width="1.4" stroke-dasharray="3 2.4"/></symbol>
   <!-- 步骤3 · 6 关旅行伙伴（小动物朋友团）。24×24 多彩内联 SVG，图鉴「旅行伙伴」6 格复用。和游戏页同名 symbol 逐字一致 -->
   <symbol id="p-bunny" viewBox="0 0 24 24"><ellipse cx="9" cy="6.5" rx="1.7" ry="4.2" fill="#FBF5EE" stroke="#E0BE98" stroke-width="0.9"/><ellipse cx="15" cy="6.5" rx="1.7" ry="4.2" fill="#FBF5EE" stroke="#E0BE98" stroke-width="0.9"/><ellipse cx="9" cy="6.8" rx="0.8" ry="2.6" fill="#F9C2D0"/><ellipse cx="15" cy="6.8" rx="0.8" ry="2.6" fill="#F9C2D0"/><circle cx="12" cy="14.5" r="6.3" fill="#FDF9F4" stroke="#E0BE98" stroke-width="1"/><circle cx="9.7" cy="13.6" r="1.15" fill="#2A2A3A"/><circle cx="14.3" cy="13.6" r="1.15" fill="#2A2A3A"/><circle cx="10.1" cy="13.2" r="0.35" fill="#fff"/><circle cx="14.7" cy="13.2" r="0.35" fill="#fff"/><circle cx="8.8" cy="16" r="1.25" fill="#FFB3C1" opacity="0.7"/><circle cx="15.2" cy="16" r="1.25" fill="#FFB3C1" opacity="0.7"/><path d="M11 15.6 h2 l-1 1 Z" fill="#F4879E"/><path d="M10.6 17.4 Q12 18.4 13.4 17.4" fill="none" stroke="#C98BA0" stroke-width="0.8" stroke-linecap="round"/></symbol>
   <symbol id="p-squirrel" viewBox="0 0 24 24"><path d="M18 20 Q23 17 21 9.5 Q19.5 4.5 15.5 6.5 Q20 8.5 18 14.5 Q16.8 18.5 15 20 Z" fill="#D98236" stroke="#B3661F" stroke-width="0.8" stroke-linejoin="round"/><circle cx="7" cy="7.6" r="2" fill="#E59B4E" stroke="#B3661F" stroke-width="0.8"/><circle cx="12.4" cy="7" r="2" fill="#E59B4E" stroke="#B3661F" stroke-width="0.8"/><circle cx="7" cy="7.6" r="0.9" fill="#C98B5A"/><circle cx="12.4" cy="7" r="0.9" fill="#C98B5A"/><circle cx="9.8" cy="13" r="6.1" fill="#E59B4E" stroke="#B3661F" stroke-width="1"/><circle cx="8" cy="12.3" r="1.1" fill="#2A2A3A"/><circle cx="11.9" cy="12.3" r="1.1" fill="#2A2A3A"/><circle cx="8.35" cy="11.9" r="0.33" fill="#fff"/><circle cx="12.25" cy="11.9" r="0.33" fill="#fff"/><circle cx="7.2" cy="15" r="1.2" fill="#FFB3A0" opacity="0.65"/><circle cx="12.6" cy="15" r="1.2" fill="#FFB3A0" opacity="0.65"/><path d="M9 14.2 h1.8 l-0.9 1 Z" fill="#7A4A24"/></symbol>
@@ -1040,7 +1058,7 @@ button.pet-gift:focus-visible{outline:3px solid #7598A5;outline-offset:2px}
     <button id="btnVisual" onclick="setMode('visual');mgSay(MG_SAY.visual)" class="mode-btn active" aria-pressed="true">
       <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-eye"/></svg> 口算模式
     </button>
-    <button id="btnAudio" onclick="setMode('audio');mgSay(MG_SAY.audio)" class="mode-btn inactive" aria-pressed="false">
+    <button id="btnAudio" onclick="setMode('audio');mgSay(MG_SAY.audio);mgAskMic()" class="mode-btn inactive" aria-pressed="false">
       <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-ear"/></svg> 听算模式
     </button>
   </div>
@@ -1291,7 +1309,7 @@ button.pet-gift:focus-visible{outline:3px solid #7598A5;outline-offset:2px}
   <div class="locked-modal-bg" onclick="hidePetBirth()"></div>
   <div class="locked-modal-card pet-birth-card" role="dialog" aria-modal="true" aria-labelledby="petBirthTitle">
     <div class="pet-eyebrow">我们的第一张出生纪念卡</div><div id="petBirthTitle" class="locked-modal-title">你好呀，数宝！</div>
-    <div class="pet-birth-art"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#pet-baby"/></svg><span class="pet-shell shell-left"></span><span class="pet-shell shell-right"></span></div>
+    <div class="pet-birth-art"><svg class="bt" viewBox="-8 -8 80 80" aria-hidden="true"><g class="bt-glow"><circle cx="32" cy="34" r="34" fill="#FFE680" opacity=".22"/><circle cx="32" cy="34" r="25" fill="#FFE680" opacity=".3"/><circle cx="32" cy="34" r="16" fill="#FFF3B0" opacity=".45"/></g><path class="bt-rays" d="M10.4 31.7L-0.4 29.6M13.7 23.8L4.6 17.7M19.8 17.7L13.7 8.6M27.7 14.4L25.6 3.6M36.3 14.4L38.4 3.6M44.2 17.7L50.3 8.6M50.3 23.8L59.4 17.7M53.6 31.7L64.4 29.6" stroke="#FFD23D" stroke-width="3" stroke-linecap="round" fill="none"/><g class="bt-pet"><use href="#pet-baby" width="64" height="64"/></g><g class="bt-bowl"><path d="M14 44L18.5 38.5L23 44L27.5 38.5L32 44L36.5 38.5L41 44L45.5 38.5L50 44A19 23 0 0 1 14 44Z" fill="#FFE6A8" stroke="#E7A740" stroke-width="2.2" stroke-linejoin="round"/><path d="M18 51q5 3.5 8 0t7 0t8 0" fill="none" stroke="#F3C564" stroke-width="2" stroke-linecap="round"/><circle cx="21" cy="47.5" r="1.8" fill="#FFCF6B"/></g><g class="bt-egg"></g><g class="bt-lid"><path d="M13.9 44C11.5 30 21 14 32 14C43 14 52.5 30 50.1 44L45.5 38.5L41 44L36.5 38.5L32 44L27.5 38.5L23 44L18.5 38.5Z" fill="#FFE6A8" stroke="#E7A740" stroke-width="2.2" stroke-linejoin="round"/><ellipse cx="24" cy="24" rx="4" ry="5.5" fill="#FFF6DC" opacity=".85"/></g><g transform="translate(14 36) scale(1.3)"><path class="bt-fly" style="--x1:-14px;--y1:-22px;--r1:-120deg;--x2:-26px;--y2:16px;--r2:-260deg" d="M-6 2L-3.2-4.6L-.4-1.4L2.8-5.4L6 .6L1.2 5Z" fill="#FFE6A8" stroke="#E7A740" stroke-width="1.6" stroke-linejoin="round"/></g><g transform="translate(50 36) scale(1.2)"><path class="bt-fly" style="--x1:16px;--y1:-26px;--r1:140deg;--x2:28px;--y2:12px;--r2:280deg" d="M-6 2L-3.2-4.6L-.4-1.4L2.8-5.4L6 .6L1.2 5Z" fill="#FFE6A8" stroke="#E7A740" stroke-width="1.6" stroke-linejoin="round"/></g><g transform="translate(24 28) scale(1)"><path class="bt-fly" style="--x1:-8px;--y1:-20px;--r1:-90deg;--x2:-14px;--y2:6px;--r2:-200deg" d="M-6 2L-3.2-4.6L-.4-1.4L2.8-5.4L6 .6L1.2 5Z" fill="#FFE6A8" stroke="#E7A740" stroke-width="1.6" stroke-linejoin="round"/></g><g transform="translate(40 26) scale(0.9)"><path class="bt-fly" style="--x1:8px;--y1:-22px;--r1:100deg;--x2:12px;--y2:4px;--r2:220deg" d="M-6 2L-3.2-4.6L-.4-1.4L2.8-5.4L6 .6L1.2 5Z" fill="#FFE6A8" stroke="#E7A740" stroke-width="1.6" stroke-linejoin="round"/></g><g transform="translate(7 58) rotate(-12) scale(1.1)"><path class="bt-rest" d="M-6 2L-3.2-4.6L-.4-1.4L2.8-5.4L6 .6L1.2 5Z" fill="#FFE6A8" stroke="#E7A740" stroke-width="1.6" stroke-linejoin="round"/></g><g transform="translate(57 59) rotate(25) scale(1)"><path class="bt-rest" d="M-6 2L-3.2-4.6L-.4-1.4L2.8-5.4L6 .6L1.2 5Z" fill="#FFE6A8" stroke="#E7A740" stroke-width="1.6" stroke-linejoin="round"/></g><g class="bt-pop" style="--d:1.3s"><path transform="translate(8 14) scale(1.5)" d="M0-5L1.4-1.4 5 0 1.4 1.4 0 5-1.4 1.4-5 0-1.4-1.4Z" fill="#FFD23D" stroke="#E7A740" stroke-width=".55" stroke-linejoin="round"/></g><g class="bt-pop" style="--d:1.42s"><path transform="translate(58 22) scale(1.1)" d="M0-5L1.4-1.4 5 0 1.4 1.4 0 5-1.4 1.4-5 0-1.4-1.4Z" fill="#FFD23D" stroke="#E7A740" stroke-width=".55" stroke-linejoin="round"/></g><g class="bt-pop" style="--d:1.5s"><path transform="translate(54 6) scale(0.9)" d="M0 7C-6 3-7-1-4.5-2.5-2.5-3.7-.5-2.5 0-1 .5-2.5 2.5-3.7 4.5-2.5 7-1 6 3 0 7Z" fill="#FF8A9A" stroke="#E86477" stroke-width="1" stroke-linejoin="round"/></g><g class="bt-pop" style="--d:1.62s"><path transform="translate(6 28) scale(0.8)" d="M0 7C-6 3-7-1-4.5-2.5-2.5-3.7-.5-2.5 0-1 .5-2.5 2.5-3.7 4.5-2.5 7-1 6 3 0 7Z" fill="#FFB3BD" stroke="#E86477" stroke-width="1" stroke-linejoin="round"/></g></svg></div>
     <p id="petBirthText" class="pet-note"></p><div id="petBirthJourney" class="pet-birth-memories"></div><label class="pet-note-title" for="petBirthName">给这位老朋友起个名字吧</label>
     <input id="petBirthName" class="pet-name-input" maxlength="12" value="数宝" onchange="savePetName()">
     <div id="petBirthFriends" class="ending-family" aria-label="来庆祝的旅行伙伴"></div>
@@ -1508,7 +1526,7 @@ function getPet() { return MG_PET.get(); }
 function setCoins(n) { return MG_PET.setCoins(n); }
 function petText(id, value) { document.getElementById(id).textContent = value; }
 function petMessage(text) { petText('petResponse', text); }
-function petError(e) { mgConfirm({ title: '小窝手记', msg: e.message || '存档没有保存成功，请检查设备存储空间。', okText: '知道了', cancelText: '返回' }); }
+function petError(e) { mgLog.w('pet', e); const m = e && e.message; mgConfirm({ title: '小窝手记', msg: /[一-龥]/.test(m || '') ? m : '存档没有保存成功，请检查设备存储空间。', okText: '知道了', cancelText: '返回' }); }
 function petTab(tab) {
   ['Today', 'Nest', 'Log'].forEach(t => {
     document.getElementById('petPanel' + t).hidden = t !== tab;
@@ -1866,6 +1884,7 @@ function showPetBirth(replay) {
     if (!replay && !p.stage) { MG_PET.syncGifts(); if (!MG_PET.hatch()) return; p = MG_PET.get(); }
     if (!p.stage) return;
     hidePet();
+    const btEgg = document.querySelector('#petBirthModal .bt-egg'); if (btEgg) btEgg.innerHTML = MG_PET_STORY.eggInner(6);
     petText('petBirthText', p.legacy ? '老朋友的旅行还在继续，我们一起留下这张纪念卡。' : p.hatchDay + ' · 经过长久的学习与陪伴，我们终于见面啦！');
     const memories = MG_PET.memories(undefined, true), birthGifts = memories.map(s => s.level);
     document.getElementById('petBirthJourney').innerHTML = (birthGifts.includes(6) ? '<div class="pet-birth-lamp">' + MG_PET_STORY.scene(6, p, true) + '</div><p><strong>一直留着的欢迎灯，今天终于亮起来了。</strong></p>' : '<p><strong>每天的学习与陪伴，带我们走到了今天。</strong></p>')
@@ -2291,6 +2310,26 @@ function mgSayStop() {
   } catch (e) {}
   return was;
 }
+// 听算要用话筒：点「听算模式」时就把系统的话筒授权问掉，别等进了关卡读题时才弹。等「听题，说答案」念完再弹，免得盖住声音。
+// 只有 App 里才有原生话筒插件；已允许、或系统不会再弹窗（永久拒绝）就什么也不做，进关后的提示仍照旧。
+let _micAsking = false;
+function mgAskMic() {
+  const V = window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform() && Capacitor.Plugins && Capacitor.Plugins.Vosk;
+  if (!V || !V.checkPermissions || !V.requestPermissions || _micAsking) return;
+  _micAsking = true;
+  let waited = 0;
+  const done = function () { _micAsking = false; };
+  const go = function () {
+    if (_saying && waited < 3000) { waited += 200; setTimeout(go, 200); return; }
+    try { V.requestPermissions({ permissions: ['microphone'] }).then(done, done); } catch (e) { done(); }
+  };
+  try {
+    V.checkPermissions().then(function (r) {
+      const s = r && r.microphone;
+      if (s === 'prompt' || s === 'prompt-with-rationale') go(); else done();
+    }, done);
+  } catch (e) { done(); }
+}
 const MG_POINT_HAND = '<svg viewBox="0 0 40 48"><g fill="#fff" stroke="#C9792E" stroke-width="2.4" stroke-linejoin="round">'
   + '<rect x="14" y="2" width="9" height="28" rx="4.5"/><rect x="8" y="22" width="27" height="23" rx="9"/>'
   + '<rect x="24" y="19" width="7" height="14" rx="3.5" transform="rotate(8 27 26)"/><rect x="2" y="26" width="11" height="14" rx="5.5" transform="rotate(-22 7 33)"/></g>'
@@ -2358,6 +2397,7 @@ function mgConfirm({ title = '确定吗？', msg = '', okText = '确定', cancel
   document.getElementById('confirmOkBtn').classList.toggle('danger', tone === 'danger');
   modal.classList.add('show');
   modal.setAttribute('aria-hidden', 'false');
+  if (_confirmResolve) { const prev = _confirmResolve; _confirmResolve = null; prev(false); }   // 上一个还没答的确认按「取消」收尾，别让它的 await 永远挂着
   return new Promise(res => { _confirmResolve = res; });
 }
 function hideConfirm(result) {
@@ -2958,10 +2998,15 @@ document.addEventListener('DOMContentLoaded', function () {
     // 1) 退出确认框开着 → 返回键当「取消」，正常关闭并解析 Promise
     var cm = document.getElementById('confirmModal');
     if (cm && cm.classList.contains('show')) { hideConfirm(false); return; }
-    // 2) 其它任意弹窗开着 → 关掉最上层，不退出
-    var open = document.querySelector('.locked-modal.show');
+    // 2) 其它任意弹窗开着 → 关掉最上层（DOM 里排最后的在最上），走各自的 hideXxx，别只摘 class（小窝/打卡的 hide 里还要收小手）
+    var shown = document.querySelectorAll('.locked-modal.show');
+    var open = shown[shown.length - 1];
     if (open) {
-      if (open.id === 'petBirthModal') hidePetBirth();
+      var closers = { petBirthModal: hidePetBirth, petModal: hidePet, profileModal: hideProfile, mistakeModal: hideMistakes,
+        collectionModal: hideCollection, badgeModal: hideBadges, badgeUnlockModal: hideBadgeUnlock, settingsModal: hideSettings,
+        lockedModal: hideLockedModal, tierModal: hideTier, rankUpModal: hideRankUp, endingModal: hideEnding, dailyModal: hideDaily };
+      var fn = closers[open.id];
+      if (fn) fn();
       else { open.classList.remove('show'); open.setAttribute('aria-hidden', 'true'); }
       return;
     }

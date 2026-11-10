@@ -204,7 +204,7 @@
       p.stories = { seen, pending };
     }
     // 只在迁移、跨日或抵达阶段时落盘，避免关卡画布每帧重复写存储。
-    if (JSON.stringify(raw) !== JSON.stringify(p)) save(p);
+    if (JSON.stringify(raw) !== JSON.stringify(p)) { try { save(p); } catch (e) { /* 存储满或被禁用：仍返回整理后的存档，真正的写操作会自己报错 */ } }
     return p;
   }
   function info(now) {

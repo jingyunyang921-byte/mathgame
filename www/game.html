@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>口算PK大冒险</title>
+<script src="mg-log.js" data-page="game"></script>
 <style>
 /* Nunito (Latin/digits) bundled locally — no network font dependency */
 @font-face {
@@ -1032,6 +1033,7 @@ div.cs-chest { cursor: default; }
 .cs-chip.rec .ic { color: #E89A00; }
 .cs-chip .mat-art { width: 28px; height: 28px; }
 #intro-prize .mat-art { width: 28px; height: 28px; }
+#intro-prize .in-egg { flex: none; width: 44px; height: 44px; margin: -10px -6px; overflow: visible; }
 #intro-prize .ig-flag { flex: none; width: 22px; height: 28px; }
 #intro-prize .ig-flag .fl { fill: #E5483B; stroke: #A8281C; stroke-width: 1.4; stroke-linejoin: round; }
 #intro-prize .ig-flag .fn { fill: #fff; font-size: 13px; font-weight: 900; }
@@ -1043,6 +1045,7 @@ div.cs-chest { cursor: default; }
 #intro-box.intro-steps #intro-rule { margin: 0 0 10px !important; line-height: 1 !important; }
 #intro-box.intro-steps #intro-prize { margin-top: 2px !important; font-size: 14px !important; padding: 6px 12px !important; }
 #intro-box.intro-steps #intro-prize .mat-art { width: 24px; height: 24px; }
+#intro-box.intro-steps #intro-prize .in-egg { width: 40px; height: 40px; margin: -8px -5px; }
 .st-row { display: flex; align-items: flex-start; justify-content: center; gap: 2px; }
 .st { width: 82px; display: flex; flex-direction: column; align-items: center; gap: 6px; position: relative; }
 .st-c { width: 60px; height: 60px; border-radius: 50%; background: #FFF1DC; border: 3px solid #F2C48C; display: flex; align-items: center; justify-content: center; position: relative; box-sizing: border-box; }
@@ -1052,6 +1055,7 @@ div.cs-chest { cursor: default; }
 .st-a { width: 12px; height: 12px; margin: 24px 0 0; border-top: 4px solid #F2A65A; border-right: 4px solid #F2A65A; transform: rotate(45deg) scale(.8); box-sizing: border-box; flex: none; }
 .st-egg > svg:first-child { width: 58px; height: 58px; display: block; overflow: visible; }
 .st-egg .mat-art { position: absolute; left: -12px; bottom: -7px; width: 24px; height: 24px; background: #fff; border-radius: 50%; border: 2px solid #F2C48C; box-sizing: content-box; padding: 1px; }
+.st-c > svg.ic.st-ck { position: absolute; right: -8px; bottom: -6px; width: 24px; height: 24px; padding: 3px; box-sizing: border-box; border-radius: 50%; background: #4FAE56; color: #fff; border: 2px solid #fff; }
 /* 首题示范：3-2-1 之后挂在答题区上的「幽灵小手」，孩子一落笔/一点就消失（见 mgDemoStart） */
 #mg-demo { position: fixed; left: 0; top: 0; width: 0; height: 0; z-index: 495; pointer-events: none; }
 #mg-demo .dm-box { position: absolute; width: 220px; height: 154px; transform-origin: 0 0; }
@@ -1206,6 +1210,20 @@ div.cs-chest { cursor: default; }
 @media (prefers-reduced-motion: reduce) { .cs-scene * { animation: none !important; } }
 @media (max-height: 600px) and (min-width: 601px) { .cs-partner { width: 104px; height: 98px; right: calc(100% + 16px); } }
 @media (max-width: 480px) { .cs-partner { width: 84px; height: 80px; right: calc(100% + 4px); } }
+/* 失败的小剧场（第 5、6 关）：同一幅插画不亮灯，朋友站在屏中央轻轻晃，下面一排攒材料的小圆点 + 一个大按钮。 */
+.cs-box.cs-lone { width: auto; height: auto; }
+.cs-lone .cs-partner { position: relative; right: auto; bottom: auto; width: 150px; height: 140px; animation: cs-lone-bob 2.4s ease-in-out infinite; }
+@keyframes cs-lone-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.cs.lv5.lose .cs-scrim { opacity: .16; }
+.ls-prog { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 18px 9px; border-radius: 18px; background: rgba(62,34,12,0.82); box-shadow: 0 4px 0 rgba(0,0,0,0.18); }
+.cs.lv6 .ls-prog { background: rgba(24,30,78,0.86); }
+.ls-dots { display: grid; grid-template-columns: repeat(10, 14px); gap: 6px; }
+.ls-dots i { width: 14px; height: 14px; border-radius: 50%; box-sizing: border-box; border: 2px solid rgba(255,243,196,0.55); }
+.ls-dots i.on { border-color: #FFD866; background: #FFD866; box-shadow: 0 0 8px 2px rgba(255,216,102,0.6); }
+.ls-prog small { font-size: 13px; font-weight: 800; letter-spacing: .02em; color: #FFE19A; }
+@media (max-height: 600px) and (min-width: 601px) { .cs-lone .cs-partner { width: 112px; height: 104px; } .ls-prog { padding: 6px 16px 7px; gap: 4px; } }
+@media (max-width: 480px) { .cs-lone .cs-partner { width: 130px; height: 122px; } }
+@media (prefers-reduced-motion: reduce) { .cs-lone .cs-partner { animation: none; } }
 @media (max-height: 600px) and (min-width: 601px) {
   .cs { gap: 6px; padding: 8px; } .cs-title { font-size: 21px; } .cs-title small { font-size: 12px; }
   .cs-box { --cs-chest: 150px; --cs-chest-open: 112px; } .cs-cue { margin-top: 6px; padding: 8px 24px; font-size: 18px; }
@@ -1601,8 +1619,8 @@ div.cs-chest { cursor: default; }
   <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="9" fill="none" stroke="rgba(0,0,0,0.14)" stroke-width="1.4"/><path d="M12 6.8 L13.5 10.6 L17.6 10.9 L14.4 13.5 L15.5 17.4 L12 15.1 L8.5 17.4 L9.6 13.5 L6.4 10.9 L10.5 10.6 Z" fill="rgba(255,255,255,0.9)" stroke="none"/></symbol>
   <!-- 萌宠「数宝」三态美术（蛋/幼/成），闯关页陪伴挂件用。和菜单页的同名 symbol 逐字一致 -->
   <symbol id="pet-egg" viewBox="0 0 64 64"><ellipse cx="32" cy="37" rx="19" ry="23" fill="#FFE6A8" stroke="#E7A740" stroke-width="2.6"/><path d="M15 40 q6 5 10 0 t8 0 t8 0" fill="none" stroke="#F3C564" stroke-width="2.2" stroke-linecap="round"/><circle cx="25" cy="27" r="2.6" fill="#FFCF6B"/><circle cx="38" cy="31" r="2" fill="#FFCF6B"/><ellipse cx="24" cy="24" rx="4" ry="5.5" fill="#FFF6DC" opacity="0.85"/></symbol>
-  <symbol id="pet-baby" viewBox="0 0 64 64"><ellipse cx="26" cy="55" rx="4" ry="2.6" fill="#4FAE56"/><ellipse cx="38" cy="55" rx="4" ry="2.6" fill="#4FAE56"/><ellipse cx="32" cy="43" rx="14" ry="12" fill="#8FD98F" stroke="#4FAE56" stroke-width="2.2"/><ellipse cx="32" cy="46" rx="8" ry="7.5" fill="#EAF8E2"/><path d="M32 13 Q29 5 34 4 Q33 9 37 11 Z" fill="#4FAE56"/><circle cx="32" cy="27" r="14" fill="#8FD98F" stroke="#4FAE56" stroke-width="2.2"/><circle cx="23" cy="31" r="2.6" fill="#FFB3C1" opacity="0.75"/><circle cx="41" cy="31" r="2.6" fill="#FFB3C1" opacity="0.75"/><circle cx="27" cy="26" r="3.4" fill="#2A2A3A"/><circle cx="37" cy="26" r="3.4" fill="#2A2A3A"/><circle cx="28.2" cy="24.8" r="1.1" fill="#fff"/><circle cx="38.2" cy="24.8" r="1.1" fill="#fff"/><path d="M28 33 Q32 36 36 33" fill="none" stroke="#2A2A3A" stroke-width="1.8" stroke-linecap="round"/></symbol>
-  <symbol id="pet-adult" viewBox="0 0 64 64"><ellipse cx="25" cy="57" rx="4.6" ry="3" fill="#3E9A47"/><ellipse cx="39" cy="57" rx="4.6" ry="3" fill="#3E9A47"/><path d="M17 35 Q5 27 6 41 Q12 40 18 43 Z" fill="#6FC96F" stroke="#3E9A47" stroke-width="1.8" stroke-linejoin="round"/><path d="M47 35 Q59 27 58 41 Q52 40 46 43 Z" fill="#6FC96F" stroke="#3E9A47" stroke-width="1.8" stroke-linejoin="round"/><ellipse cx="32" cy="43" rx="16" ry="14" fill="#7FD07F" stroke="#3E9A47" stroke-width="2.4"/><ellipse cx="32" cy="46" rx="9.5" ry="9" fill="#EAF8E2"/><path d="M22 13 L19 4 L27 11 Z" fill="#FFD23D" stroke="#E7A740" stroke-width="1.4" stroke-linejoin="round"/><path d="M42 13 L45 4 L37 11 Z" fill="#FFD23D" stroke="#E7A740" stroke-width="1.4" stroke-linejoin="round"/><circle cx="32" cy="24" r="15" fill="#7FD07F" stroke="#3E9A47" stroke-width="2.4"/><circle cx="22" cy="28" r="2.8" fill="#FFB3C1" opacity="0.75"/><circle cx="42" cy="28" r="2.8" fill="#FFB3C1" opacity="0.75"/><circle cx="26" cy="23" r="3.6" fill="#2A2A3A"/><circle cx="38" cy="23" r="3.6" fill="#2A2A3A"/><circle cx="27.3" cy="21.6" r="1.2" fill="#fff"/><circle cx="39.3" cy="21.6" r="1.2" fill="#fff"/><path d="M27 30 Q32 34 37 30" fill="none" stroke="#2A2A3A" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="pet-baby" viewBox="0 0 64 64"><path d="M46.7 59.4L50.5 65.7L51.9 59.0Z" fill="#5FD3C8" stroke="#25968D" stroke-width="1.3" stroke-linejoin="round"/><path d="M53.0 58.7L59.7 61.6L56.9 55.3Z" fill="#5FD3C8" stroke="#25968D" stroke-width="1.3" stroke-linejoin="round"/><path d="M57.3 54.2L64.5 52.7L58.6 49.2Z" fill="#5FD3C8" stroke="#25968D" stroke-width="1.3" stroke-linejoin="round"/><path d="M41 56Q57 61 56.5 46" fill="none" stroke="#D97A1F" stroke-width="8.8" stroke-linecap="round"/><path d="M41 56Q57 61 56.5 46" fill="none" stroke="#FFB545" stroke-width="5.4" stroke-linecap="round"/><path transform="translate(56.5 46) scale(1.05)" d="M0 0Q-6.5-6 1-12Q6.5-5.5 0 0Z" fill="#5FD3C8" stroke="#25968D" stroke-width="1.5" stroke-linejoin="round"/><g fill="#FFB545" stroke="#D97A1F" stroke-width="2.2"><ellipse cx="24.5" cy="58.2" rx="6.2" ry="3.2"/><ellipse cx="39.5" cy="58.2" rx="6.2" ry="3.2"/></g><ellipse cx="32" cy="49" rx="13.2" ry="11.4" fill="#FFB545" stroke="#D97A1F" stroke-width="2.3"/><ellipse cx="32" cy="50.3" rx="8.2" ry="8.6" fill="#FFF0C4"/><path d="M25.5 45.2q2.1 2.4 4.2 0q2.1 2.4 4.2 0q2.1 2.4 4.2 0M27.6 49.4q2.1 2.4 4.2 0q2.1 2.4 4.2 0M25.5 53.6q2.1 2.4 4.2 0q2.1 2.4 4.2 0q2.1 2.4 4.2 0" fill="none" stroke="#F2C98A" stroke-width=".95" stroke-linecap="round"/><g fill="#FFB545" stroke="#D97A1F" stroke-width="2"><ellipse cx="23.4" cy="47.6" rx="3.7" ry="5.2" transform="rotate(14 23.4 47.6)"/><ellipse cx="40.6" cy="47.6" rx="3.7" ry="5.2" transform="rotate(-14 40.6 47.6)"/></g><path d="M19 11.6Q13.6 11 10 5.2Q16.6 4.2 19.8 7.6Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.7" stroke-linejoin="round"/><path d="M45.0 11.6Q50.4 11 54.0 5.2Q47.4 4.2 44.2 7.6Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.7" stroke-linejoin="round"/><path d="M21 17.5Q16.2 10 16.8 2.6Q24 5.4 27.6 14.4Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.7" stroke-linejoin="round"/><path d="M18.2 10.9Q21 9.4 23.8 11M17.6 6.8Q19.6 5.6 21.6 6.4" fill="none" stroke="#F0B26A" stroke-width="1.3" stroke-linecap="round"/><path d="M43.0 17.5Q47.8 10 47.2 2.6Q40.0 5.4 36.4 14.4Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.7" stroke-linejoin="round"/><path d="M45.8 10.9Q43.0 9.4 40.2 11M46.4 6.8Q44.4 5.6 42.4 6.4" fill="none" stroke="#F0B26A" stroke-width="1.3" stroke-linecap="round"/><path d="M16.5 25Q10.5 21.5 5.5 24.8Q10 26 12.5 29.8Q9.5 31 8 35Q14 34.8 17.5 33Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.9" stroke-linejoin="round"/><path d="M47.5 25Q53.5 21.5 58.5 24.8Q54.0 26 51.5 29.8Q54.5 31 56.0 35Q50.0 34.8 46.5 33Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.9" stroke-linejoin="round"/><path d="M29.3 14.8Q29.2 8.4 32 6.4Q34.8 8.4 34.7 14.8Z" fill="#5FD3C8" stroke="#25968D" stroke-width="1.9" stroke-linejoin="round"/><ellipse cx="32" cy="26" rx="19" ry="16" fill="#FFB545" stroke="#D97A1F" stroke-width="2.3"/><ellipse cx="23.5" cy="16.5" rx="5" ry="2.4" transform="rotate(-24 23.5 16.5)" fill="#FFD98A" opacity=".85"/><path transform="translate(32 17.2) scale(0.8)" d="M0-5L1.4-1.4 5 0 1.4 1.4 0 5-1.4 1.4-5 0-1.4-1.4Z" fill="#FFD23D" stroke="#E7A740" stroke-width=".55" stroke-linejoin="round"/><ellipse cx="19.2" cy="35.4" rx="3.6" ry="2.4" fill="#FF9DB0" opacity=".8"/><ellipse cx="44.8" cy="35.4" rx="3.6" ry="2.4" fill="#FF9DB0" opacity=".8"/><ellipse cx="22.5" cy="27.5" rx="4.5" ry="5.1" fill="#3B2433"/><ellipse cx="22.5" cy="30.2" rx="2.8" ry="1.5" fill="#FF8A3D" opacity=".8"/><circle cx="24" cy="25.5" r="1.7" fill="#fff"/><circle cx="20.8" cy="28.9" r=".75" fill="#fff"/><ellipse cx="41.5" cy="27.5" rx="4.5" ry="5.1" fill="#3B2433"/><ellipse cx="41.5" cy="30.2" rx="2.8" ry="1.5" fill="#FF8A3D" opacity=".8"/><circle cx="43" cy="25.5" r="1.7" fill="#fff"/><circle cx="39.8" cy="28.9" r=".75" fill="#fff"/><ellipse cx="32" cy="35.6" rx="6.6" ry="4.3" fill="#FFE0A0"/><circle cx="29.6" cy="34.6" r=".95" fill="#D97A1F"/><circle cx="34.4" cy="34.6" r=".95" fill="#D97A1F"/><path d="M29.4 37.6Q32 40 34.6 37.6" fill="none" stroke="#3B2433" stroke-width="1.7" stroke-linecap="round"/></symbol>
+  <symbol id="pet-adult" viewBox="0 0 64 64"><path d="M48.2 59.4L52.3 65.5L53.4 58.6Z" fill="#5FD3C8" stroke="#25968D" stroke-width="1.3" stroke-linejoin="round"/><path d="M54.7 58.1L61.7 60.4L58.3 54.4Z" fill="#5FD3C8" stroke="#25968D" stroke-width="1.3" stroke-linejoin="round"/><path d="M58.9 52.8L65.9 50.8L59.8 47.7Z" fill="#5FD3C8" stroke="#25968D" stroke-width="1.3" stroke-linejoin="round"/><path d="M42 56Q59 61 57.5 44" fill="none" stroke="#D97A1F" stroke-width="8.8" stroke-linecap="round"/><path d="M42 56Q59 61 57.5 44" fill="none" stroke="#FFB545" stroke-width="5.4" stroke-linecap="round"/><path transform="translate(57.5 44) scale(1.2)" d="M0 0Q-6.5-6 1-12Q6.5-5.5 0 0Z" fill="#5FD3C8" stroke="#25968D" stroke-width="1.5" stroke-linejoin="round"/><g fill="#FFB545" stroke="#D97A1F" stroke-width="2.2"><ellipse cx="24.5" cy="58.2" rx="6.2" ry="3.2"/><ellipse cx="39.5" cy="58.2" rx="6.2" ry="3.2"/></g><ellipse cx="32" cy="49" rx="13.2" ry="11.4" fill="#FFB545" stroke="#D97A1F" stroke-width="2.3"/><ellipse cx="32" cy="50.3" rx="8.2" ry="8.6" fill="#FFF0C4"/><path d="M25.5 45.2q2.1 2.4 4.2 0q2.1 2.4 4.2 0q2.1 2.4 4.2 0M27.6 49.4q2.1 2.4 4.2 0q2.1 2.4 4.2 0M25.5 53.6q2.1 2.4 4.2 0q2.1 2.4 4.2 0q2.1 2.4 4.2 0" fill="none" stroke="#F2C98A" stroke-width=".95" stroke-linecap="round"/><g fill="#FFB545" stroke="#D97A1F" stroke-width="2"><ellipse cx="23.4" cy="47.6" rx="3.7" ry="5.2" transform="rotate(14 23.4 47.6)"/><ellipse cx="40.6" cy="47.6" rx="3.7" ry="5.2" transform="rotate(-14 40.6 47.6)"/></g><path d="M19 11.6Q13.6 11 10 5.2Q16.6 4.2 19.8 7.6Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.7" stroke-linejoin="round"/><path d="M45.0 11.6Q50.4 11 54.0 5.2Q47.4 4.2 44.2 7.6Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.7" stroke-linejoin="round"/><path d="M21 17.5Q16.2 10 16.8 2.6Q24 5.4 27.6 14.4Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.7" stroke-linejoin="round"/><path d="M18.2 10.9Q21 9.4 23.8 11M17.6 6.8Q19.6 5.6 21.6 6.4" fill="none" stroke="#F0B26A" stroke-width="1.3" stroke-linecap="round"/><path d="M43.0 17.5Q47.8 10 47.2 2.6Q40.0 5.4 36.4 14.4Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.7" stroke-linejoin="round"/><path d="M45.8 10.9Q43.0 9.4 40.2 11M46.4 6.8Q44.4 5.6 42.4 6.4" fill="none" stroke="#F0B26A" stroke-width="1.3" stroke-linecap="round"/><path d="M16.5 25Q10.5 21.5 5.5 24.8Q10 26 12.5 29.8Q9.5 31 8 35Q14 34.8 17.5 33Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.9" stroke-linejoin="round"/><path d="M47.5 25Q53.5 21.5 58.5 24.8Q54.0 26 51.5 29.8Q54.5 31 56.0 35Q50.0 34.8 46.5 33Z" fill="#FFF0C4" stroke="#D97A1F" stroke-width="1.9" stroke-linejoin="round"/><path d="M28 14.8Q26.5 9 29 7.4Q30.4 9.4 32 5.2Q33.6 9.4 35 7.4Q37.5 9 36 14.8Z" fill="#5FD3C8" stroke="#25968D" stroke-width="1.9" stroke-linejoin="round"/><ellipse cx="32" cy="26" rx="19" ry="16" fill="#FFB545" stroke="#D97A1F" stroke-width="2.3"/><ellipse cx="23.5" cy="16.5" rx="5" ry="2.4" transform="rotate(-24 23.5 16.5)" fill="#FFD98A" opacity=".85"/><path transform="translate(32 17.2) scale(0.8)" d="M0-5L1.4-1.4 5 0 1.4 1.4 0 5-1.4 1.4-5 0-1.4-1.4Z" fill="#FFD23D" stroke="#E7A740" stroke-width=".55" stroke-linejoin="round"/><ellipse cx="19.2" cy="35.4" rx="3.6" ry="2.4" fill="#FF9DB0" opacity=".8"/><ellipse cx="44.8" cy="35.4" rx="3.6" ry="2.4" fill="#FF9DB0" opacity=".8"/><ellipse cx="22.5" cy="27.5" rx="4.5" ry="5.1" fill="#3B2433"/><ellipse cx="22.5" cy="30.2" rx="2.8" ry="1.5" fill="#FF8A3D" opacity=".8"/><circle cx="24" cy="25.5" r="1.7" fill="#fff"/><circle cx="20.8" cy="28.9" r=".75" fill="#fff"/><ellipse cx="41.5" cy="27.5" rx="4.5" ry="5.1" fill="#3B2433"/><ellipse cx="41.5" cy="30.2" rx="2.8" ry="1.5" fill="#FF8A3D" opacity=".8"/><circle cx="43" cy="25.5" r="1.7" fill="#fff"/><circle cx="39.8" cy="28.9" r=".75" fill="#fff"/><ellipse cx="32" cy="35.6" rx="6.6" ry="4.3" fill="#FFE0A0"/><circle cx="29.6" cy="34.6" r=".95" fill="#D97A1F"/><circle cx="34.4" cy="34.6" r=".95" fill="#D97A1F"/><path d="M29.4 37.6Q32 40 34.6 37.6" fill="none" stroke="#3B2433" stroke-width="1.7" stroke-linecap="round"/><path d="M19.5 40.5Q32 48.5 44.5 40.5L45 45.5Q32 53.5 19 45.5Z" fill="#E85D5D" stroke="#B93A3A" stroke-width="1.8" stroke-linejoin="round"/><path d="M26 46L25 52.5L31 51" fill="#E85D5D" stroke="#B93A3A" stroke-width="1.6" stroke-linejoin="round"/><path d="M24.5 44Q32 49.4 39.5 44" fill="none" stroke="#FFD0C8" stroke-width="1.4" stroke-dasharray="3 2.4"/></symbol>
   <!-- 步骤3 · 6 关旅行伙伴（小动物朋友团）。24×24 多彩内联 SVG，可直接塞进任何 24-viewBox 外壳（intro-icon / 结算 chip / 图鉴）。和菜单页同名 symbol 逐字一致 -->
   <symbol id="p-bunny" viewBox="0 0 24 24"><ellipse cx="9" cy="6.5" rx="1.7" ry="4.2" fill="#FBF5EE" stroke="#E0BE98" stroke-width="0.9"/><ellipse cx="15" cy="6.5" rx="1.7" ry="4.2" fill="#FBF5EE" stroke="#E0BE98" stroke-width="0.9"/><ellipse cx="9" cy="6.8" rx="0.8" ry="2.6" fill="#F9C2D0"/><ellipse cx="15" cy="6.8" rx="0.8" ry="2.6" fill="#F9C2D0"/><circle cx="12" cy="14.5" r="6.3" fill="#FDF9F4" stroke="#E0BE98" stroke-width="1"/><circle cx="9.7" cy="13.6" r="1.15" fill="#2A2A3A"/><circle cx="14.3" cy="13.6" r="1.15" fill="#2A2A3A"/><circle cx="10.1" cy="13.2" r="0.35" fill="#fff"/><circle cx="14.7" cy="13.2" r="0.35" fill="#fff"/><circle cx="8.8" cy="16" r="1.25" fill="#FFB3C1" opacity="0.7"/><circle cx="15.2" cy="16" r="1.25" fill="#FFB3C1" opacity="0.7"/><path d="M11 15.6 h2 l-1 1 Z" fill="#F4879E"/><path d="M10.6 17.4 Q12 18.4 13.4 17.4" fill="none" stroke="#C98BA0" stroke-width="0.8" stroke-linecap="round"/></symbol>
   <symbol id="p-squirrel" viewBox="0 0 24 24"><path d="M18 20 Q23 17 21 9.5 Q19.5 4.5 15.5 6.5 Q20 8.5 18 14.5 Q16.8 18.5 15 20 Z" fill="#D98236" stroke="#B3661F" stroke-width="0.8" stroke-linejoin="round"/><circle cx="7" cy="7.6" r="2" fill="#E59B4E" stroke="#B3661F" stroke-width="0.8"/><circle cx="12.4" cy="7" r="2" fill="#E59B4E" stroke="#B3661F" stroke-width="0.8"/><circle cx="7" cy="7.6" r="0.9" fill="#C98B5A"/><circle cx="12.4" cy="7" r="0.9" fill="#C98B5A"/><circle cx="9.8" cy="13" r="6.1" fill="#E59B4E" stroke="#B3661F" stroke-width="1"/><circle cx="8" cy="12.3" r="1.1" fill="#2A2A3A"/><circle cx="11.9" cy="12.3" r="1.1" fill="#2A2A3A"/><circle cx="8.35" cy="11.9" r="0.33" fill="#fff"/><circle cx="12.25" cy="11.9" r="0.33" fill="#fff"/><circle cx="7.2" cy="15" r="1.2" fill="#FFB3A0" opacity="0.65"/><circle cx="12.6" cy="15" r="1.2" fill="#FFB3A0" opacity="0.65"/><path d="M9 14.2 h1.8 l-0.9 1 Z" fill="#7A4A24"/></symbol>
@@ -2260,6 +2278,7 @@ body.mg-stage-battle .mg-listen-card .lc-skip, body.mg-stage-race .mg-listen-car
   #intro-rule { font-size: 14px !important; line-height: 1.5 !important; }
   #intro-prize { font-size: 13px !important; padding: 5px 10px !important; }
   #intro-prize .mat-art { width: 24px; height: 24px; }
+  #intro-prize .in-egg { width: 36px; height: 36px; margin: -6px -4px; }
 
   /* 结算卡：设备是 1000×576，原尺寸下大标题+三个按钮几乎顶满全屏（底部按钮贴边）。
      整卡收紧一档，留出安全边距。 */
@@ -3146,7 +3165,7 @@ function mgSetOverlayChest(snap) {
   const card = document.getElementById('overlay-content');
   if (card) card.scrollTop = 0;
   if (!snap) { el.className = ''; el.innerHTML = ''; return; }
-  if (snap.claimed) { mgRevealChest(snap, snap.claim); return; }
+  if (snap.claimed) { mgRevealChest(snap, snap.claim); mgShowLoseStage(snap); return; }
   // 一拍之后：卡刚排好版，宝箱舞台就在一拍淡出的同时接上（不先露结算卡）。其余情况卡里先只有星星和数据条，约 0.55 秒后再弹出全屏宝箱舞台。
   // 舞台挂不上（结算卡已不在场）就直接补领，奖励不丢。
   const quick = _mgAfterBeat;
@@ -3330,7 +3349,14 @@ function mgStageMount(cls, html, lv, lit) {
   if (card) { card.className = ''; card.innerHTML = ''; }
   return s;
 }
-const mgWsLv = snap => (snap && snap.win && snap.level >= 1 && MG_WS[snap.level] && MG_PARTNERS[snap.level]) ? snap.level : 0;
+// 没通关的小剧场只给第 5、6 关（1-4 关没有失败局）：同一幅插画不亮灯，朋友在场，一句鼓励话 + 一个大按钮。速算局不算。
+const MG_LOSE = {
+  5: { title: '再试一次，船就靠岸啦！', sub: '小船离贝壳海岸不远啦', say: '没关系，再来一次，小船就靠岸啦！' },
+  6: { title: '再试一次，灯就亮啦！', sub: '萤火还在等你，小屋还黑着', say: '没关系，再来一次，小屋就亮啦！' },
+};
+const MG_LOSE_SAY = ['别着急，我们再试一次！', '你已经很努力啦，再来一次！'];
+const mgLoseLv = snap => (snap && !snap.win && !Number.isFinite(snap.sprintN) && MG_LOSE[snap.level] && MG_WS[snap.level] && MG_PARTNERS[snap.level]) ? snap.level : 0;
+const mgWsLv = snap => !snap ? 0 : snap.win ? ((snap.level >= 1 && MG_WS[snap.level] && MG_PARTNERS[snap.level]) ? snap.level : 0) : mgLoseLv(snap);
 const mgWsPartner = lv => lv ? '<div class="cs-partner' + (lv === 6 ? ' lamp' : '') + '"><i class="sh"></i><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#' + MG_PARTNERS[lv].sym + '"/></svg></div>' : '';
 const mgStageChest = open => '<svg viewBox="8 9 48 50" aria-hidden="true"><use href="#chest-' + (open ? 'open' : 'closed') + '" width="64" height="64"/></svg>';
 const mgStageTitle = (t, sub) => '<div class="cs-title">' + t + '<small>' + sub + '</small></div>';
@@ -3348,7 +3374,7 @@ function mgShowStage(snap) {
   if (!snap || snap.claimed) return false;
   const g = mgSafeGrowth();
   const lv = mgWsLv(snap);
-  const s = mgStageMount('closed', '<div class="cs-rays"></div>' + mgStageTitle('宝箱来啦！', snap.win ? (lv === 6 ? '小屋黑漆漆的，萤火都在宝箱里' : '奖励都在宝箱里') : '努力的奖励都在宝箱里')
+  const s = mgStageMount(lv && !snap.win ? 'closed lose' : 'closed', '<div class="cs-rays"></div>' + mgStageTitle('宝箱来啦！', snap.win ? (lv === 6 ? '小屋黑漆漆的，萤火都在宝箱里' : '奖励都在宝箱里') : '努力的奖励都在宝箱里')
     + '<div class="cs-box"><div class="cs-glow"></div>' + mgWsPartner(lv) + '<i class="cs-ring"></i><i class="cs-ring r2"></i>'
     + '<button type="button" class="cs-chest chest-tap" onclick="event.stopPropagation();mgOpenChest()" aria-label="点一点，打开奖励">' + mgStageChest(false) + '</button>'
     + '<i class="cs-tapfx"></i>' + MG_CS_HAND + '</div>'
@@ -3361,9 +3387,10 @@ function mgShowStage(snap) {
 function mgStageOpen(snap, c) {
   clearTimeout(_mgStageTimer);
   const gen = ++_mgChestGen, g = c.before || c.after, chips = mgChestChips(snap, c), lv = mgWsLv(snap);
-  const s = mgStageMount('opened', '<div class="cs-rays"></div>' + mgStageTitle(snap.win ? '太棒了！' : '宝箱收好啦！', lv === 6 ? '萤火飞出来啦，小屋亮起来啦' : '奖励收进来啦')
+  const win6 = snap.win && lv === 6;
+  const s = mgStageMount(lv && !snap.win ? 'opened lose' : 'opened', '<div class="cs-rays"></div>' + mgStageTitle(snap.win ? '太棒了！' : '宝箱收好啦！', win6 ? '萤火飞出来啦，小屋亮起来啦' : '奖励收进来啦')
     + '<div class="cs-box"><div class="cs-glow"></div>' + mgWsPartner(lv) + mgStageSparks() + '<div class="cs-chest">' + mgStageChest(true) + '</div></div>'
-    + (chips ? '<div class="cs-chips">' + chips + '</div>' : '') + mgChestWhy(c) + mgEggStrip(g, mgEggLine(g, null)), lv, lv === 6 ? ' w1 w2 dl' : '');
+    + (chips ? '<div class="cs-chips">' + chips + '</div>' : '') + mgChestWhy(c) + mgEggStrip(g, mgEggLine(g, null)), lv, win6 ? ' w1 w2 dl' : '');
   if (!s) return;
   mgConfetti(22); mgPetReact('correct');
   const live = () => gen === _mgChestGen && s.isConnected;
@@ -3400,6 +3427,8 @@ function mgStageFinish(s, c) {
     else if (lose) sub = lose;
     else sub = a.doneToday ? '通关一次，萌蛋还能再吃 ' + Math.min(MG_PET.xp.clear, a.dayCap - a.today) + ' 点' : '再答对 ' + a.need + ' 题，萌蛋就能吃到能量';
   }
+  const lz = mgLoseLv(_mgChestSnap);
+  if (lz && t === '宝箱收好啦！') { t = MG_LOSE[lz].title; if (sub === '奖励都收好啦') sub = MG_LOSE[lz].sub; }   // 没有特别的消息时，落在鼓励页上
   const ws = s.classList.contains('scened') && _mgChestSnap ? MG_WS[_mgChestSnap.level] : null;
   if (ws && t === '太棒了！' && !(c.care && c.care.rollback)) sub = ws.cap;   // 没有特别的消息要讲时，副标题换成本关的小故事
   const sn = _mgChestSnap, stars = sn && sn.win && Number.isFinite(sn.stars) ? Math.max(0, Math.min(3, sn.stars)) : 0;
@@ -3415,9 +3444,10 @@ function mgStageFinish(s, c) {
   const ti = s.querySelector('.cs-title');
   if (ti) ti.innerHTML = t + starHtml + '<small>' + sub + '</small>';
   const sc = s.querySelector('.cs-scene');
-  if (sc && s.classList.contains('lv6')) sc.className = 'cs-scene w1 w2 dl all';
+  if (sc && s.classList.contains('lv6') && !lz) sc.className = 'cs-scene w1 w2 dl all';
   s.classList.remove('opened'); s.classList.add('done');
   s.insertAdjacentHTML('beforeend', mgStageActs());
+  if (lz) mgLoseSay(lz);
   mgResultSay(s);
 }
 
@@ -3443,13 +3473,40 @@ function mgResultSay(s) {
   }, 500);
 }
 
+// 没通关的鼓励话：本关一句 + 两句通用的里随机一句，经引擎的 _playTTS 念（尊重语音开关，听算下会停麦、念完恢复）。
+function mgLoseSay(lv) {
+  const g = window._currentGame, a = [MG_LOSE[lv].say].concat(MG_LOSE_SAY);
+  if (g && typeof g._playTTS === 'function') g._playTTS(a[Math.floor(Math.random() * a.length)]);
+}
+// 攒材料的一排小圆点（亮着的 = 这局带回的）；蛋位没挂在这一关时不画。
+function mgLoseDots(snap) {
+  const lv = snap.level, m = window.MG_PET && MG_PET.mats ? MG_PET.mats[lv] : null;
+  if (!m || !MG_EGG.on || MG_EGG.level !== lv) return '';
+  const u = mgMatUnit(lv), n = Math.max(0, Math.min(u.n, MG_EGG.n | 0));
+  let h = '';
+  for (let i = 0; i < u.n; i++) h += '<i' + (i < n ? ' class="on"' : '') + '></i>';
+  return '<div class="ls-prog"><div class="ls-dots" role="img" aria-label="带回 ' + n + ' / ' + u.n + ' ' + u.one + m.name + '">' + h + '</div><small>' + mgEggLoseLine(snap) + '</small></div>';
+}
+// 一道题都没答对：没有宝箱可开，直接落在鼓励页上（答对过的局先开宝箱，收尾时落在同一幅插画上，见 mgStageFinish）。
+function mgShowLoseStage(snap) {
+  const lv = mgLoseLv(snap);
+  if (!lv) return false;
+  const s = mgStageMount('done lose', mgStageTitle(MG_LOSE[lv].title, MG_LOSE[lv].sub)
+    + '<div class="cs-box cs-lone">' + mgWsPartner(lv) + '</div>' + mgLoseDots(snap) + mgStageActs(true), lv, '');
+  if (!s) return false;
+  s.setAttribute('aria-label', '再试一次');
+  mgLoseSay(lv);
+  mgResultSay(s);
+  return true;
+}
+
 // 舞台底部的两个去向：文字、有没有「下一关」都读结算卡上那两个真按钮（各引擎 / 练习 / 复习已经设好），点了转给它们，逻辑一份不重写。
-function mgStageActs() {
+function mgStageActs(retryOnly) {
   const nb = document.getElementById('next-level-btn'), rb = document.getElementById('retry-btn');
   const guide = mgResultFresh();
   const btn = (which, el, icon, pri) => '<button type="button" class="cs-act ' + (pri ? 'pri' : 'sec') + '" data-go="' + which + '" onclick="mgStageGo(\'' + which + '\')">'
     + _mgIcon(icon) + (el ? el.textContent.trim() : '') + (pri && guide ? MG_ACT_HAND : '') + '</button>';
-  const hasNext = !!nb && getComputedStyle(nb).display !== 'none';
+  const hasNext = !retryOnly && !!nb && getComputedStyle(nb).display !== 'none';
   return '<div class="cs-acts">' + (rb ? btn('retry', rb, 'i-refresh', !hasNext) : '') + (hasNext ? btn('next', nb, 'i-play', true) : '') + '</div>';
 }
 function mgStageGo(which) {
@@ -3760,10 +3817,11 @@ function _mgSpeakAwait(text, rate, lang) {
     // watchdog：原生 speak() 若挂起也不能把倒计时永久卡住。
     const wd = setTimeout(end, 3000);
     if (_nativeTtsAvailable()) {
+      if (document.hidden) { end(); return; }
       try {
         const p = Capacitor.Plugins.Tts.speak({ text: text, rate: rate || 1.0, volume: mgVol('voice'), lang: lang || 'zh-CN' });
-        if (p && p.then) { p.then(end).catch(end); } else { end(); }
-      } catch (e) { end(); }
+        if (p && p.then) { p.then(end).catch(function (err) { mgLog.w('tts', err); end(); }); } else { end(); }
+      } catch (e) { mgLog.w('tts', e); end(); }
       return;
     }
     if (!window.speechSynthesis) { end(); return; }
@@ -3834,7 +3892,8 @@ function mgSpeakGameCue(text) {
 // 云端音色的固定短句：进游戏后台预下载进缓存，之后离线也能念。先放答对 / 答错这类马上要用的。
 function mgTtsPrefetchLines() {
   const L = [].concat(MG_WRONG_LINES, MG_BINGO_LINES, MG_IDLE_LINES, MG_IDLE_TAP_LINES, MG_CUE.win, ['好的，换下一题！', '太棒了，速算完成！'],
-    mgFlat(MG_OPEN_LINE), MG_SPRINT_OPEN_LINE, [MG_READY_LINE], mgFlat(MG_RULE_SAY), mgFlat(MG_POKE_SAY), [MG_DEMO_SAY.write, MG_DEMO_SAY.door], Object.keys(MG_RESULT_SAY).map(k => MG_RESULT_SAY[k]));
+    mgFlat(MG_OPEN_LINE), MG_SPRINT_OPEN_LINE, [MG_READY_LINE], mgFlat(MG_RULE_SAY), mgFlat(MG_POKE_SAY), [MG_DEMO_SAY.write, MG_DEMO_SAY.door], Object.keys(MG_RESULT_SAY).map(k => MG_RESULT_SAY[k]),
+    Object.keys(MG_LOSE).map(k => MG_LOSE[k].say), MG_LOSE_SAY);
   const names = Object.keys(MG_COMPANION).map(k => MG_COMPANION[k].name);
   MG_CUE.lead.concat(MG_CUE.finish).forEach(s => (/\{n\}/.test(s) ? names.map(n => s.replace(/\{n\}/g, n)) : [s]).forEach(x => L.push(x)));
   const mats = window.MG_PET && MG_PET.mats;
@@ -5380,7 +5439,7 @@ function mgRenderEquation(el, a, op, b) {
 // ===== INTRO + READY/GO SEQUENCE =====
 const LEVEL_INTROS = {
   // 0 = 错题重练局（菜单错题本里点「重练这些题」进来）。
-  0: { icon: 'i-book', title: '错题重练 · 再来一遍', rule: '把做错过的题再做一遍\n答对就算真的掌握啦！' },
+  0: { icon: 'p-bunny', title: '错题重练 · 再来一遍', rule: '把做错过的题再做一遍\n答对就算真的掌握啦！' },
   1: { icon: 'p-bunny', title: '10以内加减 · 暖草坡', rule: '小兔来当第一位向导！\n口算又快又准，才能帮它找回暖草～' },
   2: { icon: 'p-squirrel', title: '20以内加减 · 松果林', rule: '小松鼠带来一只收纳篮！\n答对 10 题，帮它捡回松果，装满小篮～' },
   3: { icon: 'p-bird', title: '100以内加减 · 音符谷', rule: '爱唱歌的小鸟在前方等你！\n仔细算对每一题，才能换来好听的小音符～' },
@@ -5401,21 +5460,23 @@ function mgIntroPrize(level, sprint) {
       + (b > 0 ? '<span>今天的目标：答对 <b class="ig">' + (b + 1) + '</b> 题，超过你的纪录 ' + b + ' 题！</span>'
         : '<span>先答对 <b class="ig">10</b> 题，立下你的第一个纪录！</span>');
   }
-  return '<span>今天累计答对 5 题就算打卡，萌蛋 +' + (P && P.xp ? P.xp.checkin : 4) + ' 点能量</span>';
+  return (S ? S.egg(0, 'in-egg') : '') + '<span>今天累计答对 5 题就算打卡，萌蛋 +' + (P && P.xp ? P.xp.checkin : 4) + ' 点能量</span>';
 }
-// 开场卡「三步图示」：看题/听题 → 写答案/说答案/选对门 → 材料进窝，再加一行目标。错题重练和一分钟速算不带材料，仍走旧文字规则。
+// 开场卡「三步图示」：看题/听题 → 写答案/说答案/选对门 → 材料进窝（错题重练第三步是「错题变少」），再加一行目标。一分钟速算仍走旧文字规则。
 function mgIntroSteps(level, mode, sprint) {
-  const P = window.MG_PET, S = window.MG_PET_STORY, m = P && P.mats ? P.mats[level] : null;
-  if (sprint || !(level >= 1 && level <= 6) || !m || !S) return null;
+  const P = window.MG_PET, S = window.MG_PET_STORY, m = P && P.mats ? P.mats[level] : null, review = level === 0;
+  if (sprint || !S || (!review && !(level >= 1 && level <= 6 && m))) return null;
   const ic = id => '<svg class="ic" viewBox="0 0 24 24"><use href="#' + id + '"/></svg>';
   const s1 = mode === 'audio' ? ['i-ear', '听题'] : ['i-eye', '看题'];
   const s2 = level === 5 ? ['i-gate', '选对门'] : mode === 'audio' ? ['i-mic', '说答案'] : ['i-pencil', '写答案'];
   const step = (n, c, t) => '<div class="st"><i>' + n + '</i><b class="st-c">' + c + '</b><span>' + t + '</span></div>';
+  const s3 = review
+    ? step(3, ic('i-book') + '<svg class="ic st-ck" viewBox="0 0 24 24"><use href="#i-check"/></svg>', '错题变少')
+    : step(3, S.egg(0, 'st-eg') + S.matArt(level), m.name.replace(/^小/, '') + '进窝').replace('class="st-c"', 'class="st-c st-egg"');
   return {
     say: (MG_RULE_SAY[level] || {})[mode === 'audio' ? 'audio' : 'visual'] || '',
-    rule: '<div class="st-row">' + step(1, ic(s1[0]), s1[1]) + '<em class="st-a"></em>' + step(2, ic(s2[0]), s2[1]) + '<em class="st-a"></em>'
-      + step(3, S.egg(0, 'st-eg') + S.matArt(level), m.name.replace(/^小/, '') + '进窝').replace('class="st-c"', 'class="st-c st-egg"') + '</div>',
-    prize: S.matArt(level) + '<span>答对' + (level === 6 ? 20 : 10) + '题，送' + m.name.replace(/^小/, '') + '给蛋</span>',
+    rule: '<div class="st-row">' + step(1, ic(s1[0]), s1[1]) + '<em class="st-a"></em>' + step(2, ic(s2[0]), s2[1]) + '<em class="st-a"></em>' + s3 + '</div>',
+    prize: review ? mgIntroPrize(0, false) : S.matArt(level) + '<span>答对' + (level === 6 ? 20 : 10) + '题，送' + m.name.replace(/^小/, '') + '给蛋</span>',
   };
 }
 // 开场报幕：每关两句不同的话（一句点出地方和朋友，一句点出本关练什么），连玩同一关会轮换着念；念完再 3-2-1；3-2-1 下面的小字是本关场景名（MG_SCENE）。
@@ -5442,6 +5503,7 @@ function mgOpeningLine(level, sprint) {
 }
 // 学龄前引导：开局规则卡念的一句（与 mgIntroSteps 的三步图示同步），每关每种玩法一句，首题示范小手的一句另算。都在 mgTtsPrefetchLines 里登记，离线可念。
 const MG_RULE_SAY = {
+  0: { visual: '写对答案，错题变少！', audio: '说对答案，错题变少！' },
   1: { visual: '小兔出题，写下答案！', audio: '小兔念题，你说答案！' },
   2: { visual: '写对答案，松果进篮！', audio: '听松鼠念题，说答案！' },
   3: { visual: '写对答案，小鸟唱歌！', audio: '听小鸟念题，说答案！' },
@@ -5450,6 +5512,13 @@ const MG_RULE_SAY = {
   6: { visual: '写对答案，点亮小灯！', audio: '听刺猬念题，说答案！' },
 };
 const MG_DEMO_SAY = { write: '跟着小手写！', door: '点对的门！' };
+function mgReviewRuleDue() {
+  try {
+    if (sessionStorage.getItem('mgReviewSaid')) return false;
+    sessionStorage.setItem('mgReviewSaid', '1');
+  } catch (e) {}
+  return true;
+}
 const mgFlat = o => Object.keys(o).reduce((a, k) => a.concat(typeof o[k] === 'string' ? [o[k]] : Array.isArray(o[k]) ? o[k] : mgFlat(o[k])), []);
 const mgOpeningCaption = (level, sprint) => sprint ? '' : (MG_SCENE[level] || '');
 
@@ -5554,8 +5623,9 @@ function runIntroSequence(level, mode = 'visual', sprint = false) {
     window._mgSkipIntro = finish;                                     // 硬件返回键也走这里
     introEl.onclick = () => { if (Date.now() - t0 > 600) finish(); };  // 点一下跳过（刚进场 0.6 秒内防误触）
     // 规则卡至少停 2.6 秒；本关还没拿过星的孩子（多半不识字）再把三步图示念一遍，念完才收（_mgSpeakAwait 自带 3 秒保险）。
+    // 错题重练没有「第一次通关」可判，改成每次启动 App 只念第一回（sessionStorage，不碰 localStorage）。
     // 3-2-1 在答题页渲染好之后（见 runCountdownOverlay()）。
-    const say = steps && mgLevelFresh(level) ? steps.say : '';
+    const say = steps && (level === 0 ? mgReviewRuleDue() : mgLevelFresh(level)) ? steps.say : '';
     Promise.all([say ? _mgSpeakAwait(say, 1.0, 'zh-CN') : null, new Promise(r => setTimeout(r, 2600))]).then(finish);
   });
 }
@@ -5789,7 +5859,7 @@ class DigitRecognizer {
       this.net = window.MnistNet(new Uint8Array(buf));   // pure-JS CNN; no WASM
       this.ready = true;
     } catch (e) {
-      console.error('[Recognizer] model load failed:', e);
+      mgLog.e('ocr', 'model load failed: ' + (e && e.message || e));
       this.failed = true;
     }
   }
@@ -5964,6 +6034,7 @@ function mgBgmStart(game) {
 // after：假值=立即开口并顶掉正在念的；true 或函数=排在上一句念完后再念（最多等 5 秒），函数返回 false 则放弃这句。
 // cue：读题用。真念完后轻「叮」一声，再隔一拍才开麦（游戏已结束 / 已锁定则不叮）。
 function _mgSpeakNative(self, text, rate, lang, after, cue) {
+  if (document.hidden) { if (cue) self._qMiss = text; return; }   // 切后台不开口；落下的题回前台补读
   mgIdleCancel(self);
   self._ttsSpeaking = true;
   mgBgmMic(self, true);
@@ -5974,9 +6045,10 @@ function _mgSpeakNative(self, text, rate, lang, after, cue) {
   const done = () => {
     if (_done) return; _done = true;
     if (seq !== self._ttsSeq) return;   // 已被后来的朗读顶替 → 陈旧回调不得释放麦克风/清掉新计时器
+    if (cue && spoke && document.hidden) self._qMiss = text;   // 题没念完就被切后台打断
     if (self._ttsFallback) { clearTimeout(self._ttsFallback); self._ttsFallback = null; }
     self._ttsEndTime = Date.now();
-    const live = spoke && !self.gameEnded && !self.locked;
+    const live = spoke && !self.gameEnded && !self.locked && !document.hidden;
     if (live) mgIdleArm(self);
     if (live && cue && mgPlayAskChime()) {
       mgBgmMic(self, false);
@@ -5988,7 +6060,9 @@ function _mgSpeakNative(self, text, rate, lang, after, cue) {
   };
   const go = () => {
     if (seq !== self._ttsSeq) return;                           // 等待期间被新朗读或离场顶掉
+    if (document.hidden) { if (cue) self._qMiss = text; done(); return; }   // 排队等的时候切了后台
     if (typeof after === 'function' && !after()) { done(); return; }
+    if (cue) self._qMiss = null;
     // Safety net: if the native speak() promise never settles (plugin/engine hang) the
     // mic would stay blocked forever (_startVoice bails while _ttsSpeaking), so voice
     // "stops working" mid-game. Force-release after a bounded time, mirroring the web
@@ -5999,8 +6073,8 @@ function _mgSpeakNative(self, text, rate, lang, after, cue) {
       spoke = true;
       const p = Capacitor.Plugins.Tts.speak({ text: text, rate: rate || 1.0, volume: mgVol('voice'), lang: lang || 'zh-CN' });
       self._ttsLast = p.then(function () {}, function () {});
-      p.then(done).catch(done);
-    } catch (e) { done(); }
+      p.then(done).catch(function (err) { mgLog.w('tts', err); done(); });
+    } catch (e) { mgLog.w('tts', e); done(); }
   };
   if (after && self._ttsLast) {
     let t;
@@ -6047,6 +6121,7 @@ function mgNoDigitCue(self) {
 // carries the per-site action (navigate or reload); nav sites keep their literal on-site
 // so the twin sync still diffs at exactly 11 nav lines (the only master↔www difference).
 function _mgSafeLeave(self, go) {
+  mgLog.i('game', 'leave');
   mgBeatCancel(true);    // 胜利一拍还在放时离场：补跑结算让奖励入账，再收掉这一层，定时器不会在离页后再弹卡
   mgClaimPending();      // 离开前把没点开的结算宝箱补领掉：下一关 / 左上角返回 / 硬件返回键都走这里
   _mgResultSayGen++;     // 作废结算舞台里还在等夸奖念完的去向句：stop 会让夸奖提前返回，不拦就会在 stop 之后又起新语音
@@ -6206,7 +6281,7 @@ function ensureVoskLoaded() {
   }
   _voskLoad = Vosk.loadModel({ grammar: VOSK_GRAMMAR }).catch(e => {
     _voskLoad = null; // don't cache the failure — allow the next attempt to retry
-    console.error('[Vosk] loadModel failed:', (e && (e.message || e.errorMessage)) || e);
+    mgLog.e('vosk', 'loadModel failed: ' + ((e && (e.message || e.errorMessage)) || e));
     throw e;
   });
   return _voskLoad;
@@ -6227,7 +6302,7 @@ class VoskRecognition {
       .catch(e => {
         this._started = false;
         const msg = ((e && (e.message || e.errorMessage)) || e || '') + '';
-        console.error('[Vosk] start failed:', msg);
+        mgLog.w('vosk', 'start failed: ' + msg);
         if (this.onerror) this.onerror({ error: /permission|denied/i.test(msg) ? 'not-allowed' : 'audio-capture' });
       });
   }
@@ -6255,6 +6330,21 @@ class VoskRecognition {
   }
 }
 VoskRecognition._active = null;
+
+// 听算切到后台放开话筒（原生 onStop 兜底），回前台再开；_startVoice 在后台不开麦，读完题 / onend 重启都不会重新占住话筒。
+// 后台时没念成的题（_qMiss）回前台先补读一遍，读完由 _ttsResume 开麦；L5 没有话筒，只补读。
+document.addEventListener('visibilitychange', function () {
+  const g = window._currentGame;
+  if (!g || g.gameEnded || g.mode !== 'audio') return;
+  const mic = g._isNativeVoice && g.recognition;
+  if (document.hidden) { if (mic) g._stopVoice(); return; }
+  setTimeout(function () {
+    if (document.hidden || window._currentGame !== g || g.gameEnded || g.locked || g._countdownActive) return;
+    if (g._qMiss && g._qMiss === g.currentQuestion) { g._qMiss = null; g._speakQuestion(); return; }
+    if (!mic) return;
+    if (g.recognizing) g._stopVoice(); else g._startVoice();
+  }, 400);
+});
 
 // ===== GAME =====
 // ===== VOICE MIXIN =====
@@ -6565,7 +6655,7 @@ const VoiceMixin = {
   },
 
   _cancelRepeatTimer() { clearInterval(this.repeatTimer); this.repeatTimer = null; },
-  _startVoice() { if (!this.recognition || this.gameEnded) return; if (this._isNativeVoice && this._ttsSpeaking) return; mgBgmMic(this, false); try { this.recognition.start(); } catch(e) {} },
+  _startVoice() { if (!this.recognition || this.gameEnded) return; if (this._isNativeVoice && (this._ttsSpeaking || document.hidden)) return; mgBgmMic(this, false); try { this.recognition.start(); } catch(e) {} },
   _stopVoice() { clearTimeout(this._commitTimer); this._commitTimer = null; if (!this.recognition) return; try { this.recognition.stop(); } catch(e) {} },
   _ttsResume() { if (!this._isNativeVoice || this.gameEnded || this.locked || this.recognizing) return; this._startVoice(); },
   _setVoiceStatus(t) { const el = document.getElementById('float-voice-status'); if (el) el.textContent = t; },
@@ -7032,6 +7122,7 @@ class Game {
     c.addEventListener('touchstart', e => { e.preventDefault(); drawing=true; hint.style.opacity='0'; const p=pos(e); this.scratchCtx.beginPath(); this.scratchCtx.moveTo(p.x,p.y); }, {passive:false});
     c.addEventListener('touchmove', e => { if(!drawing) return; e.preventDefault(); const p=pos(e); this.scratchCtx.lineTo(p.x,p.y); this.scratchCtx.strokeStyle='#3E2723'; this.scratchCtx.lineWidth=Math.max(c.width/30,5); this.scratchCtx.lineCap='round'; this.scratchCtx.lineJoin='round'; this.scratchCtx.stroke(); }, {passive:false});
     c.addEventListener('touchend', () => { drawing=false; });
+    c.addEventListener('touchcancel', () => { drawing=false; });
     document.getElementById('lv1-voice-skip-btn').addEventListener('click', () => this._skipQuestion());
   }
 
@@ -7074,6 +7165,7 @@ class Game {
     c.addEventListener('touchstart', onStart, {passive:false});
     c.addEventListener('touchmove', onMove, {passive:false});
     c.addEventListener('touchend', onEnd);
+    c.addEventListener('touchcancel', onEnd);
     document.getElementById('exit-btn').addEventListener('click', () => this._forceEnd());
     document.getElementById('skip-btn').addEventListener('click', () => this._skipQuestion());
     document.getElementById('next-level-btn').addEventListener('click', () => {
@@ -7180,12 +7272,13 @@ class Game {
     if (this.mode === 'audio') {
       const opText = `${a} ${MG_OP_WORD[op]} ${b} 等于`;
       this.currentQuestion = opText;
+      const seq = this._nqSeq = (this._nqSeq || 0) + 1;   // 连点「跳过」时只让最后一道题的读题/开麦生效
       setTimeout(() => {
-        if (this._countdownActive) return;
+        if (seq !== this._nqSeq || this._countdownActive) return;
         if (!this.gameEnded && !this.locked) {
           this._speakQuestion(true);
           this._startRepeatTimer();
-          setTimeout(() => { if (!this.gameEnded && !this.locked) this._startVoice(); }, 1200);
+          setTimeout(() => { if (seq === this._nqSeq && !this.gameEnded && !this.locked) this._startVoice(); }, 1200);
         }
       }, 300);
     }
@@ -7314,6 +7407,7 @@ class Game {
   }
 
   _endGame() {
+    if (this.gameEnded) return;
     this.gameEnded = true;
     clearInterval(this.monsterTimer);
     this._cancelAutoSubmit();
@@ -7475,6 +7569,7 @@ window.addEventListener('load', async () => {
     game = new Game(level, mode, recognizer);
   }
   window._currentGame = game;      // 提前到构造后立即赋值：倒计时期间点退出也要能走 _mgSafeLeave
+  mgLog.i('game', 'start L' + level + ' ' + mode + (sprint ? ' sprint' : ''));
   mgEggMount(level, mode, sprint); // 萌蛋同行：把蛋放进本关的小窝
   mgSceneMount(level, sprint);     // L1-L3 右侧主场景小画（喂小兔 / 爬树摘松果 / 点亮旋律）
   game.locked = true;              // 双重保险：倒计时期间不接受答题输入
@@ -7519,9 +7614,10 @@ if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D
   };
 }
 
-// ===== On-device error surface (this WebView pipes no console to logcat) =====
+// ===== On-device error surface =====
 // Any uncaught error / promise rejection is shown as a tap-to-dismiss red banner so a
 // failure during gameplay is visible on the device instead of silently freezing the UI.
+// 同样的错误也由 mg-log.js 落盘（release 包不把 console 转到 logcat，只能靠它）。
 (function () {
   function _mgShowErr(msg) {
     try {
@@ -7810,8 +7906,9 @@ class SpaceGame {
   _startLoop() {
     cancelAnimationFrame(this.rafId);   // 幂等：防「再来一局」/resize 叠出两条 rAF 循环
     const tick = () => {
-      if (!this.gameEnded) this._draw();
       this.rafId = requestAnimationFrame(tick);
+      if (this.gameEnded) return;
+      try { this._draw(); } catch (e) { mgLog.w('draw', e); }
     };
     this.rafId = requestAnimationFrame(tick);
   }
@@ -8139,15 +8236,23 @@ class SpaceGame {
     }
 
     // 标签：本关场景名（小岛就是目的地）；右边放不下就往左挪，不被画布边缘切掉
-    ctx.save();
-    ctx.font = `bold ${Math.max(11, r * 0.34)}px Nunito,sans-serif`;
-    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-    ctx.fillStyle = 'rgba(255,255,255,0.95)';
-    ctx.shadowColor = 'rgba(20,80,110,0.9)'; ctx.shadowBlur = 6;
-    const lbl = MG_SCENE[5], lw = ctx.measureText(lbl).width;
-    ctx.fillText(lbl, Math.min(cx, ctx.canvas.width - lw / 2 - 6), cy + r * 1.05);
-    ctx.shadowBlur = 0;
-    ctx.restore();
+    const lb = this._islandLabel(Math.max(11, r * 0.34));
+    ctx.drawImage(lb.cv, Math.round(Math.min(cx, ctx.canvas.width - lb.w / 2 - 6) - lb.w / 2 - lb.pad), Math.round(cy + r * 1.05 - lb.pad));
+  }
+
+  // 带投影的岛名牌：shadowBlur 逐帧画很贵，同一字号只画一次存成小图
+  _islandLabel(fpx) {
+    if (this._lblCache && this._lblCache.fpx === fpx) return this._lblCache;
+    const txt = MG_SCENE[5], pad = 12, font = `bold ${fpx}px Nunito,sans-serif`;
+    const cv = document.createElement('canvas'), g = cv.getContext('2d');
+    g.font = font;
+    const w = g.measureText(txt).width;
+    cv.width = Math.ceil(w) + pad * 2; cv.height = Math.ceil(fpx * 1.4) + pad * 2;
+    g.font = font; g.textAlign = 'center'; g.textBaseline = 'top';
+    g.fillStyle = 'rgba(255,255,255,0.95)';
+    g.shadowColor = 'rgba(20,80,110,0.9)'; g.shadowBlur = 6;
+    g.fillText(txt, pad + w / 2, pad);
+    return (this._lblCache = { fpx, cv, w, pad });
   }
 
   _drawDoors(ctx, W, H) {
@@ -8273,7 +8378,7 @@ class SpaceGame {
     const _html = (id, v) => { const el = document.getElementById(id); if (el) el.innerHTML = v; };
     mgSetOverlayMark(won, snap);
     const ot = document.getElementById('overlay-title');
-    if (ot) { ot.textContent = won ? mgWinTitle(this.level) : '帆船迷航了...'; ot.className = won ? 'win' : 'lose'; }
+    if (ot) { ot.textContent = won ? mgWinTitle(this.level) : MG_LOSE[5].title; ot.className = won ? 'win' : 'lose'; }
     _html('overlay-msg', won
       ? `穿过 ${SPACE_TOTAL} 道海门，抵达宝藏岛！`
       : `穿过 ${this.done} / ${SPACE_TOTAL} 道海门，再试一次！`);
@@ -8411,8 +8516,9 @@ class RaceGame {
         this._drawRaceScene();
         this._drawCenterScene();
         this._startRaceFlutter();
-      } else requestAnimationFrame(sizeStrips);
+      } else if (++stripTries < 180 && !this.gameEnded) requestAnimationFrame(sizeStrips);
     };
+    let stripTries = 0;
     requestAnimationFrame(sizeStrips);
 
     // Size answer canvas
@@ -8422,8 +8528,9 @@ class RaceGame {
       const w = ansWrap.clientWidth || ansWrap.offsetWidth;
       const h = ansWrap.clientHeight || ansWrap.offsetHeight;
       if (w > 0 && h > 0) { ansCanvas.width = w; ansCanvas.height = h; }
-      else requestAnimationFrame(sizeAns);
+      else if (++ansTries < 180 && !this.gameEnded) requestAnimationFrame(sizeAns);
     };
+    let ansTries = 0;
     requestAnimationFrame(sizeAns);
   }
 
@@ -8450,6 +8557,7 @@ class RaceGame {
     c.addEventListener('touchstart', e => { e.preventDefault(); drawing=true; hint.style.opacity='0'; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); }, {passive:false});
     c.addEventListener('touchmove', e => { if(!drawing) return; e.preventDefault(); const p=pos(e); ctx.lineTo(p.x,p.y); ctx.strokeStyle='#3E2723'; ctx.lineWidth=Math.max(c.width/30,5); ctx.lineCap='round'; ctx.lineJoin='round'; ctx.stroke(); }, {passive:false});
     c.addEventListener('touchend', () => { drawing=false; });
+    c.addEventListener('touchcancel', () => { drawing=false; });
     document.getElementById('race-scratch-skip-btn').addEventListener('click', () => this._skipQuestion());
   }
 
@@ -8866,6 +8974,7 @@ class RaceGame {
     c.addEventListener('touchstart', onStart, {passive:false});
     c.addEventListener('touchmove', onMove, {passive:false});
     c.addEventListener('touchend', onEnd);
+    c.addEventListener('touchcancel', onEnd);
     document.getElementById('skip-btn').addEventListener('click', () => this._skipQuestion());
     document.getElementById('exit-btn').addEventListener('click', () => this._forceEnd());
     document.getElementById('next-level-btn').addEventListener('click', () => {
@@ -8951,12 +9060,13 @@ class RaceGame {
       if (sh) sh.style.opacity = '1';
     }
     if (this.mode === 'audio') {
+      const seq = this._nqSeq = (this._nqSeq || 0) + 1;   // 连点「跳过」时只让最后一道题的读题/开麦生效
       setTimeout(() => {
-        if (this._countdownActive) return;
+        if (seq !== this._nqSeq || this._countdownActive) return;
         if (!this.gameEnded && !this.locked) {
           this._speakQuestion(true);
           this._startRepeatTimer();
-          setTimeout(() => { if (!this.gameEnded && !this.locked) this._startVoice(); }, 1200);
+          setTimeout(() => { if (seq === this._nqSeq && !this.gameEnded && !this.locked) this._startVoice(); }, 1200);
         }
       }, 300);
     }
@@ -9089,6 +9199,7 @@ class RaceGame {
     const oc = document.getElementById('overlay-canvas');
     oc.getContext('2d').clearRect(0,0,oc.width,oc.height);
     this._updateRaceTrack();
+    this._startRaceFlutter();
     this.nextQuestion();
   }
 }
@@ -9161,6 +9272,7 @@ class VoiceGame {
     c.addEventListener('touchstart', e => { e.preventDefault(); drawing=true; document.getElementById('voice-canvas-hint').style.opacity='0'; const p=pos(e); this.ctx.beginPath(); this.ctx.moveTo(p.x,p.y); }, {passive:false});
     c.addEventListener('touchmove', e => { if(!drawing) return; e.preventDefault(); const p=pos(e); this.ctx.lineTo(p.x,p.y); this.ctx.strokeStyle='#3E2723'; this.ctx.lineWidth=Math.max(c.width/30,5); this.ctx.lineCap='round'; this.ctx.lineJoin='round'; this.ctx.stroke(); }, {passive:false});
     c.addEventListener('touchend', () => { drawing=false; });
+    c.addEventListener('touchcancel', () => { drawing=false; });
 
     document.getElementById('voice-skip-btn').addEventListener('click', () => this._skipQuestion());
     document.getElementById('voice-mic-btn').addEventListener('click', () => {
@@ -9429,7 +9541,7 @@ class VoiceGame {
 
   _startVoice() {
     if (!this.recognition || this.gameEnded) return;
-    if (this._isNativeVoice && this._ttsSpeaking) return;
+    if (this._isNativeVoice && (this._ttsSpeaking || document.hidden)) return;
     mgBgmMic(this, false);
     try { this.recognition.start(); } catch(e) {}
   }
@@ -9489,13 +9601,14 @@ class VoiceGame {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     document.getElementById('voice-canvas-hint').style.opacity = '1';
     // Speak question then start listening
+    const seq = this._nqSeq = (this._nqSeq || 0) + 1;   // 连点「跳过」时只让最后一道题的读题/开麦生效
     setTimeout(() => {
-      if (this._countdownActive) return;
+      if (seq !== this._nqSeq || this._countdownActive) return;
       if (this.gameEnded || this.locked) return;
       this._speakQuestion(true);
       this._startRepeatTimer();
       setTimeout(() => {
-        if (!this.gameEnded && !this.locked) this._startVoice();
+        if (seq === this._nqSeq && !this.gameEnded && !this.locked) this._startVoice();
       }, 1200);
     }, 300);
   }
@@ -9543,6 +9656,7 @@ class VoiceGame {
   }
 
   _endGame() {
+    if (this.gameEnded) return;
     this.gameEnded = true;
     this._cancelRepeatTimer();
     this._stopVoice();
@@ -9637,8 +9751,6 @@ class BattleGame {
     this._countdownActive = true; // 开局半透明倒计时期间：比赛计时/听算自动读题开麦都先不启动
 
     // Battle arena animation state
-    this.lasers = [];         // flying laser balls（旧打斗遗留，现为空数组不再使用）
-    this.flames = [];         // monster flame bursts（同上，去打斗后恒空）
     this.energy = [];         // 回家大门：钥匙能量光点（答对飞向大门）
     this._gateFlash = 0;      // 能量抵达大门的闪光计时
     this._lampKick = -9999;   // 最近一次答对（点灯）的帧号：小刺猬蹦一下、灯亮一下晃一下
@@ -9646,12 +9758,7 @@ class BattleGame {
     this.monsterShakeEnd = 0;
     this.frameCount = 0;
     this.embers = [];
-    this.hitSparks = [];        // 怪兽受击/被击碎迸出的星火
     this._petStage = mgPetStage(mgGetPet());   // 数宝成长阶段：一局内不会变，开局读一次，绘制循环里不再每帧读存档
-    this.warriorLungeStart = 0; // 勇士突刺动画起始帧(0=无)
-    this.monsterHitEnd = 0;     // 怪兽受击闪红结束帧
-    this.defeated = false;      // BOSS 血量清零后播放倒地动画
-    this.defeatStart = 0;       // 倒地动画起始帧
     this.currentQuestion = '';
     this.recognition = null; this.recognizing = false;
     this.repeatTimer = null; this._interimFired = false; this._interimNum = null; this._interimCount = 0;
@@ -9732,11 +9839,12 @@ class BattleGame {
     // Size drawing canvas (use requestAnimationFrame to wait for layout)
     const wrap = document.getElementById('battle-canvas-wrapper');
     const bc = document.getElementById('battle-canvas');
+    let bcTries = 0;
     const resizeBC = () => {
       if (wrap.clientWidth > 0) {
         bc.width = wrap.clientWidth;
         bc.height = wrap.clientHeight;
-      } else {
+      } else if (++bcTries < 180 && !this.gameEnded) {
         requestAnimationFrame(resizeBC);
       }
     };
@@ -9786,6 +9894,7 @@ class BattleGame {
     c.addEventListener('touchstart', onStart, {passive:false});
     c.addEventListener('touchmove', onMove, {passive:false});
     c.addEventListener('touchend', onEnd);
+    c.addEventListener('touchcancel', onEnd);
 
     document.getElementById('battle-skip-btn').addEventListener('click', () => this._skipQuestion());
 
@@ -9827,6 +9936,7 @@ class BattleGame {
     c.addEventListener('touchstart', e => { e.preventDefault(); drawing=true; hint.style.opacity='0'; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); }, {passive:false});
     c.addEventListener('touchmove', e => { if(!drawing) return; e.preventDefault(); const p=pos(e); ctx.lineTo(p.x,p.y); ctx.strokeStyle='#3E2723'; ctx.lineWidth=Math.max(c.width/30,5); ctx.lineCap='round'; ctx.lineJoin='round'; ctx.stroke(); }, {passive:false});
     c.addEventListener('touchend', () => { drawing=false; });
+    c.addEventListener('touchcancel', () => { drawing=false; });
     document.getElementById('battle-scratch-skip-btn').addEventListener('click', () => this._skipQuestion());
   }
 
@@ -9874,12 +9984,13 @@ class BattleGame {
       if (sh) sh.style.opacity = '1';
     }
     if (this.mode === 'audio') {
+      const seq = this._nqSeq = (this._nqSeq || 0) + 1;   // 连点「跳过」时只让最后一道题的读题/开麦生效
       setTimeout(() => {
-        if (this._countdownActive) return;
+        if (seq !== this._nqSeq || this._countdownActive) return;
         if (!this.gameEnded && !this.locked) {
           this._speakQuestion(true);
           this._startRepeatTimer();
-          setTimeout(() => { if (!this.gameEnded && !this.locked) this._startVoice(); }, 1200);
+          setTimeout(() => { if (seq === this._nqSeq && !this.gameEnded && !this.locked) this._startVoice(); }, 1200);
         }
       }, 300);
     }
@@ -10087,25 +10198,70 @@ class BattleGame {
     return { kp: kp, kick: kp < 1 ? 1 - kp : 0 };
   }
 
-  _monsterHit() {
-    // 怪兽受击：闪红 + 抖动 + 撞击处迸出星火；若这一下把血打空则进入倒地
-    this.monsterHitEnd = this.frameCount + 16;
-    this.monsterShakeEnd = Math.max(this.monsterShakeEnd, this.frameCount + 16);
-    const ac = document.getElementById('battle-arena-canvas');
-    const hx = ac.width * 0.62, hy = ac.height * 0.50;
-    const kill = !this.sprint && this.monsterHP <= 0;
-    const n = kill ? 30 : 14;
-    for (let i = 0; i < n; i++) {
-      const a = Math.random() * Math.PI * 2;
-      const sp = (kill ? 3 : 2) + Math.random() * (kill ? 8 : 5);
-      this.hitSparks.push({
-        x: hx + (Math.random() - 0.5) * 20, y: hy + (Math.random() - 0.5) * 20,
-        vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 1.5,
-        size: (kill ? 3 : 2) + Math.random() * (kill ? 6 : 4), alpha: 1,
-        hue: kill ? (20 + Math.random() * 40) : (180 + Math.random() * 40)
-      });
+  // 天空、太阳、远山、草地、小路整幅不会动：尺寸变了才画一次，之后每帧只贴一张图
+  _arenaBackdrop(W, H) {
+    const cv = document.createElement('canvas');
+    cv.width = W; cv.height = H;
+    const ctx = cv.getContext('2d');
+    // === Rich arena background ===
+    // Sky gradient — warm dawn over the home valley（温暖黎明家园，去火山夜空）
+    const skyGrad = ctx.createLinearGradient(0, 0, 0, H*0.85);
+    skyGrad.addColorStop(0, '#3a2a5e');
+    skyGrad.addColorStop(0.42, '#6b4e8a');
+    skyGrad.addColorStop(0.72, '#e08a6a');
+    skyGrad.addColorStop(1, '#ffcf99');
+    ctx.fillStyle = skyGrad;
+    ctx.fillRect(0, 0, W, H*0.85);
+
+    // Warm rising sun top-right（暖阳初升，取代血月）
+    const sunX = W*0.82, sunY = H*0.12;
+    const sunGlow = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, H*0.2);
+    sunGlow.addColorStop(0, 'rgba(255,220,150,0.35)');
+    sunGlow.addColorStop(1, 'rgba(255,220,150,0)');
+    ctx.fillStyle = sunGlow; ctx.beginPath(); ctx.arc(sunX, sunY, H*0.2, 0, Math.PI*2); ctx.fill();
+    const sunG = ctx.createRadialGradient(sunX-H*0.015, sunY-H*0.015, 0, sunX, sunY, H*0.07);
+    sunG.addColorStop(0, '#fff6e0');
+    sunG.addColorStop(0.6, '#ffe3a0');
+    sunG.addColorStop(1, '#ffc46b');
+    ctx.fillStyle = sunG; ctx.beginPath(); ctx.arc(sunX, sunY, H*0.07, 0, Math.PI*2); ctx.fill();
+
+    // Distant hill behind the cottage（小屋背后的远山）
+    const homeHillBase = H*0.86;
+    const hillGrad = ctx.createLinearGradient(0, H*0.42, 0, homeHillBase);
+    hillGrad.addColorStop(0, 'rgba(96,74,128,0.55)');
+    hillGrad.addColorStop(1, 'rgba(60,46,92,0.55)');
+    ctx.fillStyle = hillGrad;
+    ctx.beginPath();
+    ctx.moveTo(W*0.52, homeHillBase);
+    ctx.quadraticCurveTo(W*0.80, H*0.44, W*1.04, homeHillBase);
+    ctx.closePath(); ctx.fill();
+
+    // Soft hills on the left（左侧柔和山丘，取代小火山）
+    ctx.fillStyle = 'rgba(66,52,96,0.5)';
+    ctx.beginPath();
+    ctx.moveTo(-W*0.06, H*0.86);
+    ctx.quadraticCurveTo(W*0.14, H*0.58, W*0.36, H*0.86);
+    ctx.closePath(); ctx.fill();
+
+    // Ground — warm meadow path home（暖色草地，取代熔岩河）
+    const groundGrad = ctx.createLinearGradient(0, H*0.82, 0, H);
+    groundGrad.addColorStop(0, '#8fb86a');
+    groundGrad.addColorStop(0.5, '#6f9e52');
+    groundGrad.addColorStop(1, '#507a3c');
+    ctx.fillStyle = groundGrad;
+    ctx.beginPath();
+    ctx.moveTo(0, H*0.85);
+    for (let gx = 0; gx <= W; gx += W*0.06) {
+      ctx.lineTo(gx, H*0.85 + Math.sin(gx*0.015)*H*0.006);
     }
-    if (kill && !this.defeated) { this.defeated = true; this.defeatStart = this.frameCount; }
+    ctx.lineTo(W, H*0.85); ctx.lineTo(W, H*1.0); ctx.lineTo(0, H*1.0); ctx.closePath(); ctx.fill();
+    // 柔和金色小路，从数宝脚下通向小屋
+    ctx.fillStyle = 'rgba(255,224,150,0.33)';
+    ctx.beginPath();
+    ctx.moveTo(W*0.18, H*1.0); ctx.lineTo(W*0.32, H*1.0);
+    ctx.lineTo(W*0.78, H*0.86); ctx.lineTo(W*0.72, H*0.86);
+    ctx.closePath(); ctx.fill();
+    return cv;
   }
 
   _initArenaEmbers(W, H) {
@@ -10116,7 +10272,7 @@ class BattleGame {
         y: H * (0.85 + Math.random() * 0.15),
         vy: 0.4 + Math.random() * 0.8,
         r: 1 + Math.random() * 2.5,
-        hue: 10 + Math.random() * 40,
+        fill: 'hsl(' + (10 + Math.random() * 40) + ',100%,65%)',
         phase: Math.random() * Math.PI * 2,
         freq: 0.02 + Math.random() * 0.03,
         life: Math.floor(Math.random() * 150),
@@ -10131,6 +10287,9 @@ class BattleGame {
     const ctx = ac.getContext('2d');
     this._rm = _mgReduced();   // 减弱动态：灯不晃、刺猬不蹦、不闪烁（亮度变化保留）
 
+    let bg = null, bgW = 0, bgH = 0;
+    const arenaStars = [[0.10,0.08],[0.25,0.05],[0.40,0.12],[0.55,0.06],[0.65,0.14],[0.15,0.18],[0.35,0.20],[0.50,0.22],[0.70,0.09],[0.78,0.24]];
+
     const draw = () => {
       this.arenaAnim = requestAnimationFrame(draw);
       this.frameCount++;
@@ -10140,72 +10299,20 @@ class BattleGame {
       // Init embers once canvas is sized
       if (this.embers.length === 0 && W > 0) this._initArenaEmbers(W, H);
 
-      // === Rich arena background ===
-      // Sky gradient — warm dawn over the home valley（温暖黎明家园，去火山夜空）
-      const skyGrad = ctx.createLinearGradient(0, 0, 0, H*0.85);
-      skyGrad.addColorStop(0, '#3a2a5e');
-      skyGrad.addColorStop(0.42, '#6b4e8a');
-      skyGrad.addColorStop(0.72, '#e08a6a');
-      skyGrad.addColorStop(1, '#ffcf99');
-      ctx.fillStyle = skyGrad;
-      ctx.fillRect(0, 0, W, H*0.85);
+      // 不动的底图只在尺寸变化时重画
+      if (W > 0 && H > 0) {
+        if (bgW !== W || bgH !== H) { bg = this._arenaBackdrop(W, H); bgW = W; bgH = H; }
+        ctx.drawImage(bg, 0, 0);
+      }
 
-      // Warm rising sun top-right（暖阳初升，取代血月）
-      const sunX = W*0.82, sunY = H*0.12;
-      const sunGlow = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, H*0.2);
-      sunGlow.addColorStop(0, 'rgba(255,220,150,0.35)');
-      sunGlow.addColorStop(1, 'rgba(255,220,150,0)');
-      ctx.fillStyle = sunGlow; ctx.beginPath(); ctx.arc(sunX, sunY, H*0.2, 0, Math.PI*2); ctx.fill();
-      const sunG = ctx.createRadialGradient(sunX-H*0.015, sunY-H*0.015, 0, sunX, sunY, H*0.07);
-      sunG.addColorStop(0, '#fff6e0');
-      sunG.addColorStop(0.6, '#ffe3a0');
-      sunG.addColorStop(1, '#ffc46b');
-      ctx.fillStyle = sunG; ctx.beginPath(); ctx.arc(sunX, sunY, H*0.07, 0, Math.PI*2); ctx.fill();
-
-      // Twinkling stars
-      const starSeeds = [[0.10,0.08],[0.25,0.05],[0.40,0.12],[0.55,0.06],[0.65,0.14],[0.15,0.18],[0.35,0.20],[0.50,0.22],[0.70,0.09],[0.78,0.24]];
-      for (const [sx,sy] of starSeeds) {
+      // 星星会闪，所以不进底图
+      ctx.fillStyle = 'rgb(255,220,180)';
+      for (const [sx, sy] of arenaStars) {
         const twinkle = 0.5 + 0.5*Math.sin(this.frameCount*0.04 + sx*30);
-        ctx.beginPath(); ctx.arc(sx*W, sy*H, 1.5+twinkle*1.2, 0, Math.PI*2);
-        ctx.fillStyle = `rgba(255,220,180,${0.4+twinkle*0.6})`; ctx.fill();
+        ctx.globalAlpha = 0.4 + twinkle*0.6;
+        ctx.beginPath(); ctx.arc(sx*W, sy*H, 1.5+twinkle*1.2, 0, Math.PI*2); ctx.fill();
       }
-
-      // Distant hill behind the cottage（小屋背后的远山）
-      const homeHillBase = H*0.86;
-      const hillGrad = ctx.createLinearGradient(0, H*0.42, 0, homeHillBase);
-      hillGrad.addColorStop(0, 'rgba(96,74,128,0.55)');
-      hillGrad.addColorStop(1, 'rgba(60,46,92,0.55)');
-      ctx.fillStyle = hillGrad;
-      ctx.beginPath();
-      ctx.moveTo(W*0.52, homeHillBase);
-      ctx.quadraticCurveTo(W*0.80, H*0.44, W*1.04, homeHillBase);
-      ctx.closePath(); ctx.fill();
-
-      // Soft hills on the left（左侧柔和山丘，取代小火山）
-      ctx.fillStyle = 'rgba(66,52,96,0.5)';
-      ctx.beginPath();
-      ctx.moveTo(-W*0.06, H*0.86);
-      ctx.quadraticCurveTo(W*0.14, H*0.58, W*0.36, H*0.86);
-      ctx.closePath(); ctx.fill();
-
-      // Ground — warm meadow path home（暖色草地，取代熔岩河）
-      const groundGrad = ctx.createLinearGradient(0, H*0.82, 0, H);
-      groundGrad.addColorStop(0, '#8fb86a');
-      groundGrad.addColorStop(0.5, '#6f9e52');
-      groundGrad.addColorStop(1, '#507a3c');
-      ctx.fillStyle = groundGrad;
-      ctx.beginPath();
-      ctx.moveTo(0, H*0.85);
-      for (let gx = 0; gx <= W; gx += W*0.06) {
-        ctx.lineTo(gx, H*0.85 + Math.sin(gx*0.015)*H*0.006);
-      }
-      ctx.lineTo(W, H*0.85); ctx.lineTo(W, H*1.0); ctx.lineTo(0, H*1.0); ctx.closePath(); ctx.fill();
-      // 柔和金色小路，从数宝脚下通向小屋
-      ctx.fillStyle = 'rgba(255,224,150,0.33)';
-      ctx.beginPath();
-      ctx.moveTo(W*0.18, H*1.0); ctx.lineTo(W*0.32, H*1.0);
-      ctx.lineTo(W*0.78, H*0.86); ctx.lineTo(W*0.72, H*0.86);
-      ctx.closePath(); ctx.fill();
+      ctx.globalAlpha = 1;
 
       // Floating embers
       for (const em of this.embers) {
@@ -10216,9 +10323,10 @@ class BattleGame {
         const fadeIn = Math.min(1, em.life/20);
         const fadeOut = Math.min(1, (em.maxLife - em.life)/20);
         const ea = fadeIn * fadeOut * 0.9;
-        ctx.beginPath(); ctx.arc(em.x, em.y, em.r, 0, Math.PI*2);
-        ctx.fillStyle = `hsla(${em.hue},100%,65%,${ea})`; ctx.fill();
+        ctx.globalAlpha = ea; ctx.fillStyle = em.fill;
+        ctx.beginPath(); ctx.arc(em.x, em.y, em.r, 0, Math.PI*2); ctx.fill();
       }
+      ctx.globalAlpha = 1;
 
       // 温和待机：数宝与小刺猬轻轻起伏
       const bob = Math.sin(this.frameCount * 0.05) * H * 0.008;
@@ -10269,187 +10377,6 @@ class BattleGame {
         ctx.fillStyle = 'rgba(255,255,245,0.95)';
         ctx.beginPath(); ctx.arc(ex, ey, l.size*0.32, 0, Math.PI*2); ctx.fill();
       }
-
-      // Update + draw lasers
-      this.lasers = this.lasers.filter(l => l.progress < 1.05);
-      for (const l of this.lasers) {
-        l.progress += l.speed;
-        if (l.progress >= 0.9 && !l.hit) { l.hit = true; this._monsterHit(); }   // 光束抵达 → 怪兽受击
-        const cx = l.x + (l.tx - l.x) * l.progress;
-        const cy = l.y + (l.ty - l.y) * l.progress;
-        l.trail.push({x:cx, y:cy});
-        if (l.trail.length > 12) l.trail.shift();
-
-        // === Glowing energy beam (line from start to head) ===
-        const beamAlpha = Math.min(1, (1 - l.progress) * 5);
-        const beamLen = Math.min(l.progress, 0.6);
-        const bx0 = l.x + (l.tx - l.x) * Math.max(0, l.progress - beamLen);
-        const by0 = l.y + (l.ty - l.y) * Math.max(0, l.progress - beamLen);
-        // Outer glow beam
-        const beamGrad = ctx.createLinearGradient(bx0, by0, cx, cy);
-        beamGrad.addColorStop(0, 'rgba(0,200,255,0)');
-        beamGrad.addColorStop(0.5, `rgba(100,230,255,${0.35 * beamAlpha})`);
-        beamGrad.addColorStop(1, `rgba(255,255,255,${0.9 * beamAlpha})`);
-        ctx.save();
-        ctx.strokeStyle = beamGrad;
-        ctx.lineWidth = l.size * 1.8;
-        ctx.lineCap = 'round';
-        ctx.beginPath(); ctx.moveTo(bx0, by0); ctx.lineTo(cx, cy); ctx.stroke();
-        // Inner bright core
-        const coreGrad = ctx.createLinearGradient(bx0, by0, cx, cy);
-        coreGrad.addColorStop(0, 'rgba(200,255,255,0)');
-        coreGrad.addColorStop(1, `rgba(255,255,255,${beamAlpha})`);
-        ctx.strokeStyle = coreGrad;
-        ctx.lineWidth = l.size * 0.55;
-        ctx.beginPath(); ctx.moveTo(bx0, by0); ctx.lineTo(cx, cy); ctx.stroke();
-        ctx.restore();
-
-        // === Swirling spark trail ===
-        for (let i = 0; i < l.trail.length; i++) {
-          const t = l.trail[i];
-          const a = (i / l.trail.length);
-          const r = l.size * 0.55 * a;
-          const hue = 180 + i * 8;
-          ctx.beginPath();
-          ctx.arc(t.x, t.y, r, 0, Math.PI*2);
-          ctx.fillStyle = `hsla(${hue},100%,70%,${a * 0.55})`;
-          ctx.fill();
-        }
-
-        // === Main energy orb ===
-        const g1 = ctx.createRadialGradient(cx - l.size*0.28, cy - l.size*0.28, 0, cx, cy, l.size * 1.6);
-        g1.addColorStop(0, '#ffffff');
-        g1.addColorStop(0.18, '#aaffff');
-        g1.addColorStop(0.5, '#00c8ff');
-        g1.addColorStop(0.8, 'rgba(0,100,255,0.45)');
-        g1.addColorStop(1, 'rgba(0,50,200,0)');
-        ctx.beginPath(); ctx.arc(cx, cy, l.size * 1.6, 0, Math.PI*2);
-        ctx.fillStyle = g1; ctx.fill();
-        // Bright white center
-        const g2 = ctx.createRadialGradient(cx, cy, 0, cx, cy, l.size * 0.6);
-        g2.addColorStop(0, 'rgba(255,255,255,1)');
-        g2.addColorStop(1, 'rgba(255,255,255,0)');
-        ctx.beginPath(); ctx.arc(cx, cy, l.size * 0.6, 0, Math.PI*2);
-        ctx.fillStyle = g2; ctx.fill();
-
-        // === Spinning energy ring ===
-        ctx.save();
-        ctx.translate(cx, cy);
-        ctx.rotate(l.progress * Math.PI * 8);
-        ctx.strokeStyle = `rgba(100,255,255,${0.7 * beamAlpha})`;
-        ctx.lineWidth = 3;
-        ctx.beginPath(); ctx.ellipse(0, 0, l.size * 1.8, l.size * 0.7, 0, 0, Math.PI*2);
-        ctx.stroke();
-        ctx.strokeStyle = `rgba(255,255,255,${0.4 * beamAlpha})`;
-        ctx.lineWidth = 1.5;
-        ctx.beginPath(); ctx.ellipse(0, 0, l.size * 1.4, l.size * 0.5, Math.PI/3, 0, Math.PI*2);
-        ctx.stroke();
-        ctx.restore();
-
-        // === Orbiting sparks ===
-        for (const sp of l.sparks) {
-          sp.phase += sp.speed;
-          const sx = cx + Math.cos(sp.phase) * (l.size * 1.5 + sp.ox * l.progress);
-          const sy = cy + Math.sin(sp.phase) * (l.size * 0.8 + sp.oy * l.progress);
-          const sg = ctx.createRadialGradient(sx, sy, 0, sx, sy, sp.r);
-          sg.addColorStop(0, 'rgba(255,255,255,0.95)');
-          sg.addColorStop(0.5, 'rgba(100,220,255,0.7)');
-          sg.addColorStop(1, 'rgba(0,150,255,0)');
-          ctx.beginPath(); ctx.arc(sx, sy, sp.r, 0, Math.PI*2);
-          ctx.fillStyle = sg; ctx.fill();
-        }
-
-        // === Impact explosion when reaching target ===
-        if (l.progress >= 0.88) {
-          const iAlpha = Math.min(1, (l.progress - 0.88) / 0.12);
-          const iR = l.size * (2 + iAlpha * 5);
-          const ig = ctx.createRadialGradient(l.tx, l.ty, 0, l.tx, l.ty, iR);
-          ig.addColorStop(0, `rgba(255,255,255,${iAlpha * 0.95})`);
-          ig.addColorStop(0.2, `rgba(100,255,255,${iAlpha * 0.8})`);
-          ig.addColorStop(0.5, `rgba(0,180,255,${iAlpha * 0.5})`);
-          ig.addColorStop(1, 'rgba(0,100,255,0)');
-          ctx.beginPath(); ctx.arc(l.tx, l.ty, iR, 0, Math.PI*2);
-          ctx.fillStyle = ig; ctx.fill();
-          // Star burst lines
-          ctx.save();
-          ctx.translate(l.tx, l.ty);
-          ctx.rotate(iAlpha * Math.PI);
-          for (let si = 0; si < 8; si++) {
-            ctx.rotate(Math.PI / 4);
-            ctx.strokeStyle = `rgba(255,255,255,${iAlpha * 0.8})`;
-            ctx.lineWidth = 3;
-            ctx.beginPath(); ctx.moveTo(0, l.size * 0.5); ctx.lineTo(0, l.size * (2 + iAlpha * 3));
-            ctx.stroke();
-          }
-          ctx.restore();
-        }
-      }
-
-      // Update + draw flames (dragon fire breath style)
-      for (const fl of this.flames) {
-        fl.age++;
-
-        // Main fire particles
-        for (const p of fl.particles) {
-          if (fl.age < (p.delay || 0)) continue;
-          p.x += p.vx;
-          p.y += p.vy;
-          p.vy *= 0.97;
-          p.alpha -= p.isSpark ? 0.032 : 0.022;
-          p.size *= p.isSpark ? 0.94 : 0.975;
-          if (p.alpha <= 0) continue;
-          if (p.isSpark) {
-            // Bright ember spark
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, Math.max(p.size, 0.5), 0, Math.PI*2);
-            ctx.fillStyle = `hsl(${p.hue},100%,${p.lightness}%)`;
-            ctx.globalAlpha = p.alpha;
-            ctx.fill();
-          } else {
-            // Large fire blob with radial gradient
-            const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
-            grd.addColorStop(0, `hsla(${p.hue+20},100%,${p.lightness+15}%,${p.alpha})`);
-            grd.addColorStop(0.5, `hsla(${p.hue},100%,${p.lightness}%,${p.alpha*0.85})`);
-            grd.addColorStop(1, `hsla(${p.hue-10},90%,30%,0)`);
-            ctx.beginPath(); ctx.arc(p.x, p.y, Math.max(p.size, 0), 0, Math.PI*2);
-            ctx.fillStyle = grd; ctx.globalAlpha = 1; ctx.fill();
-          }
-        }
-        ctx.globalAlpha = 1;
-
-        // Spiral fire swirl particles
-        for (const sp of (fl.spiralParticles || [])) {
-          sp.x += sp.vx;
-          sp.y += sp.vy;
-          sp.rotAngle += sp.rotSpeed;
-          sp.alpha -= 0.018;
-          sp.size *= 0.982;
-          if (sp.alpha <= 0) continue;
-          // Draw as fire petal/lobe shape
-          ctx.save();
-          ctx.translate(sp.x, sp.y);
-          ctx.rotate(sp.rotAngle);
-          const sgrd = ctx.createRadialGradient(0, 0, 0, 0, 0, sp.size);
-          sgrd.addColorStop(0, `hsla(${sp.hue+30},100%,${sp.lightness+20}%,${sp.alpha})`);
-          sgrd.addColorStop(0.6, `hsla(${sp.hue},100%,${sp.lightness}%,${sp.alpha*0.7})`);
-          sgrd.addColorStop(1, `hsla(${sp.hue-10},80%,25%,0)`);
-          ctx.beginPath();
-          ctx.ellipse(0, 0, sp.size, sp.size * 0.65, 0, 0, Math.PI*2);
-          ctx.fillStyle = sgrd; ctx.fill();
-          ctx.restore();
-        }
-      }
-      ctx.globalAlpha = 1;
-      this.flames = this.flames.filter(fl => fl.age < fl.maxAge);
-
-      // 受击/被击碎的星火
-      for (const s of this.hitSparks) {
-        s.x += s.vx; s.y += s.vy; s.vy += 0.22; s.alpha -= 0.045; s.size *= 0.97;
-        if (s.alpha <= 0) continue;
-        ctx.beginPath(); ctx.arc(s.x, s.y, Math.max(s.size, 0.5), 0, Math.PI * 2);
-        ctx.globalAlpha = 1; ctx.fillStyle = `hsla(${s.hue},100%,68%,${s.alpha})`; ctx.fill();
-      }
-      this.hitSparks = this.hitSparks.filter(s => s.alpha > 0);
     };
     draw();
   }
@@ -10684,7 +10611,7 @@ class BattleGame {
       _html('overlay-msg', `小家的灯全亮啦，你用了 ${this.time - this.timeLeft} 秒！`);
       _set('overlay-sub', '');
     } else {
-      if (ot) { ot.textContent = '这次没赢...'; ot.className = 'lose'; }
+      if (ot) { ot.textContent = MG_LOSE[6].title; ot.className = 'lose'; }
       _html('overlay-msg', '欢迎灯还差一点点，再来一次！');
       _set('overlay-sub', '');
     }
@@ -10706,20 +10633,13 @@ class BattleGame {
     this.timeLeft = this.time;
     this.gameEnded = false;
     this.locked = false;
-    this.lasers = [];
-    this.flames = [];
     this.energy = [];           // 回家大门：钥匙能量光点（取代激光）
     this._gateFlash = 0;        // 能量抵达大门的闪光计时
     this._lampKick = -9999;
     this.frameCount = 0;
     this.monsterShakeEnd = 0;   // P3-11: 重开清怪兽受击抖动帧，否则新局怪兽持续抖到 frameCount 追上上局残值
     this.embers = [];
-    this.hitSparks = [];
     this._petStage = mgPetStage(mgGetPet());
-    this.warriorLungeStart = 0;
-    this.monsterHitEnd = 0;
-    this.defeated = false;
-    this.defeatStart = 0;
     this.currentQuestion = '';
     this._recBurst = false;     // 速算：新一局重新追纪录（this.sprintBest 已在结算时刷新）
 

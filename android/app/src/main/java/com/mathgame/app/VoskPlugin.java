@@ -75,19 +75,47 @@ public class VoskPlugin extends Plugin {
 
     // ---- Model loading -------------------------------------------------
 
+    // loadModel 可能被页面重复调用（刷新、重进）：解压期间再来的请求挂在同一次解压后面，别并发解压到同一目录。
+    private final java.util.List<PluginCall> loadWaiters = new java.util.ArrayList<>();
+    private boolean loading;
+
     @PluginMethod
     public void loadModel(PluginCall call) {
         String g = call.getString("grammar", null);
         if (g != null) grammar = g;
         if (model != null) { call.resolve(); return; }
+        synchronized (loadWaiters) {
+            loadWaiters.add(call);
+            if (loading) return;
+            loading = true;
+        }
         Log.d(TAG, "Unpacking model from assets/model-cn ...");
         StorageService.unpack(
             getContext(),
             "model-cn", // source: assets/model-cn/
             "model",    // target: filesDir/model
-            (m) -> { model = m; Log.d(TAG, "Model loaded"); call.resolve(); },
-            (e) -> { Log.e(TAG, "Model unpack failed", e); call.reject("Failed to unpack Vosk model: " + e.getMessage()); }
+            (m) -> { model = m; Log.d(TAG, "Model loaded"); finishLoad(null); },
+            (e) -> { Log.e(TAG, "Model unpack failed", e); finishLoad("Failed to unpack Vosk model: " + e.getMessage()); }
         );
+    }
+
+    // 页面跳转：旧页面还在等的 loadModel 作废，不 resolve（事后再 resolve 会经桥落进新页面）。
+    // 解压仍在后台继续，新页面的 loadModel 排在它后面；话筒一并放掉。
+    void dropPageCalls() {
+        synchronized (loadWaiters) { loadWaiters.clear(); }
+        getBridge().execute(this::stopCapture);
+    }
+
+    private void finishLoad(String error) {
+        java.util.List<PluginCall> waiting;
+        synchronized (loadWaiters) {
+            waiting = new java.util.ArrayList<>(loadWaiters);
+            loadWaiters.clear();
+            loading = false;
+        }
+        for (PluginCall c : waiting) {
+            if (error == null) c.resolve(); else c.reject(error);
+        }
     }
 
     // ---- Start / stop --------------------------------------------------
@@ -285,8 +313,16 @@ public class VoskPlugin extends Plugin {
         notifyListeners("error", ret);
     }
 
+    // 切后台就放开话筒：助手设备上系统唤醒词引擎要用它。网页端在 visibilitychange 里自己停、回前台再开。
+    @Override
+    protected void handleOnStop() {
+        getBridge().execute(this::stopCapture);
+        super.handleOnStop();
+    }
+
     @Override
     protected void handleOnDestroy() {
+        synchronized (loadWaiters) { loadWaiters.clear(); }
         stopCapture();
         if (model != null) {
             model.close();

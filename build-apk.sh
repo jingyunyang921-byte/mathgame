@@ -7,7 +7,7 @@ JDK="${JDK21_HOME:-E:/tools/jdk-21.0.12.1+1}"
 
 node .shots/sync_menu_twin.mjs | tail -1
 node .shots/sync_twin.mjs | tail -1
-for f in pet-care.js pet-story.js pet-story.css; do
+for f in pet-care.js pet-story.js pet-story.css mg-log.js; do
   cmp "$f" "www/$f" || { echo "孪生不一致: $f"; exit 1; }
 done
 
